@@ -10,7 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-from pathlib import Path
+from pathlib import Path, os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'TimeBank_account',
+    'TimeBank_app',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +120,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# static 파일 경로 작성
+STATIC_DIRS = [
+    os.path.join(BASE_DIR, "TimeBank_app", "static"),
+    os.path.join(BASE_DIR, "TimeBank_account", "static"),
+]
+
+# static 파일들이 어디로 모일 것인지 작성
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

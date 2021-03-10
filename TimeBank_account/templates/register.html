@@ -20,7 +20,8 @@
         </div>
         <div class="row mt-5">
             <div class="col-12">
-                <form>
+                <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+                   {% csrf_token %}
                     <div class="form-group">
                       <label for="exampleInputEmail1">Email address</label>
                       <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path, os
+# import my_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,6 +22,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'u1y%mw*x+sqm-mq#48-cwcis+-rxk^#&(4et_)3nf+89v10hm9'
+
+# DATABASES = my_settings.DATABASES
+# SECRETE_KEY = my_settings.SECRETE_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -56,7 +60,7 @@ ROOT_URLCONF = 'TimeBank_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['TimeBank_proj/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,5 +131,5 @@ STATIC_DIRS = [
     os.path.join(BASE_DIR, "TimeBank_account", "static"),
 ]
 
-# static 파일들이 어디로 모일 것인지 작성
+# static 파일들이 어디로 모일 것인지 작성 (새로운 폴더 생성)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

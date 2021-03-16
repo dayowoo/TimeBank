@@ -20,27 +20,41 @@
         </div>
         <div class="row mt-5">
             <div class="col-12">
-                <form method = "POST" action="{% url 'register' %}" enctype="multipart/form-data">
-                  {% csrf_token %}
-                    <div class="form-group">
-                      <label for="exampleInputEmail1">Username</label>
-                      <input name="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter username">
-                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputPassword1">Password</label>
-                      <input name="password1" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                    </div>
-                    <div class="form-group">
-                      <label for="exampleInputPassword1">Confirm Password</label>
-                      <input name="password2" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                    </div>
-                    <div class="form-group form-check">
-                      <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                      <label class="form-check-label" for="exampleCheck1">Check me out</label>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                  </form>
+              <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                  {{ form.as_p }}
+                  <p>
+                      <label for="id_username">사용자명 : </label>
+                      <input autofocus="" id="id_username" name="username" pattern="[a-zA-Z0-9]+" title="특수문자, 공백 입력불가" type="text" required="">
+                  </p>
+                  <p>
+                      <label for="id_email">이메일 주소 : </label>
+                      <input id="id_email" maxlength="254" name="email" type="email">
+                  </p>
+                  <p>
+                      <label for="id_password1">비밀번호 : </label>
+                      <input id="id_password1" name="password" type="password" required>
+                  </p>
+                  <p>
+                      <label for="id_password2">비밀번호 확인 :</label>
+                      <input id="id_password2" name="pw_check" type="password" required="">
+                      <span class="helptext">확인을 위해 이전과 동일한 비밀번호를 입력하세요. </span>
+                  </p>
+                  <p>
+                      <label for="id_nickname">닉네임 : </label>
+                      <input id="id_nickname" name="name" type="text" required>
+                  </p>
+                  <p>
+                      <label for="id_picture">프로필 사진 :</label>
+                      <input id="id_picture" name="image" type="file" required>
+                  </p>
+                <input class="submit_btn" type="submit" value="가입">
+              </form>
+            </div>
+            <div class="shortcut">
+            <p class="link">계정이 있으신가요? <a href="{% url 'login' %}">로그인</a></p>
+            </div>
+          </div>
             </div>
         </div>        
     </body>

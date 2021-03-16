@@ -53,18 +53,18 @@
 
   
 
-  <h1>Login</h1>
-  <form method="POST" action="{%url 'login'%}">
-    {% csrf_token %}
-    Username:
-    <br>
-    <input name="username" type="text" value="">
-    <br>
-    Password:
-    <br>
-    <input name="password" type="password" value="">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+  <h3>{{ user.profile.username }}'s 프로필</h3>
+  <ul>
+    {% if user.profile.image %}
+    <li>picture:<img src="{{ user.profile.image.url }}" alt=""></li>
+    {% endif %}
+    <li>username : {{ user.username }}</li>
+    <li>소개: {{ user.profile.about }}</li>
+    <li>성별: {{ user.profile.gender }}</li>
+    <li><a href="{% url 'logout' %}">로그아웃</a></li>
+    <li><a href="#">회원정보 변경</a></li>
+    <li><a href="#">비밀번호 변경</a></li>
+  </ul>
 
   <!-- Footer -->
   <footer class="py-5 bg-dark">

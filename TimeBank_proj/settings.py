@@ -29,7 +29,10 @@ SECRET_KEY = 'u1y%mw*x+sqm-mq#48-cwcis+-rxk^#&(4et_)3nf+89v10hm9'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '*',
+    # '13.125.168.10', # LightSail IP 주소
+]
 
 
 # Application definition
@@ -133,3 +136,8 @@ STATIC_DIRS = [
 
 # static 파일들이 어디로 모일 것인지 작성 (새로운 폴더 생성)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+# media 경로 추가
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"

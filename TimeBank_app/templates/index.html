@@ -37,10 +37,13 @@
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+          </li>
           <!--로그인 상태-->
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#MyPage">{{ user.get_username }}님 환영합니다</a>
+            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}님 환영합니다</a>
           </li>
           <li class="nav-item">
             <form action="{% url 'logout' %}" method="POST">

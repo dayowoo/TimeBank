@@ -1,7 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <meta charset="utf-8">
@@ -9,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Scrolling Nav - Start Bootstrap Template</title>
+  <title>TimeBank</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -24,7 +22,7 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">Start Bootstrap</a>
+      <a class="navbar-brand js-scroll-trigger" href="#page-top">TimeBank</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -39,37 +37,50 @@
           <li class="nav-item">
             <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+          </li>
+          <!--로그인 상태-->
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}님 환영합니다</a>
+          </li>
+          <li class="nav-item">
+            <form action="{% url 'logout' %}" method="POST">
+              {% csrf_token %} 
+              <input type="submit" class="nav-link logout" value="로그아웃">
+            </form>
+          </li>
+          
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </div>
   </nav>
 
+
   <header class="bg-primary text-white">
     <div class="container text-center">
-      <h1>Welcome to Scrolling Nav</h1>
-      <p class="lead">A landing page template freshly redesigned for Bootstrap 4</p>
+      <h1>TimeBank</h1>
+     
     </div>
   </header>
 
-  
-
-  <h1>Login</h1>
-  <form method="POST" action="{%url 'login'%}">
-    {% csrf_token %}
-    Username:
-    <br>
-    <input name="username" type="text" value="">
-    <br>
-    Password:
-    <br>
-    <input name="password" type="password" value="">
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+  <!-- <h1>새로운 시간 거래 요청</h1>
+  <div class="container text-center">주고받고자 하는 작업에 대해 오른쪽의 양식에 맞게 내용을 작성해주세요.</div>
+  <p class="lead">내용 작성에 도움이 될 만한 이야기들을 적어주면 좋을 것 같습니다.</p>    -->
 
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+      <p class="m-0 text-center text-white">Copyright &copy; Dayoung Seon 2021</p>
     </div>
     <!-- /.container -->
   </footer>
@@ -86,4 +97,4 @@
 
 </body>
 
-</html>
+

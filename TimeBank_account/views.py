@@ -1,8 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 from django.contrib.auth.models import User
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
+from .models import *
+from django.contrib.auth import get_user_model
 
 
 # 회원가입
@@ -11,17 +14,19 @@ def register(request):
     if request.method == "GET":
         return render(request, "register.html")
     elif request.method == "POST":
+        name = request.POST["name"]
+        email = request.POST["email"]
         username = request.POST["username"]
-        password = request.POST["password1"]
-        password_check = request.POST["password2"]
-        
+        password = request.POST["password"]
+        password_check = request.POST["pw_check"]
+        image = request.FILES["image"]
         # 비밀번호 재확인 불일치
         if password != password_check:
             return render(request, "register.html")
         # 새로운 유저 생성
-        user = User.objects.create_user(username=username, password=password)
+        user = User.objects.create_user(username=username, password=password, name=name, email=email, image=image)
         auth.login(request, user)
-    return redirect("http://127.0.0.1:8000")
+    return redirect("index")
 
 
 # 로그인
@@ -38,7 +43,7 @@ def login(request):
             return render(request, "login.html")
         #  로그인 처리
         auth.login(request, user)
-    return redirect("http://127.0.0.1:8000")
+    return redirect("index")
 
 
 # 로그아웃
@@ -47,6 +52,13 @@ def logout(request):
         if request.user.is_authenticated:
             auth.logout(request)
     return redirect("http://127.0.0.1:8000")
+
+# 프로필
+@login_required
+def profile(requset,username):
+    user = get_object_or_404(User,username=username)
+
+    return render(requset, "profile.html",{ "user_profile":user, 'username': username})
 
 
 # @csrf_exempt

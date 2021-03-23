@@ -68,30 +68,42 @@
 
   <header class="bg-primary text-white">
     <div class="container text-center">
-      <h1>신규거래등록</h1>
+      <h1>거래목록</h1>
+     
     </div>
   </header>
 
   <div class="row mt-5">
-    <div class="col-12">
-      <form method="POST" action=".">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-          <input type="{{ field.field.widget.input_type }}" class="form-control" id="PP field.id_for_label }}"
-            placeholder="{{ field.label }}" name="{{ field.name }}" />
-            </div>
-            {% if field.errors %}
-            <span style="color: red">{{ field.errors }}</span>
-            {% endif %}
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">글쓰기</button>
-      </form>
-    </div>
+      <div class="col-12">
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>#</th>
+                      <th>제목</th>
+                      <th>아이디</th>
+                      <th>일시</th>
+                  </tr>
+              </thead>
+               {% for post in posts %}
+              <tbody>
+                  <tr>
+                      <th>{{ post.id }}</th>
+                      <td>{{ post.content }}</td>>
+                      <td>{{ post.author }}</td>
+                      <td>{{ post.created_at }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+          </table>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-12">
+        <button class="btn btn-primary">글쓰기</button>
+      </div>
   </div>
 
-  
+
   <!-- <h1>새로운 시간 거래 요청</h1>
   <div class="container text-center">주고받고자 하는 작업에 대해 오른쪽의 양식에 맞게 내용을 작성해주세요.</div>
   <p class="lead">내용 작성에 도움이 될 만한 이야기들을 적어주면 좋을 것 같습니다.</p>    -->

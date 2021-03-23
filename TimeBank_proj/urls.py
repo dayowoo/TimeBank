@@ -7,8 +7,9 @@ from django.conf import settings
 
 
 urlpatterns = [
+    path('', TimeBank_app.views.index),
     path('admin/', admin.site.urls),
-    path('', include('TimeBank_app.urls')),
+    path('post/', include('TimeBank_app.urls')),
     path('account/', include('TimeBank_account.urls')),
 ]
 

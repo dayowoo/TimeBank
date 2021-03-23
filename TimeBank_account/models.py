@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 
-# Create your models here.
+# 사용자 정보
 class User(models.Model):
     object = UserManager()
     user_id = models.CharField(max_length=64, verbose_name='사용자ID')
@@ -23,3 +23,23 @@ class User(models.Model):
 
     class Meta:
         db_table = 'TimeBank_user'
+
+
+# 계좌정보
+class Account(models.Model):
+    state_list = (
+        ('deal','거래진행중'), ('request','요청진행중'),
+        ('complete', '거래완료'), ('inquire', '요청보내기')
+        )
+    state_type = models.CharField(max_length=10, choices=state_list, verbose_name='요청상태')
+    account_no = models.CharField(max_length=20)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    # PositiveIntegerField : 0 또는 양수의 값
+    balance = models.PositiveIntegerField(default=0)
+    transfer_number = models.IntegerField(default=3)
+    bank = models.CharField(max_length=10)
+    account_type_list = (
+        ('give','주고싶어요'),
+        ('take','받고싶어요')
+        )
+    account_type = models.CharField(max_length=10, choices=account_type_list)

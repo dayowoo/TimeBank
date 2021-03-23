@@ -60,6 +60,9 @@ def profile(requset,username):
 
     return render(requset, "profile.html",{ "user_profile":user, 'username': username})
 
+# 거래 내역
+def account_history(request):
+    return render(request, "account.html")
 
 # @csrf_exempt
 # def register(request):

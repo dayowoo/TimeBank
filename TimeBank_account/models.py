@@ -32,11 +32,11 @@ class Account(models.Model):
         ('complete', '거래완료'), ('inquire', '요청보내기')
         )
     state_type = models.CharField(max_length=10, choices=state_list, verbose_name='요청상태')
-    account_no = models.CharField(max_length=20)
+    # account_no = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # PositiveIntegerField : 0 또는 양수의 값
-    balance = models.PositiveIntegerField(default=0)
-    transfer_number = models.IntegerField(default=3)
+    time_balance = models.PositiveIntegerField(default=0, verbose_name='시간계좌')
+    transfer_balance = models.IntegerField(default=0, verbose_name='시간거래활동')
     bank = models.CharField(max_length=10)
     account_type_list = (
         ('give','주고싶어요'),

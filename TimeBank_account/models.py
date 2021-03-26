@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser, UserManager
 class User(models.Model):
     object = UserManager()
     user_id = models.CharField(max_length=64, verbose_name='사용자ID')
-    email = models.CharField(max_length=150, verbose_name='E-mail')
+    email = models.EmailField(max_length=128, verbose_name='E-mail')
     username = models.CharField(max_length=64, verbose_name='사용자명')
     password = models.CharField(max_length=64, verbose_name='비밀번호')
     contact = models.CharField(max_length=150, verbose_name='연락처')

@@ -1,32 +1,42 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.contrib.auth import get_user_model
+from TimeBank_app.views import *
 
 
 # 회원가입
 @csrf_exempt
 def register(request):
+    # 단순히 페이지에 들어오는 경우
     if request.method == "GET":
-        return render(request, "register.html")
+        return render(request, 'register.html')
+    # 등록버튼 클릭
     elif request.method == "POST":
-        name = request.POST["name"]
+        user_id = request.POST["user_id"] #id
         email = request.POST["email"]
-        username = request.POST["username"]
+        username = request.POST["username"] #이름
         password = request.POST["password"]
         password_check = request.POST["pw_check"]
         image = request.FILES["image"]
+
+        res_data = {}
         # 비밀번호 재확인 불일치
         if password != password_check:
-            return render(request, "register.html")
+            res_data ['error'] = '비밀번호가 다릅니다.'
+
         # 새로운 유저 생성
-        user = User.objects.create_user(username=username, password=password, name=name, email=email, image=image)
-        auth.login(request, user)
-    return redirect("index")
+        user = User(
+            user_id=user_id, password=password,
+            username=username, email=email, image=image
+            )
+        user.save()
+        
+    return render(request, 'login.html', res_data)
 
 
 # 로그인
@@ -51,7 +61,7 @@ def logout(request):
     if request.method == "POST":
         if request.user.is_authenticated:
             auth.logout(request)
-    return redirect("http://127.0.0.1:8000")
+    return redirect("index")
 
 # 프로필
 @login_required

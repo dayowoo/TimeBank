@@ -14,6 +14,7 @@
 
   <!-- Custom styles for this template -->
   <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+  <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
 
 </head>
 
@@ -68,33 +69,83 @@
 
   <header class="bg-primary text-white">
     <div class="container text-center">
-      <h1>신규거래등록</h1>
+      <h1>새로운 시간 거래 요청</h1>
     </div>
   </header>
 
   <div class="row mt-5">
     <div class="col-12">
-      <form method="POST" action=".">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-          <input type="{{ field.field.widget.input_type }}" class="form-control" id="PP field.id_for_label }}"
-            placeholder="{{ field.label }}" name="{{ field.name }}" />
-            </div>
-            {% if field.errors %}
-            <span style="color: red">{{ field.errors }}</span>
-            {% endif %}
-            {% endfor %}
-            <button type="submit" class="btn btn-primary">글쓰기</button>
-      </form>
+      
     </div>
   </div>
 
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-8">
+
+        <!-- Title -->
+        <h1 class="mt-4">새로운 시간 거래 요청</h1>
+
+        <!-- Author -->
+        <p class="lead">
+          by
+          <a href="#">admin</a>
+        </p>
+
+        <hr>
+
+        <!-- Date/Time -->
+        <p>주고받고자 하는 작업에 대해 오른쪽의 양식에 맞게 내용을 작성해주세요.<br>
+          내용 작성에 도움이 될 만한 이야기들을 적어주면 좋을 것 같습니다.</p>
+
+        <hr>
+
+        <!-- Comments Form -->
+        <div class="card my-4">
+          <h5 class="card-header"></h5>
+          <div class="card-body">
+            <form method="POST" action=".">
+              {% csrf_token %}
+              {% for field in form %}
+              <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}" class="form-control" id="PP field.id_for_label }}"
+                  placeholder="{{ field.label }}" name="{{ field.name }}" />
+                  </div>
+                  {% if field.errors %}
+                  <span style="color: red">{{ field.errors }}</span>
+                  {% endif %}
+                  {% endfor %}
+                  <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Widgets Column -->
+      <div class="col-md-4">
+
+        <!-- Side Widget -->
+        <div class="card my-4">
+          <h5 class="card-header">문의사항</h5>
+          <div class="card-body">
+            031-408-1225
+          </div>
+        </div> 
+
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
   
-  <!-- <h1>새로운 시간 거래 요청</h1>
-  <div class="container text-center">주고받고자 하는 작업에 대해 오른쪽의 양식에 맞게 내용을 작성해주세요.</div>
-  <p class="lead">내용 작성에 도움이 될 만한 이야기들을 적어주면 좋을 것 같습니다.</p>    -->
 
   <!-- Footer -->
   <footer class="py-5 bg-dark">

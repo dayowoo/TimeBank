@@ -3,10 +3,10 @@ from django.contrib.auth.models import AbstractUser, UserManager
 
 # 사용자 정보
 class User(models.Model):
-    object = UserManager()
+    #object = UserManager()
     user_id = models.CharField(max_length=64, verbose_name='사용자ID')
     email = models.EmailField(max_length=128, verbose_name='E-mail')
-    username = models.CharField(max_length=64, verbose_name='사용자명')
+    username = models.CharField(max_length=64, verbose_name='이름')
     password = models.CharField(max_length=64, verbose_name='비밀번호')
     contact = models.CharField(max_length=150, verbose_name='연락처')
     birth = models.CharField(max_length=150, verbose_name='생년월일')

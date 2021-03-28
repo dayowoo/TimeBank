@@ -7,6 +7,19 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from django.contrib.auth import get_user_model
 from TimeBank_app.views import *
+from django.contrib.auth.hashers import make_password, check_password
+
+
+def home(request):
+    user_id = request.session.get('user')
+
+    if user_id:
+        user = User.objects.get(pk=user_id)
+        return HttpResponse(user.username)
+        
+    return render(request, 'index.html')
+
+
 
 
 # 회원가입
@@ -35,7 +48,7 @@ def register(request):
             username=username, email=email, image=image
             )
         user.save()
-        
+
     return render(request, 'login.html', res_data)
 
 
@@ -47,14 +60,27 @@ def login(request):
     elif request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
-        user = auth.authenticate(request, username=username, password=password)
-        # 존재하지 않는 user
-        if user is None:
-            return render(request, "login.html")
-        #  로그인 처리
-        auth.login(request, user)
-    return redirect("index")
 
+        res_data = {}
+        if not (user_id and password):
+            res_data['error'] = '모든 값을 입력하세요'
+        else:
+            user = get_object_or_404(User, pk=user_id)
+            if check_password(password, User.password):
+                #비밀번호 일치, 로그인 처리
+                request.session['user'] = User.id 
+                return redirect('/')
+            #비밀번호 불일치, 로그인 실패
+            else:
+                res_data['error'] = '비밀번호가 틀렸습니다'
+        return render(request, 'login.html', res_data)
+
+    #     # 존재하지 않는 user
+    #     if user is None:
+    #         return render(request, "login.html")
+    #     #  로그인 처리
+    #     auth.login(request, user)
+    # return render(request,'index.html')
 
 # 로그아웃
 def logout(request):

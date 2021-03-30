@@ -43,7 +43,7 @@
           <!--로그인 상태-->
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}님 환영합니다</a>
+            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.user_id %}">{{ user.get_user_id }}님 환영합니다</a>
           </li>
           <li class="nav-item">
             <form action="{% url 'logout' %}" method="POST">

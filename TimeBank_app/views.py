@@ -29,7 +29,7 @@ def new_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            author = User.object.get(id=user_id)
+            author = User.object.get(id=userid)
             post = Post()
             post.content = form.cleaned_data['content']
             post.author = request.user
@@ -42,6 +42,22 @@ def new_post(request):
 
 
 
+# 요청 보내기
+def send_message(request):
+    return render(request, '')
+
+
+# 요청 진행중
+def wait_message(request):
+    return render(request,"")
+
+# 거래 진행중
+def wait_deal(request):
+    return render(request,"")
+
+# 완료
+def complete(request):
+    return render(request, "")
 
 '''
 # 신규 거래 등록 - 템플릿 보여주기

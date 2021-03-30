@@ -141,3 +141,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # media 경로 추가
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
+
+AUTH_USER_MODEL = 'TimeBank_account.User'

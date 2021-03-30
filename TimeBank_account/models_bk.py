@@ -1,39 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
+from django.contrib.auth.models import AbstractUser, UserManager
 
-from django.contrib.auth.base_user import BaseUserManager
-
-
-class CustomUserManager(BaseUserManager):
-
-    def create_user(self, email, password, **extra_fields):
-       
-        if not email:
-            raise ValueError(('The Email must be set'))
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save()
-        return user
-
-    def create_superuser(self, email, password, **extra_fields):
-        
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
-
-        if extra_fields.get('is_staff') is not True:
-            raise ValueError(('Superuser must have is_staff=True.'))
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError(('Superuser must have is_superuser=True.'))
-        return self.create_user(email, password, **extra_fields)
 
 # 사용자 정보
-class User(AbstractUser):
-    
+class User(models.Model):
+    object = UserManager()
     userid = models.CharField(max_length=64, verbose_name='사용자ID')
     email = models.EmailField(max_length=128, verbose_name='E-mail')
-    username = models.CharField(max_length=64, verbose_name='이름', unique=True)
+    username = models.CharField(max_length=64, verbose_name='이름')
     password = models.CharField(max_length=64, verbose_name='비밀번호')
     contact = models.CharField(max_length=150, verbose_name='연락처')
     birth = models.CharField(max_length=150, verbose_name='생년월일')
@@ -44,10 +18,7 @@ class User(AbstractUser):
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)
 
-    object = CustomUserManager()
-
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    
 
     # 문자열 반환(user_id문자열 반환)
     def __str__(self):

@@ -43,12 +43,12 @@
           <!--로그인 상태-->
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.user_id %}">{{ user.get_user_id }}님 환영합니다</a>
+            <a class="nav-link js-scroll-trigger" href="#">{{ user.get_userid }}</a>
           </li>
           <li class="nav-item">
             <form action="{% url 'logout' %}" method="POST">
               {% csrf_token %} 
-              <input type="submit" class="nav-link logout" value="로그아웃">
+              <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="로그아웃">
             </form>
           </li>
           

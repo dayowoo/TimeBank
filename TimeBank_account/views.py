@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import auth
 from .models import *
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import authenticate
 from django.contrib.auth import logout,update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
@@ -31,28 +31,35 @@ def register(request):
         password = request.POST["password"]
         password_check = request.POST["pw_check"]
         image = request.FILES["image"]
+
+        #text output
+        #f = open("tmp.txt", 'w')
+        #data = '{}\n {}\n {}\n{}\n{}\n{}\n'.format( userid, email, username, password, password_check, image)
+        #f.write(data)
+        #f.close()
+
         # 비밀번호 재확인 불일치
         if password != password_check:
             return render(request, "register.html")
         # 새로운 유저 생성
-        user = User.objects.create_user(username=username, password=password, name=name, email=email, image=image)
+        user = User.object.create_user(username=username, email=email, password=password, userid=userid, image=image)
         auth.login(request, user)
-    return redirect('index')
+    return redirect('../../')
 
 # 로그인
 def login(request):
     if request.method == "GET":
         return render(request, "login.html")
     elif request.method == "POST":
-        username = request.POST["username"]
+        userid = request.POST["userid"]
         password = request.POST["password"]
-        user = auth.authenticate(request, username=username, password=password)
+        user = auth.authenticate(request, userid=userid, password=password)
         # 존재하지 않는 user
         if user is None:
             return render(request, "login.html")
         # 로그인 처리
         auth.login(request, user)
-    return redirect("index")
+    return redirect('../../')
 
 
 # 로그아웃
@@ -66,10 +73,10 @@ def sign_out(request):
 
 # 프로필
 @login_required
-def profile(requset,username):
-    user = get_object_or_404(User,username=username)
+def profile(requset,userid):
+    user = get_object_or_404(User,userid=userid)
 
-    return render(requset, "profile.html",{ "user_profile":user, 'username': username})
+    return render(requset, "profile.html", {"user_profile":user, 'userid': userid})
 
 
 # 거래 내역

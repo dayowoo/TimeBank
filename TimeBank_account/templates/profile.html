@@ -52,12 +52,12 @@
 
   
 
-  <h3>{{ user.profile.username }}'s 프로필</h3>
+  <h3>{{ user.profile.name }}'s 프로필</h3>
   <ul>
     {% if user.profile.image %}
     <li>picture:<img src="{{ user.profile.image.url }}" alt=""></li>
     {% endif %}
-    <li>username : {{ user.username }}</li>
+    <li>username : {{ user.name }}</li>
     <li>소개: {{ user.profile.about }}</li>
     <li>성별: {{ user.profile.gender }}</li>
     <li><a href="{% url 'logout' %}">로그아웃</a></li>

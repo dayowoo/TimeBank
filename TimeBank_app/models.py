@@ -28,8 +28,8 @@ class Post(models.Model):
     sub_work = models.ForeignKey(SubCategory, on_delete = models.CASCADE, related_name='MainCategory', null=True)
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='작성자')
     tok = models.PositiveIntegerField(default=0, verbose_name='거래톡')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='작성자')
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:
@@ -38,3 +38,23 @@ class Post(models.Model):
     @property
     def index(self):
         return self.work_choice[:50]
+
+    def __str__(self):
+        return self.content
+
+
+# 거래톡 보내기
+class MessageItem(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    status_list = (('register','신청하기'),('register_complete','신청완료'),
+                    ('wait','대기중'),('complete','완료하기'),('fail','중단'))
+    status = models.CharField(max_length=50, choices=status_list, default='wait')
+    applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applier', null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = '메세지함'
+        verbose_name_plural = f'{verbose_name} 목록'
+        ordering = ['-pk']
+

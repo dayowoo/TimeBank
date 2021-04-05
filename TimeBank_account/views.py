@@ -25,9 +25,9 @@ def register(request):
     if request.method == "GET":
         return render(request, "register.html")
     elif request.method == "POST":
-        userid = request.POST["userid"]
-        email = request.POST["email"]
         username = request.POST["username"]
+        email = request.POST["email"]
+        name = request.POST["name"]
         password = request.POST["password"]
         password_check = request.POST["pw_check"]
         image = request.FILES["image"]
@@ -42,28 +42,28 @@ def register(request):
         if password != password_check:
             return render(request, "register.html")
         # 새로운 유저 생성
-        user = User.object.create_user(username=username, email=email, password=password, userid=userid, image=image)
+        user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
         auth.login(request, user)
-    return redirect('../../')
+    return redirect('index')
 
 # 로그인
 def login(request):
     if request.method == "GET":
         return render(request, "login.html")
     elif request.method == "POST":
-        userid = request.POST["userid"]
+        username = request.POST["username"]
         password = request.POST["password"]
-        user = auth.authenticate(request, userid=userid, password=password)
+        user = auth.authenticate(request, username=username, password=password)
         # 존재하지 않는 user
         if user is None:
-            return render(request, "login.html")
+            return render(request, "login.html", {"msg": "로그인 실패!"})
         # 로그인 처리
         auth.login(request, user)
-    return redirect('../../')
+    return redirect('index')
 
 
 # 로그아웃
-def sign_out(request):
+def logout(request):
     if request.method=="POST":
         if request.user.is_authenticated:
             auth.logout(request)

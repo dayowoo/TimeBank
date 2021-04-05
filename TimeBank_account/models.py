@@ -30,10 +30,9 @@ class CustomUserManager(BaseUserManager):
 
 # 사용자 정보
 class User(AbstractUser):
-    
-    userid = models.CharField(max_length=64, verbose_name='사용자ID')
+    username = models.CharField(max_length=64, verbose_name='사용자ID', unique=True)
     email = models.EmailField(max_length=128, verbose_name='E-mail')
-    username = models.CharField(max_length=64, verbose_name='이름', unique=True)
+    name = models.CharField(max_length=64, verbose_name='이름')
     password = models.CharField(max_length=64, verbose_name='비밀번호')
     contact = models.CharField(max_length=150, verbose_name='연락처')
     birth = models.CharField(max_length=150, verbose_name='생년월일')
@@ -43,15 +42,14 @@ class User(AbstractUser):
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)
-
     object = CustomUserManager()
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    # USERNAME_FIELD = 'username'
+    # REQUIRED_FIELDS = ['email']
 
     # 문자열 반환(user_id문자열 반환)
     def __str__(self):
-        return self.userid
+        return self.username
 
     class Meta:
         db_table = 'TimeBank_user'

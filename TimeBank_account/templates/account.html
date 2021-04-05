@@ -43,7 +43,7 @@
           <!--로그인 상태-->
           {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}님 환영합니다</a>
+            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.name %}">{{ user.get_name }}님 환영합니다</a>
           </li>
           <li class="nav-item">
             <form action="{% url 'logout' %}" method="POST">
@@ -84,7 +84,7 @@
       <div class="card mt-4">
         <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
         <div class="card-body">
-          <h3 class="card-title">{{ user.get_username }} 😃</h3>
+          <h3 class="card-title">{{ user.get_name }} 😃</h3>
           <h4>$24.99</h4>
           <p class="card-text"></p>
           <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>

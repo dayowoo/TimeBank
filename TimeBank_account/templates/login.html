@@ -55,12 +55,13 @@
       <div class="row">
         <div class="col-lg-8 mx-auto">
           <div class="container">
+            <span style="color:red">{{msg}}</span>
             <h1>Login</h1>
-            <form method="POST" action="{%url 'login'%}">
+            <form method="POST" action="{% url 'login'%}">
               {% csrf_token %}
-              Username:
+              UserID:
               <br>
-              <input name="userid" type="text" value="">
+              <input name="username" type="text" value="">
               <br>
               Password:
               <br>

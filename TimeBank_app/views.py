@@ -29,7 +29,7 @@ def new_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
-            author = User.object.get(id=userid)
+            author = User.object.get(id=username)
             post = Post()
             post.content = form.cleaned_data['content']
             post.author = request.user

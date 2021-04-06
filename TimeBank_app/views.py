@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404,HttpResponse
 from django.utils import timezone
-from TimeBank_app.models import Post, MainCategory, SubCategory
+from TimeBank_app.models import Post, MainCategory, SubCategory, MessageItem
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -13,18 +13,21 @@ from django.http import HttpResponse
 import re
 from django.contrib import messages
 from django.utils import timezone
-from .forms import PostForm
+from .forms import PostForm, MsgForm
 
 # home
 def index(request):
     return render(request, 'index.html')
 
 
+# 거래글 목록
 def post_list(request):
     # order_by : 순서정렬 / 최신순
     posts = Post.objects.all().order_by('-id')
     return render(request, 'post_list.html', {'posts': posts})
 
+
+# 신규 거래 등록
 def new_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
@@ -33,6 +36,7 @@ def new_post(request):
             post = Post()
             post.content = form.cleaned_data['content']
             post.author = request.user
+            post.service = request.service
             post.save()
 
             return redirect('/post/post_list/')
@@ -42,23 +46,116 @@ def new_post(request):
 
 
 
-# 요청 보내기
+
+
+
+
+
+
+
+def test_btn(request):
+    status = get_object_or_404(MessageItem, status="wait")
+    is_cliked = status.filter()
+    pass
+
+# 신청하기
 def send_message(request):
-    return render(request, '')
+    form = MsgForm()
+    return render(request, 'testmsg_form.html', {'form': form})
 
 
-# 요청 진행중
-def wait_message(request):
-    return render(request,"")
+
+
+
+#########
+'''
+class ButtonView:
+    def __init__(self, show_btn):
+        self.show_btn = show_btn
+
+    def applicant_mode()
+    pass
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 신청 내용 저장
+def create_message(request):  
+
+        posts = Post.objects.all().order_by('-id')
+        return render(request, 'post_list.html', {'posts': posts})
+
+'''
+
+def create_message(request):
+    show_btn = True
+    btn_msg = "신청하기"
+
+    context = {
+                'show_btn': show_btn,
+                'btn_msg': btn_msg,
+            }
+    
+    post = Post()
+    post.author = request.user
+    post.service = request.service
+    post.save()
+
+    return render(request, "post_list_tmp2.html", context)
+'''
+
+
+
+
+'''
+# 신청하기
+#@login_required(login_url='login')
+def send_message(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    if post.author != request.user:
+        try:
+            # 장바구니는 user 를 FK 로 참조하기 때문에 save() 를 하기 위해 user 가 누구인지도 알아야 함
+            message = MessageItem.objects.get(post_id=post.pk, user__id=request.user.pk)
+            if message:
+                if message.post.content == post.content:
+                    message.quantity += 1
+                    message.save()
+        except MessageItem.DoesNotExist:
+            user = User.objects.get(pk=request.user.pk)
+            message = MessageItem(
+                user=user,
+                post=post,
+                message_list=1,
+            )
+            message.save()
+        return redirect('profile')
+    else:
+        messages.error(request, '자신의 글은 신청할 수 없습니다.')
+ '''       
+
+
+# 대기중
+
+
 
 # 거래 진행중
-def wait_deal(request):
-    return render(request,"")
 
-# 완료
-def complete(request):
-    return render(request, "")
 
+
+# 거래 완료
+
+
+# 거래 중단
 '''
 # 신규 거래 등록 - 템플릿 보여주기
 @login_required

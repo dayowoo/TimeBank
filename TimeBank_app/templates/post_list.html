@@ -76,30 +76,7 @@
      
     </div>
   </header>
-  <div class="row mt-5">
-      <div class="col-12">
-          <table class="table">
-              <thead>
-                  <tr>
-                      <th>#</th>
-                      <th>제목</th>
-                      <th>아이디</th>
-                      <th>일시</th>
-                  </tr>
-              </thead>
-               {% for post in posts %}
-              <tbody>
-                  <tr>
-                      <th>{{ post.id }}</th>
-                      <td>{{ post.content }}</td>>
-                      <td>{{ post.author }}</td>
-                      <td>{{ post.created_at }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-          </table>
-      </div>
-  </div>
+
   <div class="row">
       <div class="col-12">
         <a href="#"><button class="btn btn-primary">글쓰기</button></a>
@@ -124,18 +101,48 @@
               <thead>
                   <tr>
                       <th style="font-size: 13px;">요청상태</th>
-                      <th style="font-size: 13px;">연 월 일</th>
-                      <th style="font-size: 13px;">장소</th>
-                      <th style="font-size: 13px;">요청 분류</th>
-                      <th style="font-size: 13px;">요청 톡</th>
+                      <th style="font-size: 13px;">글번호</th>
                       <th style="font-size: 13px;">요청 세부 내용</th>
+                      <th style="font-size: 13px;">작성자</th>
+                      <th style="font-size: 13px;">요청 톡</th>
+                      <th style="font-size: 13px;">날짜</th>
                   </tr>
               </thead>
               <tbody>
                 {% for post in posts %}
                   <tr>
-                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">요청 보내기</button></td>
+                    {% if request.user != post.author %}
+                    <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">{{ post.status }}</button></td>
                     <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 : {{ post.author }}</h5>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body"> {{ post.content }} 
+                               </div>
+                                <div class="modal-footer">
+                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                   <form action="{% url 'test' %}" method="POST" class="post-form my-3">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <button type="submit" class="btn btn-primary" data-dismiss="modal">{{ btn_msg }}</button>
+                                    </form>
+                                    </div>
+                                    {% else %}
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <form action="{% url 'test' %}" method="POST" class="post-form my-3">
+                                       {% csrf_token %}
+                                       {{ form.as_p }}
+                                       {% if show_btn == True %}
+                                       <button type="submit" class="btn btn-primary" data-dismiss="modal">{{ btn_msg }}</button>
+                                       {% endif %}
+                                       </form>
+                                       </div>
+                                   </div>
+                                   </div>
+                                  
+                                   <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">{{ status_msg }}</button></td>
+                       <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                       <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 : {{ post.author }}</h5>
                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -147,98 +154,24 @@
                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
                                    </div>
                                    </div>
-                                   </div> 
+                                   </div>
+                                   {% endif %}
                       <td>{{ post.id }}</td>
                       <td>{{ post.content }}</td>
                       <td>{{ post.author }}</td>
-                      <td>$198,500</td>
+                      <td>10</td>
                       <td>{{ post.created_at }}</td>
                   </tr>
                   {% endfor %}
-                  <tr>
-                      <td><button type="button" class="btn btn-success">요청 진행 중</button></td>
-                      <td>Regional Director</td>
-                      <td>London</td>
-                      <td>19</td>
-                      <td>2010/03/17</td>
-                      <td>$385,750</td>
-                  </tr>
-                  <tr>
-                      <td><button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#staticBackdrop">거래 완료</button></td>
-                      <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
-                           <h5 class="modal-title" id="staticBackdropLabel">제목</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                               <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body"> 이미 완료된 거래입니다.
-                                  </div>
-                                   <div class="modal-footer">
-                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                      </div>
-                                      </div>
-                                      </div> 
-                   </div>
-                      <td>{{ post.id }}</td>
-                      <td>{{ post.content }}</td>
-                      <td>{{ post.author }}</td>
-                      <td>{{ post.created_at }}</td>
-                      <td>$198,500</td>
-                  </tr>
-                  <tr>
-                      <!-- Modal -->
-                      
-                      <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">요청 보내기</button></td>
-                      <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                         <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">제목</h5>
-                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body"> 내용
-                                   </div>
-                                    <div class="modal-footer">
-                                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary">요청보내기</button>
-                                       </div>
-                                       </div>
-                                       </div> 
-                    </div>
 
-
-                      <td>Chief Financial Officer (CFO)</td>
-                      <td>New York</td>
-                      <td>64</td>
-                      <td>2010/06/09</td>
-                      <td>$725,000</td>
-                  </tr>
-                  <tr>
-                      <td>Gloria Little</td>
-                      <td>Systems Administrator</td>
-                      <td>New York</td>
-                      <td>59</td>
-                      <td>2009/04/10</td>
-                      <td>$237,500</td>
-                  </tr>
-                  <tr>
-                      <td>Bradley Greer</td>
-                      <td>Software Engineer</td>
-                      <td>London</td>
-                      <td>41</td>
-                      <td>2012/10/13</td>
-                      <td>$132,000</td>
-                  </tr>
-                  <tr>
-                      <td>Dai Rios</td>
-                      <td>Personnel Lead</td>
-                      <td>Edinburgh</td>
-                      <td>35</td>
-                      <td>2012/09/26</td>
-                      <td>$217,500</td>
-                  </tr>
               </tbody>
             </table>
           </div>
         </div>
-        <!-- /.card -->
+         
   
       </div>
+   
       <!-- /.col-lg-9 -->
   
       <div class="col-lg-9">
@@ -261,67 +194,40 @@
                   </tr>
               </thead>
               <tbody>
-                  <tr>
-                      <td><button type="button" class="btn btn-primary">거래 진행 중</button></td>
-                      <td>2021/03/23</td>
-                      <td>아산시</td>
-                      <td>20</td>
-                      <td>10 tok</td>
-                      <th>집 청소</th>
-                  </tr>
-                  
-                  <tr>
-                      <td>Tatyana Fitzpatrick</td>
-                      <td>Regional Director</td>
-                      <td>London</td>
-                      <td>19</td>
-                      <td>2010/03/17</td>
-                      <td>$385,750</td>
-                  </tr>
-                  <tr>
-                      <td>Michael Silva</td>
-                      <td>Marketing Designer</td>
-                      <td>London</td>
-                      <td>66</td>
-                      <td>2012/11/27</td>
-                      <td>$198,500</td>
-                  </tr>
-                  <tr>
-                      <td>Paul Byrd</td>
-                      <td>Chief Financial Officer (CFO)</td>
-                      <td>New York</td>
-                      <td>64</td>
-                      <td>2010/06/09</td>
-                      <td>$725,000</td>
-                  </tr>
-                  <tr>
-                      <td>Gloria Little</td>
-                      <td>Systems Administrator</td>
-                      <td>New York</td>
-                      <td>59</td>
-                      <td>2009/04/10</td>
-                      <td>$237,500</td>
-                  </tr>
-                  <tr>
-                      <td>Bradley Greer</td>
-                      <td>Software Engineer</td>
-                      <td>London</td>
-                      <td>41</td>
-                      <td>2012/10/13</td>
-                      <td>$132,000</td>
-                  </tr>
-                  <tr>
-                      <td>Dai Rios</td>
-                      <td>Personnel Lead</td>
-                      <td>Edinburgh</td>
-                      <td>35</td>
-                      <td>2012/09/26</td>
-                      <td>$217,500</td>
-                  </tr>
-              </tbody>
-            </table>
-          </div>
+                {% for post in posts %}
+                <tr>
+                  <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop">{{ btn_msg }}</button></td>
+                  <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
+                      <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 : {{ post.author }}</h5>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body"> {{ post.content }} 
+                             </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                
+                                  <button type="submit" class="btn btn-primary" data-dismiss="modal">{{ btn_msg }}</button>
+                                  
+                                  </div>
+                                  
+                                     
+                                 </div>
+                                 </div>
+                                
+                                 
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.content }}</td>
+                    <td>{{ post.author }}</td>
+                    <td>10</td>
+                    <td>{{ post.created_at }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+          </table>
         </div>
+      </div>
+              
         <!-- /.card -->
   
       </div>

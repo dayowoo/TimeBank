@@ -30,6 +30,11 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
     tok = models.PositiveIntegerField(default=0, verbose_name='거래톡')
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='작성자')
+    applicants = models.ManyToManyField(User, blank=True, related_name='applier')
+    status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
+    status = models.CharField(max_length=50, choices=status_list, default='대기')
+    respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
+    respond = models.CharField(max_length=50, choices=respond_list, default='요청대기')
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:
@@ -42,19 +47,68 @@ class Post(models.Model):
     def __str__(self):
         return self.content
 
+'''
+    def usermode(self):
+
+        if self.author == User.username:
+            if self.service == "give":
+                usermode = "giver"
+            else:
+                usermode = "taker"
+        else:
+            usermode = "none"
+            #if self.objects.get(applicants = User.is_active):
+            #    usermode = "applicant"
+            #else:
+            #    usermode = "none"
+        
+        return usermode
+
+    def btn_msg(self):
+
+        if self.status == "대기":
+            if self.usermode == "applicant":
+                btn_msg = "신청 완료"
+            elif self.usermode =="none":
+                btn_msg = "신청하기"
+            else:
+                btn_msg = "시험"
+        elif self.status == "진행":
+            if self.usermode == "taker":
+                btn_msg = "완료하기"
+            else:
+                btn_msg = "진행중"
+        elif self.status == "완료":
+            btn_msg = "완료"
+        else:
+            btn_msg = "중단"
+
+        return btn_msg
+'''
+
 
 # 거래톡 보내기
 class MessageItem(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="신청자", default=User.username)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name="원글")
     status_list = (('register','신청하기'),('register_complete','신청완료'),
                     ('wait','대기중'),('complete','완료하기'),('fail','중단'))
-    status = models.CharField(max_length=50, choices=status_list, default='wait')
-    applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applier', null=True)
+    status = models.CharField(max_length=50, choices=status_list, default='대기중')
+    # applicant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applier', null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    message_list = models.PositiveSmallIntegerField(null=True, default=0)
 
     class Meta:
         verbose_name = '메세지함'
         verbose_name_plural = f'{verbose_name} 목록'
         ordering = ['-pk']
+
+
+    def respond_msg(self):
+        if self.post.respond == '요청승인':
+            return self.message_list + 1
+        elif self.post.repond == '요청거절':
+            return self.message_list
+        else:
+            return self.message_list
 

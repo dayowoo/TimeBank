@@ -89,7 +89,7 @@ class Post(models.Model):
 
 # 거래톡 보내기
 class MessageItem(models.Model):
-    #user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="신청자", default=User.username)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="신청자")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name="원글")
     status_list = (('register','신청하기'),('register_complete','신청완료'),
                     ('wait','대기중'),('complete','완료하기'),('fail','중단'))

@@ -112,3 +112,7 @@ class MessageItem(models.Model):
         else:
             return self.message_list
 
+
+    def __str__(self):
+        return self.post.content
+

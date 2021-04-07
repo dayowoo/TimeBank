@@ -12,6 +12,9 @@ except ImportError:
     import json
 from django.http import HttpResponse
 from django.contrib import messages
+from TimeBank_app.models import Post, MessageItem
+from .models import User
+
 
 
 # 홈화면
@@ -79,6 +82,8 @@ def profile(requset,userid):
     return render(requset, "profile.html", {"user_profile":user, 'userid': userid})
 
 
-# 거래 내역
+# 계좌 내역 보여주기
 def account_history(request):
-    return render(request, "account.html")
+    posts = Post.objects.all()
+    post_lists = posts.filter(author=request.user)
+    return render(request, "account.html",{'post_lists': post_lists})

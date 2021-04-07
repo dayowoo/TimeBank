@@ -32,6 +32,8 @@ def new_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
+            user_id = request.session.get('user')
+            user = User.objects.get(pk)
             author = User.object.get(id=username)
             post = Post()
             post.content = form.cleaned_data['content']
@@ -46,17 +48,11 @@ def new_post(request):
 
 
 
-
-
-
-
-
-
-
 def test_btn(request):
     status = get_object_or_404(MessageItem, status="wait")
     is_cliked = status.filter()
     pass
+
 
 # 신청하기
 def send_message(request):
@@ -65,7 +61,28 @@ def send_message(request):
 
 
 
-
+'''
+# 신청 내용 저장
+def create_message(request):  
+    posts = Post.objects.get(pk=post.id)
+    try:
+    # user 를 FK 로 참조하기 때문에 save() 를 하기 위해 user 가 누구인지도 알아야 함
+        message = MessageItem.objects.get(post_id=post.id, user__id=request.user.pk)
+        if message:
+            if message.post.id == post.id:
+                message.message_list += 1
+                message.save()
+    except MessageItem.DoesNotExist:
+        user = User.objects.get(pk=request.user.pk)
+        message = MessageItem(
+            user=user,
+            post=post,
+            message_list=1,
+        )
+        message.save()
+    return redirect('account')
+#        return render(request, 'post_list.html', {'posts': posts})
+'''
 
 #########
 '''
@@ -76,24 +93,6 @@ class ButtonView:
     def applicant_mode()
     pass
 '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 신청 내용 저장
-def create_message(request):  
-
-        posts = Post.objects.all().order_by('-id')
-        return render(request, 'post_list.html', {'posts': posts})
 
 '''
 

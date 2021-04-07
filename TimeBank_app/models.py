@@ -21,7 +21,7 @@ class Post(models.Model):
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-    service_choice = (('give','주고싶어요'), ('take','받고싶어요'))
+    service_choice = (('주고싶어요','주고싶어요'), ('받고싶어요','받고싶어요'))
     service = models.CharField(max_length=50, choices=service_choice)
     location = models.CharField(max_length=140)
     main_work = models.ForeignKey('MainCategory', on_delete = models.CASCADE, null=True)
@@ -34,7 +34,7 @@ class Post(models.Model):
     status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
     status = models.CharField(max_length=50, choices=status_list, default='대기')
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
-    respond = models.CharField(max_length=50, choices=respond_list, default='요청대기')
+    respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:
@@ -47,9 +47,8 @@ class Post(models.Model):
     def __str__(self):
         return self.content
 
-'''
-    def usermode(self):
 
+    def usermode(self):
         if self.author == User.username:
             if self.service == "give":
                 usermode = "giver"
@@ -57,10 +56,10 @@ class Post(models.Model):
                 usermode = "taker"
         else:
             usermode = "none"
-            #if self.objects.get(applicants = User.is_active):
-            #    usermode = "applicant"
-            #else:
-            #    usermode = "none"
+            if self.objects.get(applicants = User.is_active):
+               usermode = "applicant"
+            else:
+               usermode = "none"
         
         return usermode
 
@@ -84,7 +83,7 @@ class Post(models.Model):
             btn_msg = "중단"
 
         return btn_msg
-'''
+
 
 
 # 거래톡 보내기

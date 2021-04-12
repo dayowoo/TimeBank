@@ -1,6 +1,6 @@
-from django.shortcuts import render, redirect, get_object_or_404,HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from TimeBank_app.models import Post, MainCategory, SubCategory, MessageItem
+from TimeBank_app.models import Post, MainCategory, SubCategory, MessageItem, DealRelation
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -13,7 +13,9 @@ from django.http import HttpResponse
 import re
 from django.contrib import messages
 from django.utils import timezone
-from .forms import PostForm, MsgForm
+# from .forms import PostForm, MsgForm
+import json
+
 
 # home
 def index(request):
@@ -24,9 +26,43 @@ def index(request):
 def post_list(request):
     # order_by : 순서정렬 / 최신순
     posts = Post.objects.all().order_by('-id')
-    return render(request, 'post_list.html', {'posts': posts})
+    applicants = MessageItem.objects.all()
+    return render(request, 'post_list.html', {'posts': posts, 'applicants': applicants})
 
 
+
+def post_ajax(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    content = {'content':post.content, 'author':post.author.username}
+    return HttpResponse(json.dumps(content), content_type="application/json")
+
+
+
+# 새 글 작성 페이지
+def new_post(request):
+    return render(request, 'new_post.html')
+
+
+
+# 새 글 작성 POST
+def create(request):
+    if(request.method == 'POST'):
+        post = Post()
+        post.date = request.POST['date']
+        post.start_time = request.POST['start_time']
+        post.end_time = request.POST['end_time']
+        post.service = request.POST['service']
+        post.location = request.POST['location']
+        post.main_work = request.POST['main_work']
+        post.content = request.POST['content']
+        post.author = request.user
+        post.tok = request.POST['tok']
+        post.status = '대기'
+        post.save()
+    return redirect('post_list')
+
+'''
 # 신규 거래 등록
 def new_post(request):
     if request.method == 'POST':
@@ -45,20 +81,45 @@ def new_post(request):
     else:
         form = PostForm()
     return render(request, 'new_post.html', {'form':form})  
+'''
 
-
-
-def test_btn(request):
-    status = get_object_or_404(MessageItem, status="wait")
-    is_cliked = status.filter()
-    pass
-
-
+'''
 # 신청하기
-def send_message(request):
-    form = MsgForm()
-    return render(request, 'testmsg_form.html', {'form': form})
+@login_required
+@require_POST
+def send_msg(request):
+    from_post = post.id
+    pk = request.POST.get('pk')
+    to_user = get_object_or_404(User, pk=pk)
+    relation_created = Relation.objects.get_or_create(from_user=from_user, to_user=to_user)
 
+    if created:
+        message = '팔로우 시작!'
+        status = 1
+
+    return render('post_list.html')
+'''
+    
+# 신청하기 (ajax)
+@login_required
+@require_POST # 해당 뷰는 POST method 만 받는다.
+def send_msg(request):
+    pk = request.POST.get('pk', None) # ajax 통신을 통해서 template에서 POST방식으로 전달
+    post = get_object_or_404(Post, pk=pk)
+    send_msg, send_msg_created = post.applicants.get_or_create(user=request.user)
+
+    if not send_msg_created:
+        send_msg.delete()
+        message = "신청 취소"
+    else:
+        message = "신청"
+
+    context = {'send_count': post.send_count,
+               'message': message,
+               'username': request.user.username }
+
+    return HttpResponse(json.dumps(context), content_type="application/json")
+    # context를 json 타입으로
 
 
 '''
@@ -83,6 +144,14 @@ def create_message(request):
     return redirect('account')
 #        return render(request, 'post_list.html', {'posts': posts})
 '''
+
+
+
+
+
+
+
+
 
 #########
 '''
@@ -186,3 +255,8 @@ def create(request):
     post.save()
     return redirect('post_list')
     '''
+
+
+
+
+        

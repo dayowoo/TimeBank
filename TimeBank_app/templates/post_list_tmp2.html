@@ -117,7 +117,7 @@
                         <form action="{% url 'test' %}" method="POST" class="post-form my-3">
                             {% csrf_token %}
                             {{ form.as_p }}
-                            <button type="submit" class="btn btn-primary" data-dismiss="modal">{{ post.btn_msg }}</button>
+                            <button type="submit" action="POST" class="btn btn-primary" data-dismiss="modal">{{ post.btn_msg }}</button>
                             </form>
                             
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

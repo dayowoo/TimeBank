@@ -1,6 +1,6 @@
+'''
 from django import forms
 from TimeBank_app.models import MessageItem
-
 
 class PostForm(forms.Form):
     date = forms.DateTimeField(widget=forms.DateTimeField, label="연-월-일")
@@ -19,3 +19,6 @@ class PostForm(forms.Form):
 class MsgForm(forms.Form):
     model = MessageItem
     fileds = ['author', 'post', 'status', 'applicant']
+'''
+
+

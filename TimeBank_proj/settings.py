@@ -30,8 +30,7 @@ SECRET_KEY = 'u1y%mw*x+sqm-mq#48-cwcis+-rxk^#&(4et_)3nf+89v10hm9'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '*',
-    # '13.125.168.10', # LightSail IP 주소
+    '13.125.168.10', # LightSail IP 주소
 ]
 
 
@@ -133,6 +132,8 @@ STATIC_DIRS = [
     os.path.join(BASE_DIR, "TimeBank_app", "static"),
     os.path.join(BASE_DIR, "TimeBank_account", "static"),
 ]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),] 
 
 # static 파일들이 어디로 모일 것인지 작성 (새로운 폴더 생성)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

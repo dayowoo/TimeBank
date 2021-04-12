@@ -14,6 +14,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 from TimeBank_app.models import Post, MessageItem
 from .models import User
+from TimeBank_app.models import Post
+import json
 
 
 
@@ -33,7 +35,7 @@ def register(request):
         name = request.POST["name"]
         password = request.POST["password"]
         password_check = request.POST["pw_check"]
-        image = request.FILES["image"]
+        #image = request.FILES["image"]
 
         #text output
         #f = open("tmp.txt", 'w')
@@ -45,7 +47,7 @@ def register(request):
         if password != password_check:
             return render(request, "register.html")
         # 새로운 유저 생성
-        user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
+        user = User.object.create_user(username=username, email=email, password=password, name=name)
         auth.login(request, user)
     return redirect('index')
 
@@ -76,10 +78,10 @@ def logout(request):
 
 # 프로필
 @login_required
-def profile(requset,userid):
-    user = get_object_or_404(User,userid=userid)
+def profile(requset,username):
+    user = get_object_or_404(User,username=username)
 
-    return render(requset, "profile.html", {"user_profile":user, 'userid': userid})
+    return render(requset, "profile.html", {"user_profile":user, 'username': username})
 
 
 # 계좌 내역 보여주기
@@ -87,3 +89,8 @@ def account_history(request):
     posts = Post.objects.all()
     post_lists = posts.filter(author=request.user)
     return render(request, "account.html",{'post_lists': post_lists})
+
+
+# 잔액 조회
+def balance(request):
+    return render(request, "balance.html")

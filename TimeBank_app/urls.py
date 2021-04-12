@@ -1,10 +1,16 @@
 from django.urls import path, include
-from . import views
-import TimeBank_account.views
+from .views import *
+from django.conf.urls.static import static
+from django.conf import settings
+# import TimeBank_account.views
 
 urlpatterns = [
-    path('post_list/', views.post_list, name="post_list"),
-    path('new_post/', views.new_post, name="new_post"),
-    #path('post_list/', views.create_message, name="create_message"),
-    #path('post_list_tmp2/', views.test, name="test")
+    path('post_list/', post_list, name="post_list"),
+    path('post_ajax/', post_ajax, name="post_ajax"),
+    path('new_post/', new_post, name="new_post"),
+    path('create/', create, name="create"),
+    path('send_msg', send_msg, name="send_msg"),
 ]
+
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)  

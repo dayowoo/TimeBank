@@ -20,56 +20,59 @@
 
 <body id="page-top">
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">TimeBank</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#about">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#services">Services</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#">거래등록</a>
-          </li>
-          <!--로그인 상태-->
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}님 환영합니다</a>
-          </li>
-          <li class="nav-item">
-            <form action="{% url 'logout' %}" method="POST">
-              {% csrf_token %} 
-              <input type="submit" class="nav-link logout" value="로그아웃">
-            </form>
-          </li>
-          
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
+ <!-- Navigation -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+        </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
+      </li>
+        <!--로그인 상태-->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
+        </li>
+        <li class="nav-item">
+          <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %} 
+            <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
+          </form>
+        </li>
+        
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
-  </nav>
-
+  </div>
+</nav>
 
   <header class="bg-primary text-white">
     <div class="container text-center">
-      <h1>새로운 시간 거래 요청</h1>
+      <h1>시간 거래 요청</h1>
     </div>
   </header>
 
@@ -88,12 +91,12 @@
       <div class="col-lg-8">
 
         <!-- Title -->
-        <h1 class="mt-4">새로운 시간 거래 요청</h1>
+        <h1 class="mt-4" style="color:mediumvioletred;">시간 거래 요청</h1>
 
         <!-- Author -->
         <p class="lead">
           by
-          <a href="#">admin</a>
+          <a href="#">{{ request.user }}</a>
         </p>
 
         <hr>
@@ -108,24 +111,100 @@
         <div class="card my-4">
           <h5 class="card-header"></h5>
           <div class="card-body">
-            <form method="POST" action=".">
+            <form action="{% url 'create' %}" method="post">
               {% csrf_token %}
-              {% for field in form %}
               <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field.field.widget.name }}
-                {% ifequal field.name 'contents' %}
-                <textarea class="form-control" name="{{ field.name }}" placeholder="{{ field.label }}"></textarea>
-                {% else %}
-                <input type="{{ field.field.widget.input_type }}" class="form-control" id="{{ field.id_for_label }}"
-                  placeholder="{{ field.label }}" name="{{ field.name }}" />
-                  {% endifequal %}
-                  </div>
-                  {% if field.errors %}
-                  <span style="color: red">{{ field.errors }}</span>
-                  {% endif %}
-                  {% endfor %}
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                <label for="date">연-월-일</label>
+                <input type="text" class="form-control" name="date" id="date" placeholder="YYYY-MM-DD 형식으로 적어주세요.">
+              </div>
+
+              <div class="form-group">
+                <label for="start_time">가능 시작 시간</label>
+                <input type="text" class="form-control" name="start_time" id="start_time" placeholder="">
+              </div>
+
+              <div class="form-group">
+                <label for="end_time">가능 끝 시간</label>
+                <input type="text" class="form-control" name="end_time" id="end_time" placeholder="">
+              </div>
+
+              <div class="form-group">
+                <label for="service">요청 분류</label>
+                <select class="form-control" name="service" id="service">
+                  <option>주고 싶어요</option>
+                  <option>받고 싶어요</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="location">장소</label>
+                <input type="text" class="form-control" name="location" id="location" placeholder="">
+              </div>
+
+              <!-- <div class="form-group">
+                <label for="work">대분류</label>
+                <select class="form-control" name="work" id="work">
+                  
+                  <option>청소 / 심부름</option>
+                  <option>상담</option>
+                  <option>몸 가꾸기 / 치장하기</option>
+                  <option>이동</option>
+                  <option>수선/수리</option>
+                  <option>먹기</option>
+                  <option>교육 / 여가생활</option>
+                  <option>정서지지</option>
+                  <option>돌봄</option>
+                  <option>식물 가꾸기</option>
+                  <option>모임 장소 대여</option>
+                  <option>의사소통</option>
+                  <option>건강관리</option>
+                  <option>기타</option>
+                </select>
+              </div> -->
+
+              <div class="form-group">
+                <label for="main_work">대분류</label>
+                <input type="text" class="form-control" name="main_work" id="main_work" placeholder="">
+              </div>
+
+              <!-- <div class="form-group">
+                <label for="location">소분류</label>
+                <input type="text" class="form-control" id="location" placeholder="">
+              </div> -->
+
+              <!--
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">작업 분류-2</label>
+                <select class="form-control" id="exampleFormControlSelect1">
+                  <option>청소 / 심부름</option>
+                  <option>상담</option>
+                  <option>몸 가꾸기 / 치장하기</option>
+                  <option>이동</option>
+                  <option>수선/수리</option>
+                  <option>먹기</option>
+                  <option>교육 / 여가생활</option>
+                  <option>정서지지</option>
+                  <option>돌봄</option>
+                  <option>식물 가꾸기</option>
+                  <option>모임 장소 대여</option>
+                  <option>의사소통</option>
+                  <option>건강관리</option>
+                  <option>기타</option>
+                </select>
+              </div>
+              -->
+
+              <div class="form-group">
+                <label for="tok">거래 Tok</label>
+                <input type="text" class="form-control" name="tok" id="tok" placeholder="">
+              </div>
+
+              <div class="form-group">
+                <label for="content">요청 설명</label>
+                <input type="text" class="form-control" name="content" id="content" style="height:100px;">
+              </div>
+
+              <button type="submit" class="btn btn-success">거래 등록</button>
             </form>
           </div>
         </div>

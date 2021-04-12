@@ -13,7 +13,7 @@ class User(models.Model):
     birth = models.CharField(max_length=150, verbose_name='생년월일')
     user_age = models.CharField(max_length=50, verbose_name='연령대')
     gender = models.CharField(max_length=10, verbose_name='성별')
-
+    balance = models.IntegerField(max_length=150, verbose_name='계좌')
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)

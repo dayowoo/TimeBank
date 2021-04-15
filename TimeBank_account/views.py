@@ -94,3 +94,5 @@ def account_history(request):
 # 잔액 조회
 def balance(request):
     return render(request, "balance.html")
+
+# 내글 보기

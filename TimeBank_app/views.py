@@ -29,12 +29,21 @@ def post_list(request):
     applicants = MessageItem.objects.all()
     return render(request, 'post_list.html', {'posts': posts, 'applicants': applicants})
 
+'''
+def post_ajax(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    user = User.objects.all()
+    content = {'content':post.content, 'author':post.author.username, 'user': user.username}
+    return HttpResponse(json.dumps(content), content_type="application/json")
+'''
 
 
 def post_ajax(request):
     pk = request.POST.get('pk', None)
     post = get_object_or_404(Post, pk=pk)
-    content = {'content':post.content, 'author':post.author.username}
+    user = request.user.username
+    content = {'content':post.content, 'author':post.author.username, 'user': user}
     return HttpResponse(json.dumps(content), content_type="application/json")
 
 

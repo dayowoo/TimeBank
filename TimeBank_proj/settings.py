@@ -30,7 +30,8 @@ SECRET_KEY = 'u1y%mw*x+sqm-mq#48-cwcis+-rxk^#&(4et_)3nf+89v10hm9'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '13.125.168.10', # LightSail IP 주소
+    '*'
+    # '13.125.168.10', # LightSail IP 주소
 ]
 
 

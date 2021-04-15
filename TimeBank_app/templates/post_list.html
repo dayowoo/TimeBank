@@ -121,41 +121,29 @@
                 {% for post in posts %}
                 <tr>
                   <!--요청상태 modal-->
-                  {% if post.author != request.user  %}
+                  
                   <td><button type="button" id="post_ajax" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}" >{{ post.status }}</button></td>
                   <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
-                      <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 : <div class="modal-author"></div></h5>
-                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body">
+                    <div class="modal-dialog" role="document">
+                       <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 : <div class="modal-author"></div>
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                           </button>
+                           </div>
+                            <div class="modal-body">
                              </div>
                               <div class="modal-footer">
                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  <button type="submit" name=" "data-dismiss="modal">
-                                    <a href="#" onclick="return confirm('신청되었습니다')">Send</a></button>
+                                 <button type="submit" class="btn btn-primary"><div class="modal-moreBtn"></div></button>
                                   </div>
                                 </div>
                                 </div>
-                  {% else %}
-                  <td><button type="button" id="post_ajax" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}" >{{ post.status }}</button></td>
-                  <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div class="modal-dialog" role="document"> <div class="modal-content"> <div class="modal-header">
-                      <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 :<div class="modal-author"></div></h5>
-                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body">
-                            </div>
-                             
-                              <div class="modal-footer">
-                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  <button type="submit" class="btn btn-primary" data-dismiss="modal">자세히보기</button>
-                                  
-                                  </div>
-                                </div>
-                                </div>
-                                
-                    {% endif %}
-                    <!--end modal-->            
-                    <!--<td><input class="follow follow-btn" type="submit" value="{{ post.status }}" name="{{ post.author.id }}"></td> --->            
+                  
+                    <!--end modal-->       
+
                     <td>{{ post.id }}</td>
                     <td>{{ post.service }}</td>
                     <td>{{ post.author }}</td>
@@ -214,6 +202,13 @@ $(document).on('click', '#post_ajax', function(){
       console.log(response.post)
         $(".modal-body").html(response.content)
         $('.modal-author').html(response.author)
+        if(response.user == response.author)
+            // 글쓴이일 때
+          { $('.modal-moreBtn').html("자세히보기")
+        } else if(response.user != response.author)
+          { // 글쓴이가 아닐때
+            $('.modal-moreBtn').html("신청하기")
+          }
     },
     error: function(requset, status, error){
       console

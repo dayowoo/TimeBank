@@ -6,10 +6,12 @@ from django.conf import settings
 
 urlpatterns = [
     path('post_list/', post_list, name="post_list"),
-    path('post_ajax/', post_ajax, name="post_ajax"),
     path('new_post/', new_post, name="new_post"),
     path('create/', create, name="create"),
-    path('send_msg', send_msg, name="send_msg"),
+    path('post_list/<post_id>/', progress, name="progress")
+    # path(r'^post_list/(?P<post_id>\d+)/$', progress, name="progress"),
+    # path('progress_ajax/', progress_ajax, name="progress_ajax"),
+    # path('post_ajax/', post_ajax, name="post_ajax"),
 ]
 
 

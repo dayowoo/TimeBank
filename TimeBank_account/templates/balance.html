@@ -19,64 +19,55 @@
 
 <body id="page-top">
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">TimeBank</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#about">소개</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#services">서비스</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#contact">문의하기</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
-          </li>
-          <!--로그인 상태-->
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
-          </li>
-          <li class="nav-item">
-            <form action="{% url 'logout' %}" method="POST">
-              {% csrf_token %} 
-              <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout">
-            </form>
-          </li>
-          
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
+ <!-- Navigation -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+        </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
+      </li>
+        <!--로그인 상태-->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
+        </li>
+        <li class="nav-item">
+          <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %} 
+            <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
+          </form>
+        </li>
+        
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
+        </li>
+        {% endif %}
+      </ul>
     </div>
-  </nav>
-          
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
+  </div>
+</nav>
 
 
   <header class="bg-primary text-white">
@@ -95,10 +86,10 @@
       
     <div class="col-lg-3">
       <div class="card mt-4">
-        <img class="card-img-top img-fluid" src="http://placehold.it/900x400" alt="">
+        <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
         <div class="card-body">
           <h3 class="card-title">{{ user.get_username }}님 😃</h3>
-          <h4>$24.99</h4>
+          <h4>{{ user.name }}</h4>
           <p class="card-text"></p>
           <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
           4.0 stars
@@ -107,8 +98,8 @@
       <p><br><br></p>
       <div class="list-group">
         <a href="#" class="list-group-item active">시간거래활동</a>
-        <a href="#" class="list-group-item">시간계좌</a>
-        <a href="#" class="list-group-item">Category 3</a>
+        <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
+        <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>
     </div>
     <!-- /.col-lg-3 -->
@@ -125,13 +116,13 @@
           <table id="example" class="table table-striped table-bordered" style="width:100%">
             <thead>
               <tr>
-                <th style="font-size: 13px;">연 월 일</th>
-                    <th style="font-size: 13px;">요청 분류</th>
-                    <th style="font-size: 13px;">거래인</th>
-                    <th style="font-size: 13px;">요청 톡</th>
-                    <th style="font-size: 13px;">받은 톡</th>
-                    <th style="font-size: 13px;">차감 톡</th>
-                    <th style="font-size: 13px;">잔액</th>
+                <th style="font-size: 13px;">요청상태</th>
+                <th style="font-size: 13px;">글번호</th>
+                <th style="font-size: 13px;">요청 분류</th>
+                <th style="font-size: 13px;">작성자</th>
+                <th style="font-size: 13px;">요청톡</th>
+                <th style="font-size: 13px;">날짜</th>
+                <th style="font-size: 13px;">요청 세부 내용</th>
             </tr>
             </thead>
             <tbody>
@@ -162,14 +153,71 @@
           
         <div class="col-lg-3">
         </div>
-    
+    <div class="col-lg-9">
+
+      <div class="card card-outline-secondary my-4">
+        <div class="card-header">
+          최근 거래 내역
+        </div>
+        <div class="card-body">
+          <h5>내가 신청한 거래</h5>
+          <table id="example" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th style="font-size: 13px;">요청상태</th>
+                    <th style="font-size: 13px;">연 월 일</th>
+                    <th style="font-size: 13px;">장소</th>
+                    <th style="font-size: 13px;">요청 분류</th>
+                    <th style="font-size: 13px;">요청 톡</th>
+                    <th style="font-size: 13px;">요청 세부 내용</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><button type="button" class="btn btn-primary">거래 진행 중</button></td>
+                    <td>2021/03/23</td>
+                    <td>아산시</td>
+                    <td>20</td>
+                    <td>10 tok</td>
+                    <th>집 청소</th>
+                </tr>
+                <tr>
+                    <td>Bradley Greer</td>
+                    <td>Software Engineer</td>
+                    <td>London</td>
+                    <td>41</td>
+                    <td>2012/10/13</td>
+                    <td>$132,000</td>
+                </tr>
+                <tr>
+                    <td>Dai Rios</td>
+                    <td>Personnel Lead</td>
+                    <td>Edinburgh</td>
+                    <td>35</td>
+                    <td>2012/09/26</td>
+                    <td>$217,500</td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- /.card -->
 
     </div>
+    <!-- /.col-lg-9 -->
+</div>
   </div>
 </div>
 </div>
 <!-- /.container -->
-
+<section id="about">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+      </div>
+    </div>
+  </div>
+</section>
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">

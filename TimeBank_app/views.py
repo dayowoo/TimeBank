@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from TimeBank_app.models import Post, MainCategory, SubCategory, MessageItem, DealRelation
+from TimeBank_app.models import Post, MainCategory, SubCategory, Register
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -26,25 +26,9 @@ def index(request):
 def post_list(request):
     # order_by : 순서정렬 / 최신순
     posts = Post.objects.all().order_by('-id')
-    applicants = MessageItem.objects.all()
-    return render(request, 'post_list.html', {'posts': posts, 'applicants': applicants})
+    #applicants = MessageItem.objects.all()
+    return render(request, 'post_list.html', {'posts': posts})
 
-'''
-def post_ajax(request):
-    pk = request.POST.get('pk', None)
-    post = get_object_or_404(Post, pk=pk)
-    user = User.objects.all()
-    content = {'content':post.content, 'author':post.author.username, 'user': user.username}
-    return HttpResponse(json.dumps(content), content_type="application/json")
-'''
-
-
-def post_ajax(request):
-    pk = request.POST.get('pk', None)
-    post = get_object_or_404(Post, pk=pk)
-    user = request.user.username
-    content = {'content':post.content, 'author':post.author.username, 'user': user}
-    return HttpResponse(json.dumps(content), content_type="application/json")
 
 
 
@@ -70,6 +54,62 @@ def create(request):
         post.status = '대기'
         post.save()
     return redirect('post_list')
+
+
+# 자세히보기
+def my_detail(request):
+    return render(request, 'account.html')
+
+
+
+# 대기->진행
+def progress(request, post_id):
+    post = Post.objects.get(pk = post_id)
+    post.status = "진행"
+    post.applicants = str(request.user)
+    post.save()
+    return HttpResponse("신청 되었습니다.")
+
+
+# 거래 진행중
+
+
+
+# 거래 완료
+
+
+# 거래 중단
+
+
+
+'''
+#### AJAX ####
+def post_ajax(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user.username
+    content = {'content':post.content, 'author':post.author.username, 'user': user}
+    return HttpResponse(json.dumps(content), content_type="application/json")
+
+
+
+
+
+# 진행
+def progress_ajax(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    message = "신청완료"
+    post.status = '진행'
+    post.applicant = request.user.username
+    post.save()
+    content = {
+        'post_status': post.status,
+        'message': message,
+        'applicant': request.user.username
+    }
+    return HttpResponse(json.dumps(content), content_type="application/json")
+'''
 
 '''
 # 신규 거래 등록
@@ -109,26 +149,7 @@ def send_msg(request):
     return render('post_list.html')
 '''
     
-# 신청하기 (ajax)
-@login_required
-@require_POST # 해당 뷰는 POST method 만 받는다.
-def send_msg(request):
-    pk = request.POST.get('pk', None) # ajax 통신을 통해서 template에서 POST방식으로 전달
-    post = get_object_or_404(Post, pk=pk)
-    send_msg, send_msg_created = post.applicants.get_or_create(user=request.user)
 
-    if not send_msg_created:
-        send_msg.delete()
-        message = "신청 취소"
-    else:
-        message = "신청"
-
-    context = {'send_count': post.send_count,
-               'message': message,
-               'username': request.user.username }
-
-    return HttpResponse(json.dumps(context), content_type="application/json")
-    # context를 json 타입으로
 
 
 '''
@@ -172,27 +193,6 @@ class ButtonView:
     pass
 '''
 
-'''
-
-def create_message(request):
-    show_btn = True
-    btn_msg = "신청하기"
-
-    context = {
-                'show_btn': show_btn,
-                'btn_msg': btn_msg,
-            }
-    
-    post = Post()
-    post.author = request.user
-    post.service = request.service
-    post.save()
-
-    return render(request, "post_list_tmp2.html", context)
-'''
-
-
-
 
 '''
 # 신청하기
@@ -221,18 +221,7 @@ def send_message(request, post_id):
  '''       
 
 
-# 대기중
 
-
-
-# 거래 진행중
-
-
-
-# 거래 완료
-
-
-# 거래 중단
 '''
 # 신규 거래 등록 - 템플릿 보여주기
 @login_required

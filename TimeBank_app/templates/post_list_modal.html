@@ -120,24 +120,33 @@
               <tbody>
                 {% for post in posts %}
                 <tr>
+                  <!--요청상태 modal-->
                   <td>
-                    {% if request.user == post.author %}
-                    <button class="btn btn-info">자세히</button>
-                    {% elif request.user != post.author %}
-                        {% if post.status == "대기" %}
-                            <form action="{{post.id}}/" method="post">
-                            {% csrf_token %}
-                                <button name="progress" class="btn btn-primary">{{ post.status }}</button>
-                            </form>    
-                        {% elif post.status == "진행" %}
-                            <button class="btn btn-success">{{ post.status }}</button>
-                        {% elif post.status == "완료" %}
-                            <button class="btn btn-warning">{{ post.status }}</button>
-                        {% elif post.status == "중단" %}
-                            <button class="btn btn-secondary">{{ post.status }}</button>
-                        {% endif %}
-                    {% endif %}
+                    <button type="button" id="post_ajax" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}" >
+                      <div class="btnStatus"></div>
+                    </button>
                   </td>
+                  <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                       <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="staticBackdropLabel">제목 <br> 작성자 : <div class="modal-author"></div>
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                           </button>
+                           </div>
+                            <div class="modal-body">
+                             </div>
+                              <div class="modal-footer">
+                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                 <button type="submit" class="btn btn-primary" id="progress_ajax" name="{{post.id}}"><div class="modal-moreBtn"></div></button>
+                                  </div>
+                                </div>
+                              </div>
+                  
+                    <!--end modal-->       
+
                     <td>{{ post.id }}</td>
                     <td>{{ post.service }}</td>
                     <td>{{ post.author }}</td>
@@ -183,6 +192,54 @@
 
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
+<script>
+
+// moreBtn
+$(document).on('click', '#post_ajax', function(){
+  var pk = $(this).attr('name');
+  $.ajax({
+    type:"POST",
+    url:"{% url 'post_ajax' %}",
+    dataType:"json",
+    data: {'pk':pk, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+    success: function(response){
+      console.log(response.post)
+        $(".modal-body").html(response.content)
+        $('.modal-author').html(response.author)
+        if(response.user == response.author)
+          {  // 글쓴이일 때
+           $('.modal-moreBtn').html("자세히보기")
+        } else if(response.user != response.author)
+          { // 글쓴이가 아닐때
+            $('.modal-moreBtn').html("신청하기")
+          }
+    },
+    error: function(requset, status, error){
+      console
+    }
+  })
+});
+
+
+// progressBtn -> 진행중
+$(document).on('click', '#progress_ajax', function(){
+  var pk = $(this).attr('name');
+  $.ajax({
+    type:"POST",
+    url:"{% url 'progress_ajax' %}",
+    dataType:"json",
+    data: {'pk':pk, 'csrfmiddlewaretoken':'{{ csrf_token }}'},
+    success: function(response){
+      console.log(response.post_status)
+      $('.btnStatus').html(response.post_status="진행")
+    },
+    error: function(requset, status, error){
+      console
+    }
+  })
+});
+
+</script>
 
 </body>
 

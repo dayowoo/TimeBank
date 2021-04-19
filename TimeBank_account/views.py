@@ -12,9 +12,8 @@ except ImportError:
     import json
 from django.http import HttpResponse
 from django.contrib import messages
-from TimeBank_app.models import Post, MessageItem
+from TimeBank_app.models import Post, Register
 from .models import User
-from TimeBank_app.models import Post
 import json
 
 
@@ -87,8 +86,11 @@ def profile(requset,username):
 # 계좌 내역 보여주기
 def account_history(request):
     posts = Post.objects.all()
-    post_lists = posts.filter(author=request.user)
-    return render(request, "account.html",{'post_lists': post_lists})
+    # 내가 등록한 거래
+    my_posts = posts.filter(author = request.user)
+    # 내가 신청한 거래
+    regsiter_posts = posts.filter(applicants = request.user)
+    return render(request, "account.html", {'my_posts': my_posts, 'regsiter_posts': regsiter_posts})
 
 
 # 잔액 조회

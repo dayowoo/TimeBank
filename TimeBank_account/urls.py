@@ -9,7 +9,9 @@ urlpatterns = [
     path('logout/', views.logout, name='logout'),
     path('profile/<str:username>', views.profile, name="profile"),
     path('account', views.account_history, name="account"),
-    path('balance', views.balance, name="balance")
+    path('balance', views.balance, name="balance"),
+    path('my_post_detail/<int:post_id>', views.my_post_detail, name="my_post_detail"),
+    path('my_post_detail/<post_id>/', views.success, name="success")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

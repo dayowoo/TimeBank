@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '*'
-    # '13.125.168.10', # LightSail IP 주소
+    #'13.125.168.10', # LightSail IP 주소
 ]
 
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'TimeBank_account',
     'TimeBank_app',
+    'debug_toolbar',    # DEBUG
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware'   # DEBUG
 ]
+
+
+# DEBUG
+INTERNAL_IPS = ('127.0.0.1')
 
 ROOT_URLCONF = 'TimeBank_proj.urls'
 

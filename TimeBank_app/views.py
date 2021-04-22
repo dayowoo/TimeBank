@@ -68,7 +68,7 @@ def progress(request, post_id):
     post.status = "진행"
     post.applicants = str(request.user)
     post.save()
-    return HttpResponse("신청 되었습니다.")
+    return redirect('post_list')
 
 
 # 거래 진행중

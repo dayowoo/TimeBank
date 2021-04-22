@@ -121,13 +121,14 @@
                 {% for post in posts %}
                 <tr>
                   <td>
+                    <!-- 글쓴이 = 로그인유저 -->
                     {% if request.user == post.author %}
-                    <button class="btn btn-info">자세히</button>
+                    <a href="{% url 'my_post_detail' post.id %}" class="btn btn-info">{{post.status}}</a>
                     {% elif request.user != post.author %}
                         {% if post.status == "대기" %}
                             <form action="{{post.id}}/" method="post">
                             {% csrf_token %}
-                                <button name="progress" class="btn btn-primary">{{ post.status }}</button>
+                                <button name="progress" class="btn btn-primary">신청하기</button>
                             </form>    
                         {% elif post.status == "진행" %}
                             <button class="btn btn-success">{{ post.status }}</button>

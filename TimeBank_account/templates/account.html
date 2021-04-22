@@ -128,7 +128,13 @@
             <tbody>
               {% for my_post in my_posts %}
                 <tr>
-                    <td><button type="button" class="btn btn-primary">{{ my_post.status}}</button></td>
+                  {% if my_post.status == "대기" %}
+                    <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-primary">{{ my_post.status}}</a></td>
+                  {% elif my_post.status == "진행" %}
+                    <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-success">{{ my_post.status}}</a></td>
+                  {% elif my_post.status == "완료" %}
+                    <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-warning">{{ my_post.status}}</a></td>   
+                  {% endif %}
                     <td>{{ my_post.id }}</td>
                     <td>{{ my_post.service }}</td>
                     <td>{{ my_post.author }}</td>
@@ -153,6 +159,7 @@
           
         <div class="col-lg-3">
         </div>
+        
     <div class="col-lg-9">
 
       <div class="card card-outline-secondary my-4">
@@ -176,7 +183,7 @@
             {% for regsiter_post in regsiter_posts %}
                 <tr>
                   <td>
-                    <button class="btn btn-info">{{ regsiter_post.status }}</button>
+                    <button type="button" class="btn btn-primary">{{ regsiter_post.status }}</button>
                   </td>
                     <td>{{ regsiter_post.id }}</td>
                     <td>{{ regsiter_post.service }}</td>

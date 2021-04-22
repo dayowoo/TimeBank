@@ -79,7 +79,6 @@ def logout(request):
 @login_required
 def profile(requset,username):
     user = get_object_or_404(User,username=username)
-
     return render(requset, "profile.html", {"user_profile":user, 'username': username})
 
 
@@ -97,4 +96,15 @@ def account_history(request):
 def balance(request):
     return render(request, "balance.html")
 
-# 내글 보기
+# 내가 쓴 글 자세히보기
+def my_post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    return render(request, "my_post_detail.html", {'post':post})
+
+
+# 진행-> 완료하기
+def success(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    post.status = "완료"
+    post.save()
+    return redirect("my_post_detail")

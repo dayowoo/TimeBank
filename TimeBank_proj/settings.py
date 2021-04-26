@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'TimeBank_account',
     'TimeBank_app',
-    'debug_toolbar',    # DEBUG
+    # 'debug_toolbar',    # DEBUG
 ]
 
 MIDDLEWARE = [
@@ -57,12 +57,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'   # DEBUG
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware'   # DEBUG
 ]
 
 
-# DEBUG
-INTERNAL_IPS = ('127.0.0.1')
+# # DEBUG
+# INTERNAL_IPS = ('127.0.0.1')
 
 ROOT_URLCONF = 'TimeBank_proj.urls'
 

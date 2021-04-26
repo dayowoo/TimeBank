@@ -27,13 +27,14 @@ class Post(models.Model):
     main_work = models.CharField(max_length=140)
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
-    tok = models.PositiveIntegerField(default=0, verbose_name='거래톡')
+    tok = models.IntegerField(default=0, verbose_name='거래톡')
     author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='작성자')
     status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
     status = models.CharField(max_length=50, choices=status_list, default='대기')
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
     applicants = models.CharField(max_length=140, verbose_name='신청자', null=True)
+    # apply_users = models.ManyToManyField(User, related_name='apply_posts', verbose_name='신청자')
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:

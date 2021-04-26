@@ -108,7 +108,7 @@
 
       <div class="card card-outline-secondary my-5">
         <div class="card-header">
-          내가 등록한 거래
+          내가 등록한 거래 {{user.balance}}
         </div>
         <div class="card-body">
           <h5>{{post.service}}</h5>
@@ -126,24 +126,24 @@
             </tr>
             </thead>
             <tbody>
-                <tr>
                   <!-- 진행상태 보여주기 -->
+                  <tr>
                     {% if post.status == "대기" %}
-                    <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
-                    {% elif post.status == "진행" %}
-                    <td><button type="button" class="btn btn-success">{{ post.status }}</button></td>
-                    {% elif post.status == "완료" %}
-                    <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
-                    {% elif post.status == "중단" %}
-                    <td><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
-                    {% endif %}
-                    <td>{{ post.id }}</td>
-                    <td>{{ post.service }}</td>
-                    <td>{{ post.author }}</td>
-                    <td>{{ post.tok }}</td>
-                    <td>{{ post.created_at }}</td>
-                    <td>{{ post.content }}</td>
-                </tr>
+                      <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
+                      {% elif post.status == "진행" %}
+                      <td><button type="button" class="btn btn-success">{{ post.status }}</button></td>
+                      {% elif post.status == "완료" %}
+                      <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
+                      {% elif post.status == "중단" %}
+                      <td><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
+                      {% endif %}
+                      <td>{{ post.id }}</td>
+                      <td>{{ post.service }}</td>
+                      <td>{{ post.author }}</td>
+                      <td>{{ post.tok }}</td>
+                      <td>{{ post.created_at }}</td>
+                      <td>{{ post.content }}</td>
+                </tr>            
             </tbody>
             <thead>
                 <tr>
@@ -163,10 +163,10 @@
                     <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
                     {% elif post.status == "진행" %}
                     <td>
-                        <form action="{{post.id}}" method="post">
-                            {% csrf_token %}
-                                <button name="success" class="btn btn-success">완료하기</button>
-                        </form>
+                      <form action="{% url 'success' post.id %}" method="post">
+                        {% csrf_token %}
+                            <button name="success" type="submit" class="btn btn-success">완료하기</button>
+                    </form>
                     </td>
                     {% elif post.status == "완료" %}
                     <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>

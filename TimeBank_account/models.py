@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
-
 from django.contrib.auth.base_user import BaseUserManager
-
 
 class CustomUserManager(BaseUserManager):
 
@@ -42,6 +40,7 @@ class User(AbstractUser):
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)
+    # apply_posts = models.ManyToManyField("Post", related_name='apply_users', verbose_name='신청글')
     object = CustomUserManager()
 
     # USERNAME_FIELD = 'username'

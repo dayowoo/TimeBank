@@ -17,7 +17,6 @@ from .models import User
 import json
 
 
-
 # 홈화면
 def index(request):
     return render(request, 'index.html')
@@ -93,8 +92,19 @@ def account_history(request):
 
 
 # 잔액 조회
+@login_required
 def balance(request):
-    return render(request, "balance.html")
+    post = Post.objects.all()
+    user = request.user
+    success = post.filter(status = "완료") 
+    success_posts = success.filter(author = request.user) | success.filter(applicants = request.user)
+    plus_toks = success_posts.filter(service = "주고싶어요") & success_posts.filter(author = request.user)
+    minus_toks = success_posts.filter(service = "받고싶어요") & success_posts.filter(author = request.user)
+    return render(request, "balance.html", {'success_posts': success_posts, 'user':user, 'plus_toks':plus_toks, 'minus_toks':minus_toks})
+
+    
+
+
 
 # 내가 쓴 글 자세히보기
 def my_post_detail(request, post_id):
@@ -104,7 +114,14 @@ def my_post_detail(request, post_id):
 
 # 진행-> 완료하기
 def success(request, post_id):
-    post = Post.objects.get(pk=post_id)
-    post.status = "완료"
-    post.save()
+    if request.method == 'POST':
+        post = Post.objects.get(pk=post_id)
+        post.status = "완료"
+        post.save()
     return redirect("my_post_detail")
+
+
+# 내가 신청한 거래 자세히보기
+def my_register_detail(request, post_id):
+    register_post = Post.objects.get(pk=post_id)
+    return render(request, "my_register_detail.html", {"register_post":register_post})

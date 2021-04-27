@@ -109,7 +109,17 @@ def balance(request):
 # 내가 쓴 글 자세히보기
 def my_post_detail(request, post_id):
     post = Post.objects.get(pk=post_id)
-    return render(request, "my_post_detail.html", {'post':post})
+    if post.status == "진행" and post.service == "주고싶어요":
+        if post.author == request.user:
+            btn_msg = "승인대기"
+        elif post.author != request.user:
+            btn_msg = "완료하기"
+    elif post.status == "진행" and post.service == "받고싶어요":
+        if post.author == request.user:
+            btn_msg = "완료하기"
+        elif post.author != request.user:
+            btn_msg = "승인대기"
+    return render(request, "my_post_detail.html", {'post':post, 'btn_msg':btn_msg})
 
 
 # 진행-> 완료하기

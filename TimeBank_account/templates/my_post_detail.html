@@ -165,8 +165,8 @@
                     <td>
                       <form action="{% url 'success' post.id %}" method="post">
                         {% csrf_token %}
-                            <button name="success" type="submit" class="btn btn-success">완료하기</button>
-                    </form>
+                            <button name="success" type="submit" class="btn btn-success">{{ btn_msg }}</button>
+                      </form>
                     </td>
                     {% elif post.status == "완료" %}
                     <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>

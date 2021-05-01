@@ -167,17 +167,16 @@
                     <td><button type="button" class="btn btn-primary">{{ register_post.status }}</button></td>
                     {% elif register_post.status == "진행" %}
                     <td>
-                      <!--
-                        <form action="{{post.id}}" method="post">
-                            {% csrf_token %}
-                                <button name="success" class="btn btn-success">완료하기</button>
+                      {% if btn_msg == "완료하기" %}
+                        <form action="{% url 'reg_success' post.id %}" method="post">
+                          {% csrf_token %}
+                              <button type="submit" class="btn btn-success">{{btn_msg}}</button>
                         </form>
-                      -->
-                      <form action="{{post.id}}" method="post">
-                        {% csrf_token %}
-                            <button name="success" class="btn btn-success">승인대기</button>
-                    </form>
-                    </td>
+                        <button class="btn btn-danger">중단하기</button>
+                      {% elif btn_msg == "승인대기" %}
+                        <button type="submit" class="btn btn-success">{{btn_msg}}</button>
+                    {% endif %}
+                  </td>
                     {% elif register_post.status == "완료" %}
                     <td><button type="button" class="btn btn-warning">{{ register_post.status }}</button></td>
                     {% elif register_post.status == "중단" %}
@@ -188,7 +187,7 @@
                     <td>{{ my_post.tok }}</td>
                     <td>{{ my_post.created_at }}</td>
                     <td>{{ my_post.content }}</td>
-                    <td>{{ my_post.content }}</td>
+                    <td>{{ my_post.content }}{{my_post.giver}}{{my_post.taker}}</td>
                 </tr>
             </tbody>
           </table>

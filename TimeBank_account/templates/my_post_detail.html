@@ -108,7 +108,7 @@
 
       <div class="card card-outline-secondary my-5">
         <div class="card-header">
-          내가 등록한 거래 {{user.balance}}
+          내가 등록한 거래
         </div>
         <div class="card-body">
           <h5>{{post.service}}</h5>
@@ -163,22 +163,27 @@
                     <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
                     {% elif post.status == "진행" %}
                     <td>
-                      <form action="{% url 'success' post.id %}" method="post">
-                        {% csrf_token %}
-                            <button name="success" type="submit" class="btn btn-success">{{ btn_msg }}</button>
-                      </form>
-                    </td>
+                      {% if btn_msg == "완료하기" %}
+                        <form action="{% url 'success' post.id %}" method="post">
+                          {% csrf_token %}
+                              <button type="submit" class="btn btn-success">{{btn_msg}}</button>
+                        </form>
+                        <button class="btn btn-danger">중단하기</button>
+                      {% elif btn_msg == "승인대기" %}
+                        <button type="submit" class="btn btn-success">{{btn_msg}}</button>
+                    {% endif %}
+                  </td>
                     {% elif post.status == "완료" %}
                     <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
                     {% elif post.status == "중단" %}
                     <td><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
                     {% endif %}
                     <td>{{ post.id }}</td>
-                    <td>{{ post.applicants }}</td>
+                    <td>{{ post.applicants }}<br>{{post.giver}}<br>{{post.taker}}<br>{{request.user}}</td>
                     <td>{{ my_post.tok }}</td>
                     <td>{{ my_post.created_at }}</td>
                     <td>{{ my_post.content }}</td>
-                    <td>{{ my_post.content }}</td>
+                    <td>{{ my_post.content }}{{my_post.giver}}{{my_post.taker}}</td>
                 </tr>
             </tbody>
           </table>
@@ -233,5 +238,3 @@
   <script src="{% static 'js/scrolling-nav.js' %}"></script>
 
 </body>
-
-

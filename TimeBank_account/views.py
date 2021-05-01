@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import auth
 from .models import *
 from django.contrib.auth import authenticate
-from django.contrib.auth import logout,update_session_auth_hash
+from django.contrib.auth import logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_POST
@@ -34,12 +34,6 @@ def register(request):
         password = request.POST["password"]
         password_check = request.POST["pw_check"]
         #image = request.FILES["image"]
-
-        #text output
-        #f = open("tmp.txt", 'w')
-        #data = '{}\n {}\n {}\n{}\n{}\n{}\n'.format( userid, email, username, password, password_check, image)
-        #f.write(data)
-        #f.close()
 
         # 비밀번호 재확인 불일치
         if password != password_check:
@@ -97,41 +91,81 @@ def balance(request):
     post = Post.objects.all()
     user = request.user
     success = post.filter(status = "완료") 
-    success_posts = success.filter(author = request.user) | success.filter(applicants = request.user)
-    plus_toks = success_posts.filter(service = "주고싶어요") & success_posts.filter(author = request.user)
-    minus_toks = success_posts.filter(service = "받고싶어요") & success_posts.filter(author = request.user)
+    success_posts = success.filter(author = request.user) or success.filter(applicants = request.user)
+    plus_toks = success_posts.filter(service = "주고싶어요") and success_posts.filter(author = request.user)
+    minus_toks = success_posts.filter(service = "받고싶어요") and success_posts.filter(author = request.user)
     return render(request, "balance.html", {'success_posts': success_posts, 'user':user, 'plus_toks':plus_toks, 'minus_toks':minus_toks})
 
-    
-
-
-
-# 내가 쓴 글 자세히보기
-def my_post_detail(request, post_id):
-    post = Post.objects.get(pk=post_id)
-    if post.status == "진행" and post.service == "주고싶어요":
-        if post.author == request.user:
-            btn_msg = "승인대기"
-        elif post.author != request.user:
-            btn_msg = "완료하기"
-    elif post.status == "진행" and post.service == "받고싶어요":
-        if post.author == request.user:
-            btn_msg = "완료하기"
-        elif post.author != request.user:
-            btn_msg = "승인대기"
-    return render(request, "my_post_detail.html", {'post':post, 'btn_msg':btn_msg})
-
-
-# 진행-> 완료하기
-def success(request, post_id):
-    if request.method == 'POST':
-        post = Post.objects.get(pk=post_id)
-        post.status = "완료"
-        post.save()
-    return redirect("my_post_detail")
 
 
 # 내가 신청한 거래 자세히보기
 def my_register_detail(request, post_id):
     register_post = Post.objects.get(pk=post_id)
-    return render(request, "my_register_detail.html", {"register_post":register_post})
+    btn_msg = register_post.status
+    if register_post.status == "진행":
+        if register_post.taker == str(request.user):
+            btn_msg = "완료하기"
+        else:
+            btn_msg = "승인대기"
+    return render(request, "my_register_detail.html", {"register_post":register_post, 'btn_msg':btn_msg})
+
+
+# 내가 신청한 글 완료하기
+def reg_success(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    post.status = "완료"
+    post.save()
+    return redirect("my_register_detail")
+
+
+# 내가 쓴글 자세히보기
+def my_post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    btn_msg = post.status
+    if post.status == "진행":
+        if post.taker == str(request.user):
+            btn_msg = "완료하기"
+        else:
+            btn_msg = "승인대기"
+    return render(request, "my_post_detail.html", {'post':post, 'btn_msg':btn_msg})
+
+
+# 내가 쓴 글 완료하기
+def success(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    post.status = "완료"
+    post.save()
+    return redirect("my_post_detail")
+
+
+
+
+'''
+def my_post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    return render(request, "my_post_detail.html", {'post':post})
+
+# 내가 쓴 글 자세히보기
+def my_post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    user = request.user
+    btn_msg = post.status
+    if post.status == "진행" and post.service == "주고싶어요":
+        if post.author == user:
+            btn_msg = "승인대기"
+        elif post.applicants == user:
+            btn_msg = "완료하기"
+    elif post.status == "진행" and post.service == "받고싶어요":
+        if post.author == user:
+            btn_msg = "완료하기"
+        elif post.applicants == user:
+            btn_msg = "승인대기"
+    return render(request, "my_post_detail.html", {'post':post, 'btn_msg':btn_msg, 'user':user})
+'''
+
+
+
+
+
+
+

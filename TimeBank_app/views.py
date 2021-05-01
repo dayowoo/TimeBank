@@ -26,7 +26,6 @@ def index(request):
 def post_list(request):
     # order_by : 순서정렬 / 최신순
     posts = Post.objects.all().order_by('-id')
-    #applicants = MessageItem.objects.all()
     return render(request, 'post_list.html', {'posts': posts})
 
 
@@ -67,19 +66,14 @@ def progress(request, post_id):
     post = Post.objects.get(pk = post_id)
     post.status = "진행"
     post.applicants = str(request.user)
+    if post.service == "주고 싶어요":
+        post.giver = str(post.author)
+        post.taker = str(request.user)
+    else:
+        post.giver = str(request.user)
+        post.taker = str(post.author)
     post.save()
     return redirect('post_list')
-
-
-# 거래 진행중
-
-
-
-# 거래 완료
-
-
-# 거래 중단
-
 
 
 '''

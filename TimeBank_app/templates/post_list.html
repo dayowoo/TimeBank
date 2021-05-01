@@ -128,7 +128,7 @@
                         {% if post.status == "대기" %}
                             <form action="{{post.id}}/" method="post">
                             {% csrf_token %}
-                                <button name="progress" class="btn btn-primary">신청하기</button>
+                                <button name="progress" class="btn btn-primary">신청</button>
                             </form>    
                         {% elif post.status == "진행" %}
                             <button class="btn btn-success">{{ post.status }}</button>

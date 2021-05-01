@@ -34,6 +34,8 @@ class Post(models.Model):
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
     applicants = models.CharField(max_length=140, verbose_name='신청자', null=True)
+    giver = models.CharField(max_length=140, verbose_name='주는사람', null=True)
+    taker = models.CharField(max_length=140, verbose_name='받는사람', null=True)
     # apply_users = models.ManyToManyField(User, related_name='apply_posts', verbose_name='신청자')
 
     # 객체 목록 가져오기 (작성 순서대로)

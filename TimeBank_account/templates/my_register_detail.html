@@ -97,7 +97,7 @@
       </div>
       <p><br><br></p>
       <div class="list-group">
-        <a href="#" class="list-group-item active">시간거래활동</a>
+        <a href="{% url 'profile' %}" class="list-group-item active">프로필</a>
         <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
         <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>
@@ -126,7 +126,7 @@
                 <th style="font-size: 13px;">작성자</th>
                 <th style="font-size: 13px;">요청톡</th>
                 <th style="font-size: 13px;">날짜</th>
-                <th style="font-size: 13px;">요청 세부 내용</th>
+                <th style="font-size: 13px;">요청 세부 내용 {{btn_msg}}</th>
             </tr>
             </thead>
             <tbody>
@@ -164,15 +164,18 @@
                 <tr>
                     <!-- 거래 승인하기 -->
                     {% if register_post.status == "대기" %}
-                    <td><button type="button" class="btn btn-primary">{{ register_post.status }}</button></td>
+                    <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
                     {% elif register_post.status == "진행" %}
                     <td>
                       {% if btn_msg == "완료하기" %}
-                        <form action="{% url 'reg_success' post.id %}" method="post">
+                        <form action="{% url 'reg_success' register_post.id %}" method="POST">
                           {% csrf_token %}
                               <button type="submit" class="btn btn-success">{{btn_msg}}</button>
                         </form>
-                        <button class="btn btn-danger">중단하기</button>
+                        <form action="{% url 'reg_stop' register_post.id %}" method="POST">
+                          {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">중단하기</button>
+                        </form>
                       {% elif btn_msg == "승인대기" %}
                         <button type="submit" class="btn btn-success">{{btn_msg}}</button>
                     {% endif %}
@@ -187,7 +190,7 @@
                     <td>{{ my_post.tok }}</td>
                     <td>{{ my_post.created_at }}</td>
                     <td>{{ my_post.content }}</td>
-                    <td>{{ my_post.content }}{{my_post.giver}}{{my_post.taker}}</td>
+                    <td>{{ my_post.content }}</td>
                 </tr>
             </tbody>
           </table>

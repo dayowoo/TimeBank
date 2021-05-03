@@ -11,9 +11,12 @@ urlpatterns = [
     path('account', views.account_history, name="account"),
     path('balance', views.balance, name="balance"),
     path('my_post_detail/<int:post_id>', views.my_post_detail, name="my_post_detail"),
-    path('my_post_detail/<int:post_id>/', views.success, name="success"),
+    path('my_post_detail/<int:post_id>/success', views.success, name="success"),
+    path('my_post_detail/<int:post_id>/stop', views.stop, name="stop"),
     path('my_register_detail/<int:post_id>', views.my_register_detail, name="my_register_detail"),
-    path('my_register_detail/<int:post_id>/', views.reg_success, name="reg_success"),
+    path('my_register_detail/<int:post_id>/reg_success', views.reg_success, name="reg_success"),
+    path('my_register_detail/<int:post_id>/reg_stop', views.reg_stop, name="reg_stop"),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

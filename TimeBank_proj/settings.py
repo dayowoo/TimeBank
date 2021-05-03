@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '*'
-    #'13.125.168.10', # LightSail IP 주소
+    # '13.125.168.10', # LightSail IP 주소
 ]
 
 

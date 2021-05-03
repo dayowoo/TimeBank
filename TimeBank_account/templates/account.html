@@ -97,7 +97,7 @@
       </div>
       <p><br><br></p>
       <div class="list-group">
-        <a href="#" class="list-group-item active">시간거래활동</a>
+        <a href="{% url 'profile' %}" class="list-group-item active">프로필</a>
         <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
         <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>
@@ -134,6 +134,8 @@
                     <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-success">{{ my_post.status}}</a></td>
                   {% elif my_post.status == "완료" %}
                     <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-warning">{{ my_post.status}}</a></td>   
+                  {% elif my_post.status == "중단" %}
+                    <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-secondary">{{ my_post.status}}</a></td>      
                   {% endif %}
                     <td>{{ my_post.id }}</td>
                     <td>{{ my_post.service }}</td>
@@ -187,7 +189,9 @@
                   {% elif regsiter_post.status == "진행" %}
                     <td><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-success">{{ regsiter_post.status}}</a></td>
                   {% elif regsiter_post.status == "완료" %}
-                    <td><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-warning">{{ regsiter_post.status}}</a></td>   
+                    <td><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-warning">{{ regsiter_post.status}}</a></td>
+                  {% elif regsiter_post.status == "중단" %}
+                    <td><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-secondary">{{ regsiter_post.status}}</a></td>      
                   {% endif %}
                     <td>{{ regsiter_post.id }}</td>
                     <td>{{ regsiter_post.service }}</td>

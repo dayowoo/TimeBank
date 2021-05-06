@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
 from django.contrib.auth.base_user import BaseUserManager
+from TimeBank_app.models import Post
+
 
 class CustomUserManager(BaseUserManager):
 
@@ -25,6 +27,7 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError(('Superuser must have is_superuser=True.'))
         return self.create_user(email, password, **extra_fields)
+
 
 # 사용자 정보
 class User(AbstractUser):
@@ -56,19 +59,20 @@ class User(AbstractUser):
 
 # 계좌정보
 class Account(models.Model):
-    state_list = (
-        ('deal','거래진행중'), ('request','요청진행중'),
-        ('complete', '거래완료'), ('inquire', '요청보내기')
-        )
-    state_type = models.CharField(max_length=10, choices=state_list, verbose_name='요청상태')
-    # account_no = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name='등록시간')
+    post = models.ForeignKey(Post, related_name='Transfer', null=True, on_delete=models.CASCADE)
+    giver = models.CharField(max_length=50, null=True, verbose_name="주는사람")
+    taker = models.CharField(max_length=50, null=True, verbose_name="받는사람")
+    giver_balance = models.IntegerField(default=0, verbose_name='주는사람 계좌')
+    taker_balance = models.IntegerField(default=0, verbose_name='받는사람 계좌')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     # PositiveIntegerField : 0 또는 양수의 값
-    time_balance = models.PositiveIntegerField(default=0, verbose_name='시간계좌')
-    transfer_balance = models.IntegerField(default=0, verbose_name='시간거래활동')
-    bank = models.CharField(max_length=10)
+    balance = models.PositiveIntegerField(default=0, verbose_name='시간계좌')
     account_type_list = (
-        ('give','주고싶어요'),
-        ('take','받고싶어요')
+        ('주고싶어요','주고싶어요'),
+        ('받고싶어요','받고싶어요')
         )
     account_type = models.CharField(max_length=10, choices=account_type_list)
+
+    class Meta:
+        ordering = ['-created_at']

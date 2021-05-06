@@ -12,8 +12,8 @@ except ImportError:
     import json
 from django.http import HttpResponse
 from django.contrib import messages
-from TimeBank_app.models import Post, Register
-from .models import User
+from TimeBank_app.models import Post
+from .models import User, Account
 import json
 
 
@@ -42,6 +42,7 @@ def register(request):
         user = User.object.create_user(username=username, email=email, password=password, name=name)
         auth.login(request, user)
     return redirect('index')
+
 
 # 로그인
 def login(request):
@@ -85,71 +86,61 @@ def account_history(request):
     return render(request, "account.html", {'my_posts': my_posts, 'regsiter_posts': regsiter_posts})
 
 
-
+'''
+# 고치고 있는 코드
 @login_required
 def balance(request):
-    post = Post.objects.all()
     user = request.user
-    # balance = int(user.balance)
-    global plus_toks
-    global minus_toks
-    success = post.filter(status = "완료") 
-    success_posts = success.filter(giver = str(request.user)) or success.filter(taker = str(request.user))
+    balance = int(user.balance)
+
+    post = Post.objects.all()
+    success = post.filter(status = "완료")
+    # 완료, giver or taker
+    success_posts = success.filter(giver = str(request.user))
+
+    plus_toks = 0
+    minus_toks = 0
+    
     # +인 경우
-    if success_posts.filter(service = "주고싶어요"):
-        if str(request.user) == success_posts.giver:
-            plus_toks = int(success_posts.tok)
-            balance = int(user.balance) + plus_toks
-        return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'plus_toks':plus_toks})
-    elif success_posts.filter(service="받고싶어요"):
-        if str(request.user) == success_posts.giver:
-            plus_toks = int(success_posts.tok)
-            balance = int(user.balance) + plus_toks
-        return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'plus_toks':plus_toks})
-    # -인 경우        
-    if success_posts.filter(service = "주고싶어요"):
-        if str(request.user) == success_posts.taker:
-            minus_toks = int(success_posts.tok)
-            balance = int(user.balance) - minus_toks
-        return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'minus_toks':minus_toks})
-    elif success_posts.filter(service="받고싶어요"):
-        if str(request.user) == success_posts.taker:
-            minus_toks = int(success_posts.tok)
-            balance = int(user.balance) - minus_toks
-        return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'minus_toks':minus_toks})
-
-
+    if str(request.user) == str(success_posts.giver):
+        plus_toks = int(success_posts.tok)
+        balance = balance + plus_toks
+    elif str(request.user) == str(success_posts.taker):
+        minus_toks = int(success_posts.tok)
+        balance = balance - minus_toks
+    return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'plus_toks':plus_toks, 'minus_toks':minus_toks})
 '''
+
+
+def balance_test(request):
+    accounts = Account.objects.all()
+    return render(request, 'balance_test.html', {'accounts':accounts})
+
+
 # 잔액 조회
 @login_required
 def balance(request):
     post = Post.objects.all()
     user = request.user
+    username = str(request.user)
     balance = int(user.balance)
-    plus_toks = 0
-    minus_toks = 0
     success = post.filter(status = "완료") 
     success_posts = success.filter(giver = str(request.user)) or success.filter(taker = str(request.user))
     # +인 경우
     if success_posts.filter(service = "주고싶어요"):
         if str(request.user) == success_posts.giver:
-            plus_toks = int(success_posts.tok)
-            balance = balance + plus_toks
+            balance = balance + success_posts.tok
     elif success_posts.filter(service="받고싶어요"):
         if str(request.user) == success_posts.giver:
-            plus_toks = int(success_posts.tok)
-            balance = balance + plus_toks
+            balance = balance + success_posts.tok
     # -인 경우        
     if success_posts.filter(service = "주고싶어요"):
         if str(request.user) == success_posts.taker:
-            minus_toks = int(success_posts.tok)
-            balance = balance - minus_toks
+            balance = balance - success_posts.tok
     elif success_posts.filter(service="받고싶어요"):
         if str(request.user) == success_posts.taker:
-            minus_toks = int(success_posts.tok)
-            balance = balance - minus_toks
-    return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'plus_toks':plus_toks, 'minus_toks':minus_toks})
-'''
+            balance = balance - success_posts.tok
+    return render(request, "balance.html", {'username':username, 'success_posts': success_posts, 'balance':balance})
 
 
 # 내가 신청한 거래 자세히보기
@@ -164,11 +155,20 @@ def my_register_detail(request, post_id):
     return render(request, "my_register_detail.html", {"register_post":register_post, 'btn_msg':btn_msg})
 
 
+
+
+
 # 내가 신청한 글 완료하기
 def reg_success(request, post_id):
     post = Post.objects.get(pk=post_id)
+    user = request.user
     post.status = "완료"
+    if post.giver == str(request.user):
+        user.balance += post.tok
+    elif post.taker == str(request.user):
+        user.balance -= post.tok
     post.save()
+    user.save()
     return redirect('/account/account')
 
 
@@ -214,11 +214,4 @@ def stop(request, post_id):
     post.status = "중단"
     post.save()
     return redirect('/account/account')
-
-
-
-
-
-
-
 

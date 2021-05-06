@@ -97,7 +97,7 @@
       </div>
       <p><br><br></p>
       <div class="list-group">
-        <a href="{% url 'profile' %}" class="list-group-item active">프로필</a>
+        <a href="{% url 'profile' user.username  %}" class="list-group-item active">프로필</a>
         <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
         <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>
@@ -118,8 +118,8 @@
               <tr>
                 <th style="font-size: 13px;">#</th>
                 <th style="font-size: 13px;">거래일자</th>
-                <th style="font-size: 13px;">작성자</th>
-                <th style="font-size: 13px;">거래자</th>
+                <th style="font-size: 13px;">주는사람</th>
+                <th style="font-size: 13px;">받는사람</th>
                 <th style="font-size: 13px;">요청분류</th>
                 <th style="font-size: 13px;">입금</th>
                 <th style="font-size: 13px;">출금</th>
@@ -131,13 +131,16 @@
                   {% for success_post in success_posts %}
                     <td>{{ success_post.id }}</td>
                     <td>{{ success_post.created_at }}</td>
-                    <td>{{ success_post.author }}</td>
-                    <td>{{ success_post.applicants }}</td>
+                    <td>{{ success_post.giver }}</td>
+                    <td>{{ success_post.taker }}</td>
                     <td>{{ success_post.service }}</td>
-                    <td style="color: blue;">+{{ plus_tok }}</td>
+                    {% if username == success_post.giver %}
+                    <td style="color: blue;">+{{ success_post.tok }}</td>
                     <td style="color: red;">0</td>
+                    {% elif username == success_post.taker %}
                     <td style="color: blue;">0</td>
-                    <td style="color: red;">-{{minus_tok}}</td>
+                    <td style="color: red;">-{{success_post.tok}}</td>
+                    {% endif %}
                     <td>{{ balance }}</td>
                 </tr>
                 {% endfor %}

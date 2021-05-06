@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from TimeBank_app.models import Post, MainCategory, SubCategory, Register
+from TimeBank_app.models import Post, MainCategory, SubCategory
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth

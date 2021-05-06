@@ -1,0 +1,31 @@
+
+{{account}}
+{{account.pk}}
+
+<table>
+    <thead>
+      <tr>
+        <th style="font-size: 13px;">#</th>
+        <th style="font-size: 13px;">#</th>
+        <th style="font-size: 13px;">#</th>
+        <th style="font-size: 13px;">#</th>
+        <th style="font-size: 13px;">#</th>
+        <th style="font-size: 13px;">#</th>
+        <th style="font-size: 13px;">#</th>
+
+    </tr>
+    </thead>
+    <tbody>
+      {% for account in accounts %}
+        <tr>
+            <td>{{ account.id }}</td>
+            <td>{{ account.account_type }}</td>
+            <td>{{ account.giver }}</td>
+            <td>{{ account.taker }}</td>
+            <td>{{ account.created_at }}</td>
+            <td>{{ account.balance }}</td>
+            <td>{{ account.content }}</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+  </table>

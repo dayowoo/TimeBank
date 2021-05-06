@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-from TimeBank_account.models import User
+#from TimeBank_account.models import User
+import TimeBank_account.models
 
 class MainCategory(models.Model):
     name = models.CharField(max_length = 100)
@@ -28,7 +29,7 @@ class Post(models.Model):
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
     tok = models.IntegerField(default=0, verbose_name='거래톡')
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='작성자')
+    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='작성자')
     status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
     status = models.CharField(max_length=50, choices=status_list, default='대기')
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
@@ -49,14 +50,6 @@ class Post(models.Model):
     def __str__(self):
         return self.content
 
-
-
-
-
-class Register(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
 
 
 '''

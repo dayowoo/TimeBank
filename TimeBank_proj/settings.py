@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'TimeBank_account',
     'TimeBank_app',
+    'TimeBank_transaction',
     # 'debug_toolbar',    # DEBUG
 ]
 

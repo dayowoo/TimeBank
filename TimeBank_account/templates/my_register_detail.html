@@ -97,7 +97,7 @@
       </div>
       <p><br><br></p>
       <div class="list-group">
-        <a href="{% url 'profile' %}" class="list-group-item active">프로필</a>
+        <a href="{% url 'profile' user.username  %}" class="list-group-item active">프로필</a>
         <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
         <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>

@@ -8,6 +8,8 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('profile/<str:username>', views.profile, name="profile"),
+    path('profile_update_page/<str:username>', views.profile_update_page, name="profile_update_page"),
+    path('profile_update/<str:username>', views.profile_update, name="profile_update"),
     path('account', views.account_history, name="account"),
     path('balance', views.balance, name="balance"),
     path('my_post_detail/<int:post_id>', views.my_post_detail, name="my_post_detail"),
@@ -18,5 +20,3 @@ urlpatterns = [
     path('my_register_detail/<int:post_id>/reg_stop', views.reg_stop, name="reg_stop"),
     path('balance_test', views.balance_test, name="balance_test"),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

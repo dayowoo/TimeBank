@@ -86,10 +86,16 @@
       
     <div class="col-lg-3">
       <div class="card mt-4">
+        {% if user.image %}
+        <img class="card-img-top img-fluid" src="{{ user.image.url }}" alt="user" style="padding: 30px;">
+        {% else %}
         <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
+        {% endif %}
         <div class="card-body">
+          
           <h3 class="card-title">{{ user.get_username }}님 😃</h3>
-          <h4>{{ user.name }}</h4>
+          <h4>{{ user.name }}</h4><br>
+          <h6>{{ user.email }}</h6>
           <p class="card-text"></p>
           <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
           4.0 stars
@@ -116,18 +122,22 @@
           <table id="example" class="table table-striped table-bordered" style="width:100%">
             <thead>
               <tr>
-                <th style="font-size: 13px;">요청상태</th>
-                <th style="font-size: 13px;">글번호</th>
-                <th style="font-size: 13px;">요청 분류</th>
-                <th style="font-size: 13px;">작성자</th>
-                <th style="font-size: 13px;">요청톡</th>
-                <th style="font-size: 13px;">날짜</th>
-                <th style="font-size: 13px;">요청 세부 내용</th>
+                <th style="font-size: 13px;">#</th>
+                  <th style="font-size: 13px;">요청상태</th>
+                  <th style="font-size: 13px;">요청 분류</th>
+                  <th style="font-size: 13px;">작성자</th>
+                  <th style="font-size: 13px;">거래시간</th>
+                  <th style="font-size: 13px;">대분류</th>
+                  <th style="font-size: 13px;">소분류</th>
+                  <th style="font-size: 13px;">거래날짜</th>
+                  <th style="font-size: 13px;">시작 시간</th>
+                  <th style="font-size: 13px;">종료 시간</th>
             </tr>
             </thead>
             <tbody>
               {% for my_post in my_posts %}
                 <tr>
+                  <td>{{ my_post.id }}</td>
                   {% if my_post.status == "대기" %}
                     <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-primary">{{ my_post.status}}</a></td>
                   {% elif my_post.status == "진행" %}
@@ -137,13 +147,14 @@
                   {% elif my_post.status == "중단" %}
                     <td><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-secondary">{{ my_post.status}}</a></td>      
                   {% endif %}
-                    <td>{{ my_post.id }}</td>
-                    <td>{{ my_post.service }}</td>
-                    <td>{{ my_post.author }}</td>
-                    <td>{{ my_post.tok }}</td>
-                    <td>{{ my_post.created_at }}</td>
-                    <td>{{ my_post.content }}</td>
-                    
+                  <td>{{ my_post.service }}</td>
+                  <td>{{ my_post.author }}</td>
+                  <td>{{ my_post.tok }}</td>
+                  <td>{{ my_post.mainwork }}</td>
+                  <td>{{ my_post.subwork }}</td>
+                  <td>{{ my_post.date }}</td>
+                  <td>{{ my_post.start_time }}</td>
+                  <td>{{ my_post.end_time }}</td>
                 </tr>
             </tbody>
             {% endfor %}
@@ -173,17 +184,21 @@
           <table id="example" class="table table-striped table-bordered" style="width:100%">
             <thead>
                 <tr>
+                  <th style="font-size: 13px;">#</th>
                   <th style="font-size: 13px;">요청상태</th>
-                  <th style="font-size: 13px;">글번호</th>
                   <th style="font-size: 13px;">요청 분류</th>
                   <th style="font-size: 13px;">작성자</th>
-                  <th style="font-size: 13px;">요청톡</th>
-                  <th style="font-size: 13px;">날짜</th>
-                  <th style="font-size: 13px;">요청 세부 내용</th>
+                  <th style="font-size: 13px;">거래시간</th>
+                  <th style="font-size: 13px;">대분류</th>
+                  <th style="font-size: 13px;">소분류</th>
+                  <th style="font-size: 13px;">거래날짜</th>
+                  <th style="font-size: 13px;">시작 시간</th>
+                  <th style="font-size: 13px;">종료 시간</th>
                 </tr>
             </thead>
             {% for regsiter_post in regsiter_posts %}
                 <tr>
+                  <td>{{ regsiter_post.id }}</td>
                   {% if regsiter_post.status == "대기" %}
                     <td><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-primary">{{ regsiter_post.status}}</a></td>
                   {% elif regsiter_post.status == "진행" %}
@@ -193,12 +208,14 @@
                   {% elif regsiter_post.status == "중단" %}
                     <td><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-secondary">{{ regsiter_post.status}}</a></td>      
                   {% endif %}
-                    <td>{{ regsiter_post.id }}</td>
                     <td>{{ regsiter_post.service }}</td>
                     <td>{{ regsiter_post.author }}</td>
                     <td>{{ regsiter_post.tok }}</td>
-                    <td>{{ regsiter_post.created_at }}</td>
-                    <td>{{ regsiter_post.content }}</td>
+                    <td>{{ regsiter_post.date }}</td>
+                    <td>{{ regsiter_post.mainwork }}</td>
+                    <td>{{ regsiter_post.subwork }}</td>
+                    <td>{{ regsiter_post.start_time }}</td>
+                    <td>{{ regsiter_post.end_time }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

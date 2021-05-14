@@ -13,7 +13,7 @@ urlpatterns = [
     path('account/', include('TimeBank_account.urls')),
 ]
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
 
 # DEBUG

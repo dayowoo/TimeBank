@@ -103,7 +103,7 @@
 
         <!-- Date/Time -->
         <p>주고받고자 하는 작업에 대해 오른쪽의 양식에 맞게 내용을 작성해주세요.<br>
-          내용 작성에 도움이 될 만한 이야기들을 적어주면 좋을 것 같습니다.</p>
+          내용 작성에 도움이 될 만한 이야기들을 적어주세요.</p>
 
         <hr>
 
@@ -120,12 +120,12 @@
 
               <div class="form-group">
                 <label for="start_time">가능 시작 시간</label>
-                <input type="text" class="form-control" name="start_time" id="start_time" placeholder="">
+                <input type="text" class="form-control" name="start_time" id="start_time" placeholder="예) 오후 6시 15분 - 18:15">
               </div>
 
               <div class="form-group">
                 <label for="end_time">가능 끝 시간</label>
-                <input type="text" class="form-control" name="end_time" id="end_time" placeholder="">
+                <input type="text" class="form-control" name="end_time" id="end_time" placeholder="예) 오후 6시 15분 - 18:15">
               </div>
 
               <div class="form-group">
@@ -137,65 +137,40 @@
               </div>
 
               <div class="form-group">
-                <label for="location">장소</label>
+                <label for="location">장소</label><br>
+                <img src="/static/img/map.jpg" class="img-fluid" alt="Responsive image">
+                <br><br>
                 <input type="text" class="form-control" name="location" id="location" placeholder="">
               </div>
 
-              <!-- <div class="form-group">
-                <label for="work">대분류</label>
-                <select class="form-control" name="work" id="work">
-                  
+          
+              <div class="form-group">
+                <label for="mainwork">대분류</label>
+                <select class="form-control" name="mainwork" id="mainwork">
                   <option>청소 / 심부름</option>
-                  <option>상담</option>
                   <option>몸 가꾸기 / 치장하기</option>
+                  <option>수선/ 수리</option>
+                  <option>상담</option>
                   <option>이동</option>
-                  <option>수선/수리</option>
                   <option>먹기</option>
                   <option>교육 / 여가생활</option>
                   <option>정서지지</option>
                   <option>돌봄</option>
-                  <option>식물 가꾸기</option>
-                  <option>모임 장소 대여</option>
                   <option>의사소통</option>
-                  <option>건강관리</option>
-                  <option>기타</option>
-                </select>
-              </div> -->
-
-              <div class="form-group">
-                <label for="main_work">대분류</label>
-                <input type="text" class="form-control" name="main_work" id="main_work" placeholder="">
-              </div>
-
-              <!-- <div class="form-group">
-                <label for="location">소분류</label>
-                <input type="text" class="form-control" id="location" placeholder="">
-              </div> -->
-
-              <!--
-              <div class="form-group">
-                <label for="exampleFormControlSelect1">작업 분류-2</label>
-                <select class="form-control" id="exampleFormControlSelect1">
-                  <option>청소 / 심부름</option>
-                  <option>상담</option>
-                  <option>몸 가꾸기 / 치장하기</option>
-                  <option>이동</option>
-                  <option>수선/수리</option>
-                  <option>먹기</option>
-                  <option>교육 / 여가생활</option>
-                  <option>정서지지</option>
-                  <option>돌봄</option>
                   <option>식물 가꾸기</option>
-                  <option>모임 장소 대여</option>
-                  <option>의사소통</option>
                   <option>건강관리</option>
+                  <option>모임 장소 대여</option>
                   <option>기타</option>
                 </select>
               </div>
-              -->
 
               <div class="form-group">
-                <label for="tok">거래 Tok</label>
+                <label for="subwork">소분류</label>
+                <input type="text" class="form-control" id="subwork" name="subwork" placeholder="">
+              </div> 
+
+              <div class="form-group">
+                <label for="tok">거래 시간 (단위:시간)</label>
                 <input type="text" class="form-control" name="tok" id="tok" placeholder="">
               </div>
 

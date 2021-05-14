@@ -86,10 +86,16 @@
       
     <div class="col-lg-3">
       <div class="card mt-4">
+        {% if user.image %}
+        <img class="card-img-top img-fluid" src="{{ user.image.url }}" alt="user" style="padding: 30px;">
+        {% else %}
         <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
+        {% endif %}
         <div class="card-body">
+          
           <h3 class="card-title">{{ user.get_username }}님 😃</h3>
-          <h4>{{ user.name }}</h4>
+          <h4>{{ user.name }}</h4><br>
+          <h6>{{ user.email }}</h6>
           <p class="card-text"></p>
           <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
           4.0 stars
@@ -97,7 +103,7 @@
       </div>
       <p><br><br></p>
       <div class="list-group">
-        <a href="{% url 'profile' user.username  %}" class="list-group-item active">프로필</a>
+        <a href="{% url 'profile' user.username %}" class="list-group-item active">프로필</a>
         <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
         <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>
@@ -111,7 +117,7 @@
           시간계좌
         </div>
         <div class="card-body">
-          <h5>거래 내역</h5>
+          <h5>시간 계좌</h5>
           <br>
           <table id="example" class="table table-striped table-bordered" style="width:100%">
             <thead>
@@ -120,7 +126,8 @@
                 <th style="font-size: 13px;">거래일자</th>
                 <th style="font-size: 13px;">주는사람</th>
                 <th style="font-size: 13px;">받는사람</th>
-                <th style="font-size: 13px;">요청분류</th>
+                <th style="font-size: 13px;">대분류</th>
+                <th style="font-size: 13px;">소분류</th>
                 <th style="font-size: 13px;">입금</th>
                 <th style="font-size: 13px;">출금</th>
                 <th style="font-size: 13px;">잔액</th>
@@ -133,7 +140,8 @@
                     <td>{{ success_post.created_at }}</td>
                     <td>{{ success_post.giver }}</td>
                     <td>{{ success_post.taker }}</td>
-                    <td>{{ success_post.service }}</td>
+                    <td>{{ success_post.mainwork }}</td>
+                    <td>{{ success_post.subwork }}</td>
                     {% if username == success_post.giver %}
                     <td style="color: blue;">+{{ success_post.tok }}</td>
                     <td style="color: red;">0</td>
@@ -141,7 +149,13 @@
                     <td style="color: blue;">0</td>
                     <td style="color: red;">-{{success_post.tok}}</td>
                     {% endif %}
-                    <td>{{ balance }}</td>
+                    {% if success_post.id == 4 %}
+                    <td>1</td>
+                    {% elif success_post.id == 6 %}
+                    <td>5</td>
+                    {% elif success_post.id == 10 %}
+                    <td>8</td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

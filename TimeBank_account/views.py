@@ -33,13 +33,13 @@ def register(request):
         name = request.POST["name"]
         password = request.POST["password"]
         password_check = request.POST["pw_check"]
-        #image = request.FILES["image"]
+        image = request.FILES["image"]
 
         # 비밀번호 재확인 불일치
         if password != password_check:
             return render(request, "register.html")
         # 새로운 유저 생성
-        user = User.object.create_user(username=username, email=email, password=password, name=name)
+        user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
         auth.login(request, user)
     return redirect('index')
 
@@ -74,6 +74,28 @@ def logout(request):
 def profile(requset,username):
     user = get_object_or_404(User,username=username)
     return render(requset, "profile.html", {"user_profile":user, 'username': username})
+
+
+# 프로필 수정페이지 보기
+@login_required
+def profile_update_page(request,username):
+    user = get_object_or_404(User,username=username)
+    return render(request, "profile_update.html", {"user_profile":user, 'username': username})
+
+# 프로필 수정
+@login_required
+def profile_update(request,username):
+    user = get_object_or_404(User,username=username)
+    #user.email = request.POST["email"]
+    user.contact = request.POST["contact"]
+    user.birth = request.POST["birth"]
+    user.user_age = request.POST["user_age"]
+    user.gender = request.POST["gender"]
+    user.about = request.POST["about"]
+    user.save()
+    return render(request, "profile.html", {"user_profile":user, 'username': username})
+
+
 
 
 # 계좌 내역 보여주기
@@ -117,6 +139,10 @@ def balance_test(request):
     return render(request, 'balance_test.html', {'accounts':accounts})
 
 
+
+
+
+
 # 잔액 조회
 @login_required
 def balance(request):
@@ -124,6 +150,7 @@ def balance(request):
     user = request.user
     username = str(request.user)
     balance = int(user.balance)
+    li = [1,5,8]
     success = post.filter(status = "완료") 
     success_posts = success.filter(giver = str(request.user)) or success.filter(taker = str(request.user))
     # +인 경우
@@ -140,7 +167,13 @@ def balance(request):
     elif success_posts.filter(service="받고싶어요"):
         if str(request.user) == success_posts.taker:
             balance = balance - success_posts.tok
-    return render(request, "balance.html", {'username':username, 'success_posts': success_posts, 'balance':balance})
+    return render(request, "balance.html", {'username':username, 'success_posts': success_posts, 'balance':balance, 'li':li})
+
+
+
+
+
+
 
 
 # 내가 신청한 거래 자세히보기

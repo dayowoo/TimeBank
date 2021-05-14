@@ -86,11 +86,9 @@
       
     <div class="col-lg-3">
       <div class="card mt-4">
-        {% if user.image %}
-        <img class="card-img-top img-fluid" src="{{ user.image.url }}" alt="user" style="padding: 30px;">
-        {% else %}
+        
         <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
-        {% endif %}
+        
         <div class="card-body">
           
           <h3 class="card-title">{{ user.get_username }}님 😃</h3>
@@ -117,62 +115,61 @@
           회원정보
         </div>
         <div class="card-body">
-          <h5>회원 정보<br><br></h5>
+          <h5>회원 정보 수정<br><br></h5>
           
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">사용자 ID</th>
-                <td>{{ user.username }}</td>
-              </tr>
-              <tr>
-                <th scope="row">이름</th>
-                <td>{{ user.name }}</td>
-              </tr>
-              <tr>
-                <th scope="row">이메일</th>
-                <td>{{ user.email }}</td>
-              </tr>
-              <tr>
-                <th scope="row">연락처</th>
-                <td>{{ user.contact }}</td>
-              </tr>
-              <tr>
-                <th scope="row">연령대</th>
-                <td>{{ user.user_age }}</td>
-              </tr>
-              <tr>
-                <th scope="row">사용자 ID</th>
-                <td>{{ user.username }}</td>
-              </tr>
-              <tr>
-                <th scope="row">생년월일</th>
-                <td>{{ user.birth }}</td>
-              </tr>
-              <tr>
-                <th scope="row">성별</th>
-                <td>{{ user.gender }}</td>
-              </tr>
-              <tr>
-                <th scope="row">가입일자</th>
-                <td>{{ user.registered_dtn }}</td>
-              </tr>
-              <tr>
-                <th scope="row">소개</th>
-                <td>{{ user.about }}</td>
-              </tr>
-            </tbody>
-          </table>
-          <hr>
-          <a href="{% url 'profile_update_page' user.username %}" class="btn btn-success">수정</a>
-        
-        </div>
+          <form action="{% url 'profile_update' user.username %}" method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="username">사용자 ID</label>
+                <input class="form-control" type="text" placeholder="{{user.username}}" readonly>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="name">이름</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{user.name}}" placeholder="{{user.name}}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input class="form-control" type="text" placeholder="{{user.email}}" readonly>
+            </div>
+            <div class="form-group">
+              <label for="gender">성별</label>
+              <input type="text" class="form-control" id="gender" name="gender" value="{{user.gender}}"placeholder="{{user.gender}}">
+              <!--
+              <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="gender" value="woman" checked>
+                    <label class="form-check-label" for="gender">
+                    여성
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gender" id="gender" value="man">
+                    <label class="form-check-label" for="gender">
+                    남성
+                    </label>
+                </div>-->
+            </div>
+            <div class="form-group">
+                <label for="birth">생년월일</label>
+                <input type="text" class="form-control" id="birth" name="birth" value="{{user.birth}}" placeholder="{{user.birth}}">
+              </div>
+              <div class="form-group">
+                <label for="user_age">연령대</label>
+                <input type="text" class="form-control" id="user_age" name="user_age" value="{{user.user_age}}" placeholder="{{user.user_age}}">
+              </div>
+            <div class="form-group">
+              <label for="contact">연락처</label>
+              <input type="text" class="form-control" id="contact" name="contact" value="{{user.contact}}" placeholder="{{user.contact}}">
+            </div>
+            
+            <div class="form-group">
+                <label for="about">소개</label>
+                <input type="text" class="form-control" id="about" style="height:100px;" name="about" value="{{user.about}}" placeholder="{{user.about}}">
+              <br><br></div>
+            <button type="submit" class="btn btn-success">수정 완료</button>
+          </form>
       </div>
       <!-- /.card -->
 

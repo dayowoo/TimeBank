@@ -46,7 +46,8 @@ def create(request):
         post.end_time = request.POST['end_time']
         post.service = request.POST['service']
         post.location = request.POST['location']
-        post.main_work = request.POST['main_work']
+        post.mainwork = request.POST['mainwork']
+        post.subwork = request.POST['subwork']
         post.content = request.POST['content']
         post.author = request.user
         post.tok = request.POST['tok']

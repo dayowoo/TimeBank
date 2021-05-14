@@ -34,7 +34,7 @@ class User(AbstractUser):
     username = models.CharField(max_length=64, verbose_name='사용자ID', unique=True)
     email = models.EmailField(max_length=128, verbose_name='E-mail')
     name = models.CharField(max_length=64, verbose_name='이름')
-    password = models.CharField(max_length=64, verbose_name='비밀번호')
+    password = models.CharField(max_length=100, verbose_name='비밀번호')
     contact = models.CharField(max_length=150, verbose_name='연락처')
     birth = models.CharField(max_length=150, verbose_name='생년월일')
     user_age = models.CharField(max_length=50, verbose_name='연령대')
@@ -43,6 +43,7 @@ class User(AbstractUser):
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)
+    about = models.TextField(verbose_name="소개말", blank=True)
     # apply_posts = models.ManyToManyField("Post", related_name='apply_users', verbose_name='신청글')
     object = CustomUserManager()
 
@@ -61,8 +62,8 @@ class User(AbstractUser):
 class Account(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name='등록시간')
     post = models.ForeignKey(Post, related_name='Transfer', null=True, on_delete=models.CASCADE)
-    giver = models.CharField(max_length=50, null=True, verbose_name="주는사람")
-    taker = models.CharField(max_length=50, null=True, verbose_name="받는사람")
+    giver = models.ForeignKey(User, related_name="giver", on_delete=models.CASCADE, verbose_name="주는사람")
+    taker = models.ForeignKey(User, related_name="taker", on_delete=models.CASCADE, verbose_name="받는사람")
     giver_balance = models.IntegerField(default=0, verbose_name='주는사람 계좌')
     taker_balance = models.IntegerField(default=0, verbose_name='받는사람 계좌')
     user = models.ForeignKey(User, on_delete=models.CASCADE)

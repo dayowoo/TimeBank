@@ -86,10 +86,16 @@
       
     <div class="col-lg-3">
       <div class="card mt-4">
+        {% if user.image %}
+        <img class="card-img-top img-fluid" src="{{ user.image.url }}" alt="user" style="padding: 30px;">
+        {% else %}
         <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
+        {% endif %}
         <div class="card-body">
+          
           <h3 class="card-title">{{ user.get_username }}님 😃</h3>
-          <h4>{{ user.name }}</h4>
+          <h4>{{ user.name }}</h4><br>
+          <h6>{{ user.email }}</h6>
           <p class="card-text"></p>
           <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
           4.0 stars
@@ -97,7 +103,7 @@
       </div>
       <p><br><br></p>
       <div class="list-group">
-        <a href="{% url 'profile' user.username  %}" class="list-group-item active">프로필</a>
+        <a href="{% url 'profile' user.username %}" class="list-group-item active">프로필</a>
         <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
         <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
       </div>
@@ -188,7 +194,7 @@
                     <td>{{ register_post.id }}</td>
                     <td>{{ register_post.applicants }}</td>
                     <td>{{ my_post.tok }}</td>
-                    <td>{{ my_post.created_at }}</td>
+                    <td>{{ my_post.date }}</td>
                     <td>{{ my_post.content }}</td>
                     <td>{{ my_post.content }}</td>
                 </tr>

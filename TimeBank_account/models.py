@@ -29,7 +29,8 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-# 사용자 정보
+
+# 사용자 모델
 class User(AbstractUser):
     username = models.CharField(max_length=64, verbose_name='사용자ID', unique=True)
     email = models.EmailField(max_length=128, verbose_name='E-mail')
@@ -47,6 +48,8 @@ class User(AbstractUser):
     # apply_posts = models.ManyToManyField("Post", related_name='apply_users', verbose_name='신청글')
     object = CustomUserManager()
 
+    #account = 
+
     # USERNAME_FIELD = 'username'
     # REQUIRED_FIELDS = ['email']
 
@@ -58,6 +61,41 @@ class User(AbstractUser):
         db_table = 'TimeBank_user'
 
 
+
+# 계좌 모델
+class Account(models.Model):
+    account_no = models.CharField(max_length=20, blank=False, verbose_name='계좌번호')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    balance = models.IntegerField(default=0, verbose_name='잔액')
+
+
+    '''
+    def update(self):
+        
+        # balance 
+        balance = self.user.balance
+
+        if self.user == self.giver:
+            balance = balance + self.post.tok    
+        elif self.user == self.taker:
+            balance = balance - self.post.tok
+
+        self.user.balance = balance
+
+        # etc
+        self.post = 
+        self.created_at = 
+        self.giver = 
+        self.taker = 
+        self.save()
+    '''
+        
+    
+
+
+
+
+'''
 # 계좌정보
 class Account(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, verbose_name='등록시간')
@@ -77,3 +115,4 @@ class Account(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+'''

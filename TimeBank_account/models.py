@@ -64,10 +64,15 @@ class User(AbstractUser):
 
 # 계좌 모델
 class Account(models.Model):
-    account_no = models.CharField(max_length=20, blank=False, verbose_name='계좌번호')
+    account_no = models.CharField(max_length=20, verbose_name='계좌번호')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     balance = models.IntegerField(default=0, verbose_name='잔액')
 
+    @classmethod
+    def create(cls, user):
+        account = cls(user=user)
+        account.account_no = str(user) + '-' + user.birth
+        return account
 
     '''
     def update(self):

@@ -114,6 +114,34 @@
 
       <div class="card card-outline-secondary my-4">
         <div class="card-header">
+          시간계좌 생성
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">시간계좌 생성</h5>
+          <p class="card-text"><div style="color: deeppink;">거래 시작 전, 시간계좌를 먼저 생성해주세요.</div>
+          하단의 버튼을 누르면 고유 번호가 자동으로 생성됩니다.</p>
+          <!-- 계좌 있음 -->
+          {% if account_no %}
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="{{ account_no }}" aria-label="Recipient's username" aria-describedby="basic-addon2" readonly>
+          </div>
+          <!-- 계좌번호 생성 X -->
+          {% else %}
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="계좌번호" aria-label="Recipient's username" aria-describedby="basic-addon2" readonly>
+            <div class="input-group-append">
+              <form action="{% url 'create_account_no' %}" method="post">
+                {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">계좌생성</button>
+              </form>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div><br>
+
+      <div class="card card-outline-secondary my-4">
+        <div class="card-header">
           시간계좌
         </div>
         <div class="card-body">

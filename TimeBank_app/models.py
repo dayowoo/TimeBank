@@ -53,7 +53,7 @@ class Post(models.Model):
     applicants = models.CharField(max_length=140, verbose_name='신청자', null=True)
     giver = models.CharField(max_length=140, verbose_name='주는사람', null=True)
     taker = models.CharField(max_length=140, verbose_name='받는사람', null=True)
-    account = models.ForeignKey('TimeBank_account.Account', related_name='Post', on_delete=models.CASCADE)
+    account = models.ForeignKey('TimeBank_account.Account', related_name='Post', null=True, on_delete=models.CASCADE)
     account_no_to = models.CharField(max_length=20, verbose_name='받는사람 계좌번호')
     account_no_from = models.CharField(max_length=20, verbose_name='주는사람 계좌번호')
     # apply_users = models.ManyToManyField(User, related_name='apply_posts', verbose_name='신청자')

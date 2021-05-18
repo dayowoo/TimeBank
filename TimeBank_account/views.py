@@ -97,6 +97,14 @@ def profile_update(request,username):
 
 
 
+# 계좌번호 생성하기
+def create_account_no(request):
+    account = Account.create(request.user)
+    account.save()
+    account_no = account.account_no
+    return render(request, "balance.html", {"account_no":account_no})
+
+
 
 # 계좌 내역 보여주기
 def account_history(request):
@@ -115,7 +123,7 @@ def balance(request):
     user = request.user
     balance = int(user.balance)
 
-    post = Post.objects.all()
+    post = post.account.objects.all()
     success = post.filter(status = "완료")
     # 완료, giver or taker
     success_posts = success.filter(giver = str(request.user))
@@ -123,6 +131,11 @@ def balance(request):
     plus_toks = 0
     minus_toks = 0
     
+    post.giver.account.update()
+    post.taker.account.update()
+
+
+
     # +인 경우
     if str(request.user) == str(success_posts.giver):
         plus_toks = int(success_posts.tok)
@@ -247,4 +260,8 @@ def stop(request, post_id):
     post.status = "중단"
     post.save()
     return redirect('/account/account')
+
+
+
+
 

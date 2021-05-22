@@ -68,12 +68,12 @@ def progress(request, post_id):
     post.status = "진행"
     post.applicants = str(request.user)
     if post.service == "주고 싶어요":
-        post.giver = str(post.author)
-        post.taker = str(request.user)
+        post.giver = post.author
+        post.taker = request.user
     else:
-        post.giver = str(request.user)
-        post.taker = str(post.author)
-    post.save()
+        post.giver = request.user
+        post.taker =post.author
+    post.save() 
     return redirect('post_list')
 
 

@@ -121,12 +121,7 @@
           <p class="card-text"><div style="color: deeppink;">거래 시작 전, 시간계좌를 먼저 생성해주세요.</div>
           하단의 버튼을 누르면 고유 번호가 자동으로 생성됩니다.</p>
           <!-- 계좌 있음 -->
-          {% if account_no %}
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="{{ account_no }}" aria-label="Recipient's username" aria-describedby="basic-addon2" readonly>
-          </div>
-          <!-- 계좌번호 생성 X -->
-          {% else %}
+          {% if account.account_no is None %}
           <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="계좌번호" aria-label="Recipient's username" aria-describedby="basic-addon2" readonly>
             <div class="input-group-append">
@@ -135,6 +130,11 @@
                     <button type="submit" class="btn btn-outline-primary">계좌생성</button>
               </form>
             </div>
+          </div>
+          <!-- 계좌번호 생성 X -->
+          {% else %}
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="{{ account_no }}" aria-label="Recipient's username" aria-describedby="basic-addon2" readonly>
           </div>
           {% endif %}
         </div>
@@ -173,16 +173,11 @@
                     {% if username == success_post.giver %}
                     <td style="color: blue;">+{{ success_post.tok }}</td>
                     <td style="color: red;">0</td>
+                    <td>{{balance_list}}</td>
                     {% elif username == success_post.taker %}
                     <td style="color: blue;">0</td>
                     <td style="color: red;">-{{success_post.tok}}</td>
-                    {% endif %}
-                    {% if success_post.id == 4 %}
-                    <td>1</td>
-                    {% elif success_post.id == 6 %}
-                    <td>5</td>
-                    {% elif success_post.id == 10 %}
-                    <td>8</td>
+                    <td>{{balance_list}}</td>
                     {% endif %}
                 </tr>
                 {% endfor %}

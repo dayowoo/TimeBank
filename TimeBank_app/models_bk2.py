@@ -51,8 +51,11 @@ class Post(models.Model):
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
     applicants = models.CharField(max_length=140, verbose_name='신청자', null=True)
-    giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
-    taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)
+    giver = models.CharField(max_length=140, verbose_name='주는사람', null=True)
+    taker = models.CharField(max_length=140, verbose_name='받는사람', null=True)
+    account = models.ForeignKey('TimeBank_account.Account', related_name='Post', null=True, on_delete=models.CASCADE, verbose_name='계좌')
+    account_no_to = models.CharField(max_length=20, verbose_name='받는사람 계좌번호')
+    account_no_from = models.CharField(max_length=20, verbose_name='주는사람 계좌번호')
     # apply_users = models.ManyToManyField(User, related_name='apply_posts', verbose_name='신청자')
 
     # 객체 목록 가져오기 (작성 순서대로)
@@ -65,8 +68,6 @@ class Post(models.Model):
 
     def __str__(self):
         return self.content
-
-
 
 
 

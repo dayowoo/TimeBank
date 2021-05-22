@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
 from django.contrib.auth.base_user import BaseUserManager
-from TimeBank_app.models import Post
-
+from TimeBank_app.models import Post 
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
 
@@ -48,8 +48,6 @@ class User(AbstractUser):
     # apply_posts = models.ManyToManyField("Post", related_name='apply_users', verbose_name='신청글')
     object = CustomUserManager()
 
-    #account = 
-
     # USERNAME_FIELD = 'username'
     # REQUIRED_FIELDS = ['email']
 
@@ -62,10 +60,24 @@ class User(AbstractUser):
 
 
 
+class Account(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name='거래일자')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='사용자')
+    giver = models.CharField(max_length=100, default='', verbose_name='주는사람')
+    taker = models.CharField(max_length=100, default='', verbose_name='받는사람')
+    mainwork = models.CharField(max_length=100, default='', null=False)
+    subwork = models.CharField(max_length=100, default='', null=False)
+    plus_tok = models.IntegerField(default=0, verbose_name='입금')
+    minus_tok = models.IntegerField(default=0, verbose_name='출금')
+    balance = models.IntegerField(default=0, verbose_name='잔액')
+
+
+
+'''
 # 계좌 모델
 class Account(models.Model):
     account_no = models.CharField(max_length=20, verbose_name='계좌번호')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, unique=True, on_delete=models.CASCADE)
     balance = models.IntegerField(default=0, verbose_name='잔액')
 
     @classmethod
@@ -74,7 +86,9 @@ class Account(models.Model):
         account.account_no = str(user) + '-' + user.birth
         return account
 
-    '''
+
+
+    
     def update(self):
         
         # balance 

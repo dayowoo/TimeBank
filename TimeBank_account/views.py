@@ -146,38 +146,33 @@ def balance(request):
         minus_toks = int(success_posts.tok)
         balance = balance - minus_toks
     return render(request, "balance.html", {'success_posts': success_posts, 'balance':balance, 'plus_toks':plus_toks, 'minus_toks':minus_toks})
+
+
+
+# 거래글 목록
+def post_list(request):
+    # order_by : 순서정렬 / 최신순
+    posts = Post.objects.all().order_by('-id')
+    return render(request, 'post_list.html', {'posts': posts})
 '''
 
-
-def balance_test(request):
-    post = Post.objects.all()
-    user = request.user
-    username = str(request.user)
-    balance = int(user.balance)
-    success = post.filter(status = "완료") 
-    success_posts = success.filter(giver = str(request.user)) or success.filter(taker = str(request.user))
-    # +인 경우
-    if success_posts.filter(service = "주고싶어요"):
-        if str(request.user) == success_posts.giver:
-            balance = balance + success_posts.tok
-    elif success_posts.filter(service="받고싶어요"):
-        if str(request.user) == success_posts.giver:
-            balance = balance + success_posts.tok
-    # -인 경우        
-    if success_posts.filter(service = "주고싶어요"):
-        if str(request.user) == success_posts.taker:
-            balance = balance - success_posts.tok
-    elif success_posts.filter(service="받고싶어요"):
-        if str(request.user) == success_posts.taker:
-            balance = balance - success_posts.tok
-
-    return render(request, 'balance_test.html', {'accounts':accounts})
+# 계좌내역 Account 모델 사용
+@login_required
+def balance(request):
+    accounts = Account.objects.all()
+    '''
+    if accounts.user == accounts.giver:
+        plus_tok = accounts.tok
+    elif accounts.user == accounts.taker:
+        minus_tok = accounts.tok
+    '''
+    return render(request, 'balance.html', {'accounts':accounts})
 
 
 
 
 
-
+'''
 # 잔액 조회
 @login_required
 def balance(request):
@@ -186,23 +181,22 @@ def balance(request):
     username = str(request.user)
     balance = int(user.balance)
     success = post.filter(status = "완료") 
-    success_posts = success.filter(giver = str(request.user)) or success.filter(taker = str(request.user))
-    # +인 경우
+    success_posts = success.filter(giver = request.user) or success.filter(taker = request.user)
     if success_posts.filter(service = "주고싶어요"):
-        if str(request.user) == success_posts.giver:
+        if request.user == success_posts.giver:
             balance = balance + success_posts.tok
     elif success_posts.filter(service="받고싶어요"):
-        if str(request.user) == success_posts.giver:
+        if request.user == success_posts.giver:
             balance = balance + success_posts.tok
     # -인 경우        
     if success_posts.filter(service = "주고싶어요"):
-        if str(request.user) == success_posts.taker:
+        if request.user == success_posts.taker:
             balance = balance - success_posts.tok
     elif success_posts.filter(service="받고싶어요"):
-        if str(request.user) == success_posts.taker:
+        if request.user == success_posts.taker:
             balance = balance - success_posts.tok
     return render(request, "balance.html", {'username':username, 'success_posts': success_posts, 'balance':balance})
-
+'''
 
 
 
@@ -224,25 +218,58 @@ def my_register_detail(request, post_id):
 
 
 
-
+'''
 # 내가 신청한 글 완료하기
 def reg_success(request, post_id):
     post = Post.objects.get(pk=post_id)
-    user = request.user
     post.status = "완료"
+    account = Account()
+    user = request.user
     if post.giver == request.user:
         user.balance += post.tok
-        post.giver.balance -= post.tok
+        account.balance = user.balance
+        post.taker.balance -= post.tok
     elif post.taker == request.user:
         user.balance -= post.tok
+        account.balance = user.balance
         post.giver.balance += post.tok
+    account.giver = post.giver
+    account.taker = post.taker
+    account.tok = post.tok
+    account.mainwork = post.mainwork
+    account.subwork = post.subwork
     post.save()
-    post.giver.save()
     post.taker.save()
+    post.giver.save()
     user.save()
+    account.save()
     return redirect('/account/account')
+'''
 
 
+
+
+def reg_success(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    account = Account()
+    user = request.user
+    post.status = "완료"
+    post.giver.balance += post.tok
+    post.taker.balance -= post.tok
+    post.save()
+    post.taker.save()
+    post.giver.save()
+
+    account.giver_balance = post.giver.balance
+    account.taker_balance = post.taker.balance
+    account.giver = post.giver
+    account.taker = post.taker
+    account.tok = post.tok
+    account.mainwork = post.mainwork
+    account.subwork = post.subwork
+    user.save()
+    account.save()
+    return redirect('/account/account')
 
 # 내가 신청한 글 중단하기
 def reg_stop(request, post_id):
@@ -269,6 +296,34 @@ def my_post_detail(request, post_id):
 # 내가 쓴 글 완료하기
 def success(request, post_id):
     post = Post.objects.get(pk=post_id)
+    # account 계좌 생성
+    account = Account()
+    user = request.user
+    post.status = "완료"
+    post.giver.balance += post.tok
+    post.taker.balance -= post.tok
+    post.save()
+    post.taker.save()
+    post.giver.save()
+
+    account.giver_balance = post.giver.balance
+    account.taker_balance = post.taker.balance
+    account.giver = post.giver
+    account.taker = post.taker
+    account.tok = post.tok
+    account.mainwork = post.mainwork
+    account.subwork = post.subwork
+    user.save()
+    account.save()
+    return redirect('/account/account')
+
+
+
+
+'''
+# 내가 쓴 글 완료하기
+def success(request, post_id):
+    post = Post.objects.get(pk=post_id)
     user = request.user
     post.status = "완료"
     if post.giver == request.user:
@@ -282,7 +337,7 @@ def success(request, post_id):
     post.giver.save()
     user.save()
     return redirect('/account/account')
-
+'''
 
 
 # 내가 쓴 글 중단하기

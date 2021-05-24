@@ -163,21 +163,21 @@
             </thead>
             <tbody>
                 <tr>
-                  {% for success_post in success_posts %}
-                    <td>{{ success_post.id }}</td>
-                    <td>{{ success_post.created_at }}</td>
-                    <td>{{ success_post.giver }}</td>
-                    <td>{{ success_post.taker }}</td>
-                    <td>{{ success_post.mainwork }}</td>
-                    <td>{{ success_post.subwork }}</td>
-                    {% if username == success_post.giver %}
-                    <td style="color: blue;">+{{ success_post.tok }}</td>
+                  {% for account in accounts %}
+                    <td>{{ account.id }}</td>
+                    <td>{{ account.timestamp }}</td>
+                    <td>{{ account.giver }}</td>
+                    <td>{{ account.taker }}</td>
+                    <td>{{ account.mainwork }}</td>
+                    <td>{{ account.subwork }}</td>
+                    {% if account.giver == request.user %}
+                    <td style="color: blue;">+{{ account.tok }}</td>
                     <td style="color: red;">0</td>
-                    <td>{{balance_list}}</td>
-                    {% elif username == success_post.taker %}
+                    <td>{{ account.giver_balance }}</td>
+                    {% elif account.taker == request.user %}
                     <td style="color: blue;">0</td>
-                    <td style="color: red;">-{{success_post.tok}}</td>
-                    <td>{{balance_list}}</td>
+                    <td style="color: red;">-{{account.tok}}</td>
+                    <td>{{ account.taker_balance }}</td>
                     {% endif %}
                 </tr>
                 {% endfor %}

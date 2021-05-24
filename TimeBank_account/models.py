@@ -62,14 +62,13 @@ class User(AbstractUser):
 
 class Account(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='거래일자')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='사용자')
-    giver = models.CharField(max_length=100, default='', verbose_name='주는사람')
-    taker = models.CharField(max_length=100, default='', verbose_name='받는사람')
+    giver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='giver', verbose_name='주는사람', null=True)
+    taker = models.ForeignKey('User', on_delete=models.CASCADE, related_name='taker', verbose_name='받는사람', null=True)
     mainwork = models.CharField(max_length=100, default='', null=False)
     subwork = models.CharField(max_length=100, default='', null=False)
-    plus_tok = models.IntegerField(default=0, verbose_name='입금')
-    minus_tok = models.IntegerField(default=0, verbose_name='출금')
-    balance = models.IntegerField(default=0, verbose_name='잔액')
+    tok = models.IntegerField(default=0, verbose_name='거래금액')
+    giver_balance = models.IntegerField(default=0, verbose_name='주는사람 잔액')
+    taker_balance = models.IntegerField(default=0, verbose_name='받는사람 잔액')
 
 
 

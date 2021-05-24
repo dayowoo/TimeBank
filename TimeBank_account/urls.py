@@ -19,5 +19,4 @@ urlpatterns = [
     path('my_register_detail/<int:post_id>', views.my_register_detail, name="my_register_detail"),
     path('my_register_detail/<int:post_id>/reg_success', views.reg_success, name="reg_success"),
     path('my_register_detail/<int:post_id>/reg_stop', views.reg_stop, name="reg_stop"),
-    path('balance_test', views.balance_test, name="balance_test"),
 ]

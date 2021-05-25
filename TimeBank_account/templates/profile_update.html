@@ -86,9 +86,11 @@
       
     <div class="col-lg-3">
       <div class="card mt-4">
-        
+        {% if user.image %}
+        <img class="card-img-top img-fluid" src="{{ user.image.url }}" alt="user" style="padding: 30px;">
+        {% else %}
         <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
-        
+        {% endif %}
         <div class="card-body">
           
           <h3 class="card-title">{{ user.get_username }}님 😃</h3>

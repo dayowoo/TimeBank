@@ -159,13 +159,7 @@ def post_list(request):
 # 계좌내역 Account 모델 사용
 @login_required
 def balance(request):
-    accounts = Account.objects.all()
-    '''
-    if accounts.user == accounts.giver:
-        plus_tok = accounts.tok
-    elif accounts.user == accounts.taker:
-        minus_tok = accounts.tok
-    '''
+    accounts = Account.objects.filter(giver=request.user) | Account.objects.filter(taker=request.user)
     return render(request, 'balance.html', {'accounts':accounts})
 
 

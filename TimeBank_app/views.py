@@ -31,6 +31,15 @@ def post_list(request):
 
 
 
+# 자세히 보기
+def post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    return render(request, 'post_detail.html')
+
+
+
+
+
 # 새 글 작성 페이지
 def new_post(request):
     return render(request, 'new_post.html')

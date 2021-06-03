@@ -44,7 +44,7 @@ class Post(models.Model):
     subwork = models.CharField(max_length=200, verbose_name='세부 목록', default='')
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
-    tok = models.IntegerField(default=1, verbose_name='거래톡')
+    tok = models.FloatField(default=1, verbose_name='거래시간')
     author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='작성자')
     status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
     status = models.CharField(max_length=50, choices=status_list, default='대기')

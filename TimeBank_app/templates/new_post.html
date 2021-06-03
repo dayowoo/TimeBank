@@ -115,17 +115,16 @@
               {% csrf_token %}
               <div class="form-group">
                 <label for="date">연-월-일</label>
-                <input type="text" class="form-control" name="date" id="date" placeholder="YYYY-MM-DD 형식으로 적어주세요.">
+                <input type="date" class="form-control" name="date" id="date">
               </div>
-
-              <div class="form-group">
+             <div class="form-group">
                 <label for="start_time">가능 시작 시간</label>
-                <input type="text" class="form-control" name="start_time" id="start_time" placeholder="예) 오후 6시 15분 - 18:15">
+                <input type="time" class="form-control" name="start_time" id="start_time">
               </div>
 
               <div class="form-group">
                 <label for="end_time">가능 끝 시간</label>
-                <input type="text" class="form-control" name="end_time" id="end_time" placeholder="예) 오후 6시 15분 - 18:15">
+                <input type="time" class="form-control" name="end_time" id="end_time">
               </div>
 
               <div class="form-group">
@@ -138,8 +137,6 @@
 
               <div class="form-group">
                 <label for="location">장소</label><br>
-                <img src="/static/img/map.jpg" class="img-fluid" alt="Responsive image">
-                <br><br>
                 <input type="text" class="form-control" name="location" id="location" placeholder="">
               </div>
 
@@ -176,7 +173,7 @@
 
               <div class="form-group">
                 <label for="content">요청 설명</label>
-                <input type="text" class="form-control" name="content" id="content" style="height:100px;">
+                <input type="text" class="form-control" name="content" id="content" style="height:200px;">
               </div>
 
               <button type="submit" class="btn btn-success">거래 등록</button>

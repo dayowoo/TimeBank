@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>TimeBank</title>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+
+    <body>
+        <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+          </li>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
+        </li>
+          <!--로그인 상태-->
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
+          </li>
+          <li class="nav-item">
+            <form action="{% url 'logout' %}" method="POST">
+              {% csrf_token %} 
+              <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
+            </form>
+          </li>
+          
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+        <!-- Page content-->
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Post content-->
+                    <article>
+                        <!-- Post header-->
+                        <header class="mb-4">
+                            <!-- Post title-->
+                            <h1 class="fw-bolder mb-1">[ {{post.mainwork}} ]  {{post.subwork}}</h1>
+                            <!-- Post meta content-->
+                            <div class="text-muted fst-italic mb-2">Posted on {{post.created_at}}</div>
+                            <div class="mb-2" style="color: blue;">작성자 {{post.author}}</div>
+                            <!-- Post categories-->
+                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.service}}</a>
+                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.mainwork }}</a>
+                        </header>
+                        <hr><br>
+                        <!-- Preview image figure
+                        <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure> -->
+                        <!-- Post content-->
+                        <section class="mb-5">
+                            
+                            <table id="example" class="table table-striped table-bordered" style="width:100%; text-align: center;">
+                                <thead>
+                                  <tr>
+                                    <th style="font-size: 13px;">거래ID</th>
+                                    <th style="font-size: 13px;">요청상태</th>
+                                    <th style="font-size: 13px;">요청 분류</th>
+                                    <th style="font-size: 13px;">작성자</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <td>{{post.id}}</td>
+                                    <td>
+                                   <!-- 글쓴이 = 로그인유저 -->
+                                        {% if request.user == post.author %}
+                                        <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">{{post.status}}</a>
+                                        {% elif request.user != post.author %}
+                                            {% if post.status == "대기" %}
+                                                <form action="{% url 'progress' post.id %}" method="post">
+                                                {% csrf_token %}
+                                                    <button name="progress" class="btn btn-primary">신청</button>
+                                                </form>    
+                                            {% elif post.status == "진행" %}
+                                                <button class="btn btn-success">{{ post.status }}</button>
+                                            {% elif post.status == "완료" %}
+                                                <button class="btn btn-warning">{{ post.status }}</button>
+                                            {% elif post.status == "중단" %}
+                                                <button class="btn btn-secondary">{{ post.status }}</button>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                        <td>{{ post.service }}</td>
+                                        <td>{{ post.author }}</td>
+                                  </tr>            
+                              </tbody>
+                              <thead>
+                                <tr>
+                                  <th style="font-size: 13px;">요청시간</th>
+                                  <th style="font-size: 13px;">거래날짜</th>
+                                  <th style="font-size: 13px;">가능 시작 시간</th>
+                                  <th style="font-size: 13px;">가능 종료 시간</th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                                  <!-- 진행상태 보여주기 -->
+                                  <tr>
+                                    <td>{{ post.tok }}</td>
+                                    <td>{{ post.date }}</td>
+                                    <td>{{ post.start_time }}</td>
+                                    <td>{{ post.end_time }}</td>
+                                </tr>            
+                            </tbody>
+                            </table>
+                            <h4 class="fw-bolder mb-4 mt-5">장소</h4>
+                            <div class="card">
+                                <div class="card-body">
+                                  {{post.location}}
+                                </div>
+                              </div>
+                              <h4 class="fw-bolder mb-4 mt-5">내용</h4>
+                              <div class="card">
+                                <div class="card-body">
+                                  {{post.content}}
+                                </div>
+                              </div>
+
+                            <h2 class="fw-bolder mb-4 mt-5">신청내역</h2>
+                            <table id="example" class="table table-striped table-bordered" style="width:100%; text-align: center;">
+                                <thead>
+                                  <tr>
+                                    {% if request.user == post.taker %}
+                                      <th style="font-size: 13px;">승인상태</th>
+                                    {% else %}
+                                    {% endif %}
+                                    <th style="font-size: 13px;">신청자</th>
+                                    <th style="font-size: 13px;">이름</th>
+                                    <th style="font-size: 13px;">나이</th>
+                                    <th style="font-size: 13px;">성별</th>
+                                    <th style="font-size: 13px;">전화</th>
+                                    <th style="font-size: 13px;">이메일</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 진행상태 보여주기 -->
+                                    <tr>
+                                      {% if request.user == post.taker %}
+                                        {% if post.status == "대기" %}
+                                          <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
+                                        {% elif post.status == "진행" %}
+                                          <td><button type="button" class="btn btn-success">{{ post.status }}</button></td>
+                                        {% elif post.status == "완료" %}
+                                          <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
+                                        {% elif post.status == "중단" %}
+                                          <td><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
+                                        {% endif %}
+                                      {% endif %}
+                                        <td>{{post.applicants}}</td>
+                                        <td>{{post.applicants.name}}</td>
+                                        <td>{{post.applicants.user_age}}</td>
+                                        <td>{{post.applicants.gender}}</td>
+                                        <td>{{post.applicants.contact}}</td>
+                                        <td>{{post.applicants.email}}</td>
+                                  </tr>            
+                                </tbody>
+                            </table>
+                        </section>
+                    </article>
+                    <hr><br><br>
+                    <!-- Comments section-->
+                    <section class="mb-5">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <!-- Comment form-->
+                                <form class="mb-4"><textarea class="form-control" rows="3" placeholder="Join the discussion and leave a comment!"></textarea></form>
+                                <!-- Comment with nested comments-->
+                                <div class="d-flex mb-4">
+                                    <!-- Parent comment-->
+                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                    <div class="ms-3">
+                                        <div class="fw-bold">Commenter Name</div>
+                                        If you're going to lead a space frontier, it has to be government; it'll never be private enterprise. Because the space frontier is dangerous, and it's expensive, and it has unquantified risks.
+                                        <!-- Child comment 1-->
+                                        <div class="d-flex mt-4">
+                                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                            <div class="ms-3">
+                                                <div class="fw-bold">Commenter Name</div>
+                                                And under those conditions, you cannot establish a capital-market evaluation of that enterprise. You can't get investors.
+                                            </div>
+                                        </div>
+                                        <!-- Child comment 2-->
+                                        <div class="d-flex mt-4">
+                                            <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                            <div class="ms-3">
+                                                <div class="fw-bold">Commenter Name</div>
+                                                When you put money directly to a problem, it makes a good headline.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Single comment-->
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                    <div class="ms-3">
+                                        <div class="fw-bold">Commenter Name</div>
+                                        When I look at the universe and all the ways the universe wants to kill us, I find it hard to reconcile that with statements of beneficence.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4">
+                    <!-- Search widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Search</div>
+                        <div class="card-body">
+                            <div class="input-group">
+                                <input class="form-control" type="text" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
+                                <button class="btn btn-primary" id="button-search" type="button">Go!</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Categories widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Categories</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><a href="#!">Web Design</a></li>
+                                        <li><a href="#!">HTML</a></li>
+                                        <li><a href="#!">Freebies</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><a href="#!">JavaScript</a></li>
+                                        <li><a href="#!">CSS</a></li>
+                                        <li><a href="#!">Tutorials</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Side widget-->
+                    <div class="card mb-4">
+                        <div class="card-header">Side Widget</div>
+                        <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use, and feature the Bootstrap 5 card component!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>

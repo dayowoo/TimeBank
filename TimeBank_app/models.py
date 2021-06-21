@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-# from TimeBank_account.models import User, Account
+# from TimeBank_account.models import User
 import TimeBank_account.models
 
 class MainCategory(models.Model):
@@ -50,24 +50,41 @@ class Post(models.Model):
     status = models.CharField(max_length=50, choices=status_list, default='대기')
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
-    applicants = models.CharField(max_length=140, verbose_name='신청자', null=True)
+    applicants = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='applicants', verbose_name='지원자', null=True)
+    # applicants = models.ManyToManyField('self', blank = True, through='Relation', symmetrical=False)
     giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)
-    # apply_users = models.ManyToManyField(User, related_name='apply_posts', verbose_name='신청자')
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:
         ordering = ['-created_at']
 
+    '''
     @property
     def index(self):
         return self.work_choice[:50]
+    
+    @property
+    def get_applicant(self):
+        return [i.applicant for i in self.applicant.all()]
 
     def __str__(self):
         return self.content
 
+    def is_applicant(self, user):
+        return user in self.get_applicant
 
 
+
+
+class Relation(models.Model):
+    applicant = models.ForeignKey('TimeBank_account.User', related_name='지원자', on_delete=models.CASCADE)
+'''
+
+
+
+
+# 댓글
 
 
 '''
@@ -75,7 +92,6 @@ class Post(models.Model):
 class Post(models.Model): 
     date = models.CharField(max_length=140)
     start_time = models.CharField(max_length=140)
-    end_time = models.CharField(max_length=140)
     service_choice = (('주고싶어요','주고싶어요'), ('받고싶어요','받고싶어요'))
     service = models.CharField(max_length=50, choices=service_choice)
     location = models.CharField(max_length=140)
@@ -204,15 +220,3 @@ class DealRelation(models.Model):
     to_user = models.ForeignKey(User, related_name='지원자', on_delete=models.CASCADE)
     create_at = models.DateField(auto_now_add=True)
 '''    
-
-'''
-class Relation(models.Model):
-    from_user = models.ForeignKey(User, related_name='follow_user', on_delete=models.CASCADE)
-    to_user = models.ForeignKey(User, related_name='follower_user', on_delete=models.CASCADE)
-    create_at = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return "{} -> {}".format(self.from_user, self.to_user)
-    class Meta:
-        unique_together = (('from_user', 'to_user'))
-'''

@@ -125,33 +125,31 @@
           <table id="example" class="table table-striped table-bordered" style="width:100%">
             <thead>
               <tr>
-                <th style="font-size: 13px;">#</th>
-                <th style="font-size: 13px;">거래일자</th>
-                <th style="font-size: 13px;">주는사람</th>
-                <th style="font-size: 13px;">받는사람</th>
-                <th style="font-size: 13px;">대분류</th>
-                <th style="font-size: 13px;">소분류</th>
-                <th style="font-size: 13px;">입금</th>
-                <th style="font-size: 13px;">출금</th>
-                <th style="font-size: 13px;">잔액</th>
+                <th style="font-size: 13px; text-align: center;">거래ID</th>
+                <th style="font-size: 13px; text-align: center;">거래일자</th>
+                <th style="font-size: 13px; text-align: center;">주는사람</th>
+                <th style="font-size: 13px; text-align: center;">받는사람</th>
+                <th style="font-size: 13px; text-align: center;">대분류</th>
+                <th style="font-size: 13px; text-align: center;">입금</th>
+                <th style="font-size: 13px; text-align: center;">출금</th>
+                <th style="font-size: 13px; text-align: center;">잔액</th>
             </tr>
             </thead>
             <tbody>
                 <tr>
                   {% for account in accounts %}
-                    <td>{{ account.id }}</td>
-                    <td>{{ account.timestamp }}</td>
-                    <td>{{ account.giver }}</td>
-                    <td>{{ account.taker }}</td>
-                    <td>{{ account.mainwork }}</td>
-                    <td>{{ account.subwork }}</td>
+                    <td style="text-align: center;">{{ account.id }}</td>
+                    <td style="text-align: center;">{{ account.timestamp|date:"Y-m-d h:i A"}}</td>
+                    <td style="text-align: center;">{{ account.giver }}</td>
+                    <td style="text-align: center;">{{ account.taker }}</td>
+                    <td style="text-align: center;">{{ account.mainwork }}</td>
                     {% if account.giver == request.user %}
-                    <td style="color: blue;">+{{ account.tok }}</td>
-                    <td style="color: red;">0</td>
+                    <td style="text-align: center; color: blue;">+{{ account.tok }}</td>
+                    <td style="text-align: center; color: blue;">0</td>
                     <td>{{ account.giver_balance }}</td>
                     {% elif account.taker == request.user %}
-                    <td style="color: blue;">0</td>
-                    <td style="color: red;">-{{account.tok}}</td>
+                    <td style="text-align: center; color: blue;">0</td>
+                    <td style="text-align: center; color: blue;">-{{account.tok}}</td>
                     <td>{{ account.taker_balance }}</td>
                     {% endif %}
                 </tr>
@@ -212,5 +210,5 @@
   <script src="{% static 'js/scrolling-nav.js' %}"></script>
 
 </body>
-
+</html>
 

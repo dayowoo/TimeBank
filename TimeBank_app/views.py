@@ -16,7 +16,6 @@ from django.utils import timezone
 # from .forms import PostForm, MsgForm
 import json
 
-
 # home
 def index(request):
     return render(request, 'index.html')
@@ -34,8 +33,13 @@ def post_list(request):
 # 자세히 보기
 def post_detail(request, post_id):
     post = Post.objects.get(pk=post_id)
-    return render(request, 'post_detail.html')
-
+    btn_msg = post.status
+    if post.status == "진행":
+        if post.taker == request.user:
+            btn_msg = "완료하기"
+        else:
+            btn_msg = "승인대기"
+    return render(request, "post_detail.html", {'post':post, 'btn_msg':btn_msg})
 
 
 
@@ -65,9 +69,7 @@ def create(request):
     return redirect('post_list')
 
 
-# 자세히보기
-def my_detail(request):
-    return render(request, 'account.html')
+
 
 
 
@@ -75,7 +77,7 @@ def my_detail(request):
 def progress(request, post_id):
     post = Post.objects.get(pk = post_id)
     post.status = "진행"
-    post.applicants = str(request.user)
+    post.applicants = request.user
     if post.service == "주고 싶어요":
         post.giver = post.author
         post.taker = request.user
@@ -83,7 +85,27 @@ def progress(request, post_id):
         post.giver = request.user
         post.taker =post.author
     post.save() 
-    return redirect('post_list')
+    return redirect('post_detail', post_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 '''

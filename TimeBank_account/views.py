@@ -15,6 +15,9 @@ from django.contrib import messages
 from TimeBank_app.models import Post
 from .models import User, Account
 import json
+from datetime import datetime
+
+
 
 
 # 홈화면
@@ -70,10 +73,11 @@ def logout(request):
 
 
 # 프로필
-@login_required
 def profile(requset,username):
     user = get_object_or_404(User,username=username)
     return render(requset, "profile.html", {"user_profile":user, 'username': username})
+
+
 
 
 # 프로필 수정페이지 보기
@@ -87,10 +91,16 @@ def profile_update_page(request,username):
 @login_required
 def profile_update(request,username):
     user = get_object_or_404(User,username=username)
-    #user.email = request.POST["email"]
+    # user.username = request.POST["username"]
+    # user.email = request.POST["email"]
     user.contact = request.POST["contact"]
     user.birth = request.POST["birth"]
-    user.user_age = request.POST["user_age"]
+    # user.user_age = request.POST["user_age"]
+    # 나이 계산하기
+    birth = user.birth
+    birth = datetime.strptime(birth, '%Y-%m-%d')    # 문자열을 시간 객체로 바꾸기
+    today = datetime.now()      # 현재시간 얻기
+    user.user_age = today.year - birth.year
     user.gender = request.POST["gender"]
     user.about = request.POST["about"]
     user.save()

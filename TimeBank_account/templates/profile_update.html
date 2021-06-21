@@ -155,11 +155,11 @@
             </div>
             <div class="form-group">
                 <label for="birth">생년월일</label>
-                <input type="text" class="form-control" id="birth" name="birth" value="{{user.birth}}" placeholder="{{user.birth}}">
+                <input type="date" class="form-control" id="birth" name="birth" value="{{user.birth}}" placeholder="{{user.birth}}">
               </div>
               <div class="form-group">
-                <label for="user_age">연령대</label>
-                <input type="text" class="form-control" id="user_age" name="user_age" value="{{user.user_age}}" placeholder="{{user.user_age}}">
+                <label for="user_age">나이</label><p style="color: blue;">생년월일을 입력하면 자동으로 계산됩니다.</p>
+                <input type="text" class="form-control" id="user_age" name="user_age" value="{{user.user_age}}" placeholder="자동으로 계산됩니다" readonly>
               </div>
             <div class="form-group">
               <label for="contact">연락처</label>

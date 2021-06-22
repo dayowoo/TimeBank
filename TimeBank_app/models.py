@@ -84,7 +84,12 @@ class Relation(models.Model):
 
 
 
-# 댓글
+# 댓글 기능
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='글', null=True)
+    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='작성자')
+    content = models.TextField()
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name='댓글등록시간')
 
 
 '''

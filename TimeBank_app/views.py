@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from TimeBank_app.models import Post, MainCategory, SubCategory
+from TimeBank_app.models import Comment, Post, MainCategory, SubCategory
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -33,13 +33,14 @@ def post_list(request):
 # 자세히 보기
 def post_detail(request, post_id):
     post = Post.objects.get(pk=post_id)
+    comments = Comment.objects.filter(post=post.id)
     btn_msg = post.status
     if post.status == "진행":
         if post.taker == request.user:
             btn_msg = "완료하기"
         else:
             btn_msg = "승인대기"
-    return render(request, "post_detail.html", {'post':post, 'btn_msg':btn_msg})
+    return render(request, "post_detail.html", {'post':post, 'btn_msg':btn_msg, 'comments':comments})
 
 
 
@@ -91,14 +92,15 @@ def progress(request, post_id):
 
 
 
-
-
-
-
-
-
-
-
+# 댓글 등록하기
+@login_required
+def create_comment(request, post_id):
+    comment = Comment()
+    comment.content = request.POST['content']
+    comment.post = get_object_or_404(Post, pk=post_id)
+    comment.author = request.user
+    comment.save()
+    return redirect('post_detail', post_id)
 
 
 

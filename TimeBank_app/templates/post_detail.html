@@ -206,18 +206,31 @@
                                 <!-- Comment with nested comments-->
                                 <br>
                                 {% for comment in comments %}
-
                                 <!-- Single comment-->
-                                <div class="d-flex">
-                                    <div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." /></div>
+                                <div class="d-flex" style="padding: 15px;">
+                                    <div class="flex-shrink-0" style="width:50px; height:50px;">
+                                      {% if comment.author.image %}
+                                      <img class="rounded-circle" src="{{ comment.author.image.url }}" alt="..." style="width:100%; height:100px; object-fit: cover;"/>
+                                      {% else %}
+                                      <img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." />
+                                      {% endif %}
+                                    </div>
                                     <div class="ms-3">
                                         <div class="fw-bold">{{ comment.author }}</div>
+                                        <div style="font-size: 14px; color: dimgray;">{{ comment.create_date }}</div>
                                         {{ comment.content}}
                                     </div>
+                                      
                                 </div>
+                                <!-- <div>
+                                  <a href="#" style="float:right; padding: 5px;">삭제</a>
+                                  <a href="#" style="float:right; padding: 5px;">수정</a>
+                                </div> -->
+                                {% endfor %}
                             </div>
+                            
                         </div>
-                        {% endfor %}
+                        
                     </section>
                     
                 </div>

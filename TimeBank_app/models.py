@@ -51,13 +51,25 @@ class Post(models.Model):
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
     applicants = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='applicants', verbose_name='지원자', null=True)
-    # applicants = models.ManyToManyField('self', blank = True, through='Relation', symmetrical=False)
+    # apply_user = models.ManyToManyField('TimeBank_account.User', blank = True, related_name='apply_user', through='Apply')
     giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:
         ordering = ['-created_at']
+
+
+    # 지원자 수 카운트
+    # @property
+    # def apply_count(self):
+    #     return self.apply_user.count()
+
+
+    # class Apply(models.Model):
+    #     username = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE)
+
+    
 
     '''
     @property

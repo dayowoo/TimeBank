@@ -39,8 +39,9 @@ class User(AbstractUser):
     contact = models.CharField(max_length=150, verbose_name='연락처')
     birth = models.CharField(max_length=150, verbose_name='생년월일')
     user_age = models.CharField(max_length=50, verbose_name='연령대')
-    gender = models.CharField(max_length=10, verbose_name='성별')
-    balance = models.FloatField(verbose_name='잔액', default=0)
+    gender_choice = [('여성','여성'),('남성','남성'),('기타','기타')]
+    gender = models.CharField(max_length=2, choices=gender_choice, verbose_name='성별')
+    balance = models.FloatField(verbose_name='잔액', default=10)
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)
@@ -60,15 +61,23 @@ class User(AbstractUser):
 
 
 
+
+
+# 계좌 
 class Account(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='거래일자')
     giver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='giver', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('User', on_delete=models.CASCADE, related_name='taker', verbose_name='받는사람', null=True)
     mainwork = models.CharField(max_length=100, default='', null=False)
     subwork = models.CharField(max_length=100, default='', null=False)
-    tok = models.IntegerField(default=0, verbose_name='거래금액')
+    tok = models.FloatField(default=0, verbose_name='거래금액')
     giver_balance = models.IntegerField(default=0, verbose_name='주는사람 잔액')
     taker_balance = models.IntegerField(default=0, verbose_name='받는사람 잔액')
+
+
+
+
+
 
 
 

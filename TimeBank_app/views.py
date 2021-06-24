@@ -104,7 +104,33 @@ def create_comment(request, post_id):
 
 
 
+# 댓글 삭제하기
+def comment_delete(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+    comment.delete()
+    return redirect("post_detail", comment.post.id)
 
+
+
+
+# # 지원하기
+# @require_POST
+# def apply(request):
+#     id = request.POST.get('pk', None) 
+#     post = get_object_or_404(Post, pk=id)
+#     post_apply, post_apply_created = post.apply_set.get_or_create(username=request.user)
+
+#     if not post_apply_created:
+#         post_apply.delete()
+#         message = "신청 취소"
+#     else:
+#         message = "신청 완료"
+
+#     context = {'apply_count': post.apply_count,
+#                'message': message,
+#                 }
+
+#     return HttpResponse(json.dumps(context), content_type="application/json")
 
 
 

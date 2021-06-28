@@ -41,7 +41,7 @@ class User(AbstractUser):
     user_age = models.CharField(max_length=50, verbose_name='연령대')
     gender_choice = [('여성','여성'),('남성','남성'),('기타','기타')]
     gender = models.CharField(max_length=2, choices=gender_choice, verbose_name='성별')
-    balance = models.FloatField(verbose_name='잔액', default=10)
+    balance = models.DecimalField(decimal_places=2, max_digits=5,verbose_name='잔액', default=10)
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)
@@ -70,7 +70,7 @@ class Account(models.Model):
     taker = models.ForeignKey('User', on_delete=models.CASCADE, related_name='taker', verbose_name='받는사람', null=True)
     mainwork = models.CharField(max_length=100, default='', null=False)
     subwork = models.CharField(max_length=100, default='', null=False)
-    tok = models.FloatField(default=0, verbose_name='거래금액')
+    tok = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='거래금액')
     giver_balance = models.IntegerField(default=0, verbose_name='주는사람 잔액')
     taker_balance = models.IntegerField(default=0, verbose_name='받는사람 잔액')
 

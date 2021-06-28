@@ -44,14 +44,14 @@ class Post(models.Model):
     subwork = models.CharField(max_length=200, verbose_name='세부 목록', default='')
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
-    tok = models.FloatField(default=1, verbose_name='거래시간')
+    tok = models.DecimalField(default=1, decimal_places=2, max_digits=5, verbose_name='거래시간')
     author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='작성자')
     status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
     status = models.CharField(max_length=50, choices=status_list, default='대기')
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
-    applicants = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='applicants', verbose_name='지원자', null=True)
-    # apply_user = models.ManyToManyField('TimeBank_account.User', blank = True, related_name='apply_user', through='Apply')
+    # applicants = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='applicants', verbose_name='지원자', null=True)
+    applicants = models.ManyToManyField('self', blank = True, related_name='apply_user', through='Apply', symmetrical=False)
     giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)
 
@@ -59,39 +59,25 @@ class Post(models.Model):
     class Meta:
         ordering = ['-created_at']
 
-
-    # 지원자 수 카운트
-    # @property
-    # def apply_count(self):
-    #     return self.apply_user.count()
-
-
-    # class Apply(models.Model):
-    #     username = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE)
-
-    
-
-    '''
+    # 지원자 얻기
     @property
-    def index(self):
-        return self.work_choice[:50]
-    
+    def get_user(self):
+        return [i.from_post for i in self.to_user.all()]
+
     @property
-    def get_applicant(self):
-        return [i.applicant for i in self.applicant.all()]
-
-    def __str__(self):
-        return self.content
-
-    def is_applicant(self, user):
-        return user in self.get_applicant
+    def user_count(self):
+        return len(self.get_user)
 
 
 
+class Apply(models.Model):
+    from_post = models.ForeignKey('TimeBank_app.Post', related_name='apply_post', on_delete=models.CASCADE)
+    to_user = models.ForeignKey('TimeBank_account.User', related_name='apply_user', on_delete=models.CASCADE)
+    create_at = models.DateTimeField(auto_now=True)
 
-class Relation(models.Model):
-    applicant = models.ForeignKey('TimeBank_account.User', related_name='지원자', on_delete=models.CASCADE)
-'''
+    # 관계되는 칼럼의 중복막기
+    class Meta:
+        unique_together = (('from_post', 'to_user'))
 
 
 

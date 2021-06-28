@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from TimeBank_app.models import Comment, Post, MainCategory, SubCategory
+from TimeBank_app.models import Comment, Post, Apply
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -34,13 +34,14 @@ def post_list(request):
 def post_detail(request, post_id):
     post = Post.objects.get(pk=post_id)
     comments = Comment.objects.filter(post=post.id)
+    applies = Apply.objects.filter(from_post=post)
     btn_msg = post.status
     if post.status == "진행":
         if post.taker == request.user:
             btn_msg = "완료하기"
         else:
             btn_msg = "승인대기"
-    return render(request, "post_detail.html", {'post':post, 'btn_msg':btn_msg, 'comments':comments})
+    return render(request, "post_detail.html", {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies})
 
 
 
@@ -73,7 +74,7 @@ def create(request):
 
 
 
-
+'''
 # 대기->진행
 def progress(request, post_id):
     post = Post.objects.get(pk = post_id)
@@ -87,8 +88,28 @@ def progress(request, post_id):
         post.taker =post.author
     post.save() 
     return redirect('post_detail', post_id)
+'''
 
 
+# 신청하기
+def apply(request, post_id):
+    from_post = Post.objects.get(pk = post_id)
+    to_user = request.user
+    apply, created = Apply.objects.get_or_create(from_post=from_post, to_user=to_user)
+
+    if created:
+        message = '신청 완료'
+        status = 1
+    else:
+        apply.delete()
+        message = '신청 취소'
+        status = 0
+
+    context = {
+        'message': message,
+        'status': status,
+    }
+    return HttpResponse(json.dumps(context), content_type="application/json")
 
 
 

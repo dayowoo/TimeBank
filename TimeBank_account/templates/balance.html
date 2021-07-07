@@ -115,11 +115,11 @@
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
           준 시간
-          <span class="badge badge-warning badge-pill" style="font-size: 15px;">2</span>
+          <span class="badge badge-warning badge-pill" style="font-size: 15px;">-{{minus_tok}}</span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
           받은 시간
-          <span class="badge badge-warning badge-pill" style="font-size: 15px;">1</span>
+          <span class="badge badge-warning badge-pill" style="font-size: 15px;">+{{plus_tok}}</span>
         </li>
       </ul>
     </div>
@@ -150,22 +150,24 @@
             </thead>
             <tbody>
                 <tr>
+                  {% for account_post in account_posts %}
                   {% for account in accounts %}
-                    <td style="text-align: center;">{{ account.id }}</td>
+                    <td style="text-align: center;"><a href="{% url 'post_detail' account_post.id %}">{{ account.id }}</a></td>
                     <td style="text-align: center;">{{ account.timestamp|date:"Y-m-d h:i A"}}</td>
-                    <td style="text-align: center;">{{ account.giver }}</td>
-                    <td style="text-align: center;">{{ account.taker }}</td>
+                    <td style="text-align: center;"><a href="{% url 'profile' account.giver.username %}">{{ account.giver }}</a></td>
+                    <td style="text-align: center;"><a href="{% url 'profile' account.taker.username %}">{{ account.taker }}</a></td>
                     <td style="text-align: center;">{{ account.mainwork }}</td>
                     {% if account.giver == request.user %}
                     <td style="text-align: center; color: blue;">+{{ account.tok }}</td>
-                    <td style="text-align: center; color: blue;">0</td>
+                    <td style="text-align: center; color: red;">0</td>
                     <td>{{ account.giver_balance }}</td>
                     {% elif account.taker == request.user %}
                     <td style="text-align: center; color: blue;">0</td>
-                    <td style="text-align: center; color: blue;">-{{account.tok}}</td>
+                    <td style="text-align: center; color: red;">-{{account.tok}}</td>
                     <td>{{ account.taker_balance }}</td>
                     {% endif %}
                 </tr>
+                {% endfor %}
                 {% endfor %}
             </tbody>
             

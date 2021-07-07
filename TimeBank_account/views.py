@@ -74,8 +74,8 @@ def logout(request):
 
 # 프로필
 def profile(requset,username):
-    user = get_object_or_404(User,username=username)
-    return render(requset, "profile.html", {"user_profile":user, 'username': username})
+    user_profile = get_object_or_404(User,username=username)
+    return render(requset, "profile.html", {"user_profile":user_profile, 'username': username})
 
 
 
@@ -85,6 +85,7 @@ def profile(requset,username):
 def profile_update_page(request,username):
     user = get_object_or_404(User,username=username)
     return render(request, "profile_update.html", {"user_profile":user, 'username': username})
+
 
 
 # 프로필 수정
@@ -130,11 +131,14 @@ def account_history(request):
 
 
 
+
 # 계좌내역 Account 모델 사용
 @login_required
 def balance(request):
     accounts = Account.objects.filter(giver=request.user) | Account.objects.filter(taker=request.user)
-    return render(request, 'balance.html', {'accounts':accounts})
+    account_posts = Post.objects.filter(giver= request.user) | Post.objects.filter(taker= request.user)
+    giver_balances = Account.objects.filter(giver=request.user)
+    return render(request, 'balance.html', {'accounts':accounts, 'account_posts':account_posts, 'giver_balances':giver_balances})
 
 
 

@@ -41,7 +41,8 @@ def post_detail(request, post_id):
             btn_msg = "완료하기"
         else:
             btn_msg = "승인대기"
-    return render(request, "post_detail.html", {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies})
+    context = {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies}
+    return render(request, "post_detail.html", context)
 
 
 
@@ -74,21 +75,26 @@ def create(request):
 
 
 
-'''
+
 # 대기->진행
-def progress(request, post_id):
+def progress(request, post_id, user_id):
     post = Post.objects.get(pk = post_id)
+    user = User.objects.get(pk = user_id)
+    to_user = Apply.objects.filter(to_user=user)
     post.status = "진행"
-    post.applicants = request.user
     if post.service == "주고 싶어요":
         post.giver = post.author
         post.taker = request.user
     else:
         post.giver = request.user
-        post.taker =post.author
+        post.taker = post.author
     post.save() 
     return redirect('post_detail', post_id)
-'''
+
+
+
+
+
 
 
 # 신청하기
@@ -109,7 +115,78 @@ def apply(request, post_id):
         'message': message,
         'status': status,
     }
-    return HttpResponse(json.dumps(context), content_type="application/json")
+    return HttpResponse('json.dumps(context), content_type="application/json"')
+
+
+
+
+'''
+def choice(request,post_id, user_id):
+    return HttpResponse("넘어온 데이터 : " +post_id +user_id)
+
+'''
+def choice(request, post_id, user_id):
+    
+    post = Post.objects.get(pk=post_id)
+    selection = request.POST['choice']
+    applicant = Apply.objects.get(from_post=post_id, to_user=selection)
+
+    post.status = "진행"
+
+    if post.service == "주고 싶어요":
+        post.giver = post.author
+        post.taker = applicant.to_user
+    else:
+        post.giver = applicant.to_user
+        post.taker = post.author
+        
+    post.save()
+    applicant.save()
+    return redirect('post_detail', post_id)
+
+
+
+
+'''    
+# 대기->선택
+def choice(self, request, post_id, user_id):
+
+    user = User.objects.get(pk = user_id)
+    # 한개의 post 가져오기
+    post = Post.objects.get(pk = post_id)
+    user = User.objects.get(pk = user_id)
+    # 신청 객체 중 해당 post에 대한 신청만 가져옴
+    apply_post = Apply.objects.get(from_post=post)
+    applicant = Apply.objects.get(to_user=user)
+
+
+    # 신청목록 중에서 선택한 유저의 신청만 가져오기
+
+
+    # 해당 신청에 대한 지원자 목록 가져오기
+    applicants = apply_post.get_user()
+    # 지원자 목록중에 한명의 지원자 가져오기
+    applicant = applicants.objects.get(id=user_id)
+
+
+    post.status = "진행"
+
+    if post.service == "주고 싶어요":
+        post.giver = post.author
+        post.taker = applicant
+    else:
+        post.giver = applicant
+        post.taker = post.author
+        
+    post.save()
+    user.save() 
+    applicant.save()
+    return redirect('post_detail', post_id, user_id)
+'''
+
+
+
+
 
 
 
@@ -122,6 +199,10 @@ def create_comment(request, post_id):
     comment.author = request.user
     comment.save()
     return redirect('post_detail', post_id)
+
+
+
+
 
 
 

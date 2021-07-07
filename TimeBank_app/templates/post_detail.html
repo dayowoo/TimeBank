@@ -146,7 +146,6 @@
                               <div class="card">
                                 <div class="card-body">
                                   {{post.content}}
-                                  {{apply.to_user.username}}
                                 </div>
                               </div>
 
@@ -173,7 +172,10 @@
                                           <tr>
                                             {% if request.user == post.author %}
                                               {% if post.status == "대기" %}
-                                                <td><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
+                                                <form action="{% url 'choice' post.id apply.to_user.id %}" method="post">
+                                                {% csrf_token %}
+                                                  <td><button name="choice" type="submit" value="{{ apply.to_user.id }}" class="btn btn-primary">선택</button> apply.to_user.id : {{apply.to_user.id}}</td>  
+                                                </form>
                                               {% elif post.status == "진행" %}
                                                 <td><button type="button" class="btn btn-success">{{ post.status }}</button></td>
                                               {% elif post.status == "완료" %}
@@ -209,7 +211,7 @@
                                               <td></td>
                                               <td></td>
                                               <td></td>
-                                      </tr> 
+                                      </tr>
                                         {% endif %}        
                                 </tbody>
                             </table>
@@ -241,7 +243,7 @@
                                       {% endif %}
                                     </div>
                                     <div class="ms-3">
-                                        <div class="fw-bold">{{ comment.author }}</div>
+                                        <div class="fw-bold"><a href="{% url 'profile' comment.author.username %}">{{ comment.author }}</a></div>
                                         <div style="font-size: 14px; color: dimgray;">{{ comment.create_date }}</div>
                                         {{ comment.content}}
                                     </div>

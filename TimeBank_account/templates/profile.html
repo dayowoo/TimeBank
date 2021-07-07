@@ -93,9 +93,9 @@
         {% endif %}
         <div class="card-body">
           
-          <h3 class="card-title">{{ user.get_username }}님 😃</h3>
-          <h4>{{ user.name }}</h4><br>
-          <h6>{{ user.email }}</h6>
+          <h3 class="card-title">{{ user_profile.username }}님 😃</h3>
+          <h4>{{ user_profile.name }}</h4><br>
+          <h6>{{ user_profile.email }}</h6>
           <p class="card-text"></p>
           <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
           4.0 stars
@@ -115,11 +115,11 @@
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
           준 시간
-          <span class="badge badge-warning badge-pill" style="font-size: 15px;">2</span>
+          <span class="badge badge-warning badge-pill" style="font-size: 15px;">{{ user.balance }}</span>
         </li>
         <li class="list-group-item d-flex justify-content-between align-items-center">
           받은 시간
-          <span class="badge badge-warning badge-pill" style="font-size: 15px;">1</span>
+          <span class="badge badge-warning badge-pill" style="font-size: 15px;">{{ user.balance }}</span>
         </li>
       </ul>
     </div>
@@ -144,48 +144,50 @@
             <tbody>
               <tr>
                 <th scope="row">사용자 ID</th>
-                <td>{{ user.username }}</td>
+                <td>{{ user_profile.username }}</td>
               </tr>
               <tr>
                 <th scope="row">이름</th>
-                <td>{{ user.name }}</td>
+                <td>{{ user_profile.name }}</td>
               </tr>
               <tr>
                 <th scope="row">이메일</th>
-                <td>{{ user.email }}</td>
+                <td>{{ user_profile.email }}</td>
               </tr>
               <tr>
                 <th scope="row">연락처</th>
-                <td>{{ user.contact }}</td>
+                <td>{{ user_profile.contact }}</td>
               </tr>
               <tr>
                 <th scope="row">나이</th>
-                <td>{{ user.user_age }}</td>
+                <td>{{ ususer_profileer.user_age }}</td>
               </tr>
               <tr>
                 <th scope="row">사용자 ID</th>
-                <td>{{ user.username }}</td>
+                <td>{{ user_profile.username }}</td>
               </tr>
               <tr>
                 <th scope="row">생년월일</th>
-                <td>{{ user.birth }}</td>
+                <td>{{ user_profile.birth }}</td>
               </tr>
               <tr>
                 <th scope="row">성별</th>
-                <td>{{ user.gender }}</td>
+                <td>{{ user_profile.gender }}</td>
               </tr>
               <tr>
                 <th scope="row">가입일자</th>
-                <td>{{ user.registered_dtn }}</td>
+                <td>{{ user_profile.registered_dtn }}</td>
               </tr>
               <tr>
                 <th scope="row">소개</th>
-                <td>{{ user.about }}</td>
+                <td>{{ user_profile.about }}</td>
               </tr>
             </tbody>
           </table>
           <hr>
+          {% if request.user.username == user_profile.username %}
           <a href="{% url 'profile_update_page' user.username %}" class="btn btn-success">수정</a>
+          {% endif %}
         </div>
       </div>
       <!-- /.card -->

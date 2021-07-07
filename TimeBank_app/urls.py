@@ -9,6 +9,7 @@ urlpatterns = [
     path('new_post/', new_post, name="new_post"),
     path('create/', create, name="create"),
     path('post_detail/<post_id>/apply', apply, name="apply"),
+    path('post_detail/<post_id>/<user_id>', choice, name="choice"),
     path('post_detail/<post_id>', post_detail, name="post_detail"),
     path('post_detail/<post_id>/create_comment', create_comment, name="create_comment")
     # path(r'^post_list/(?P<post_id>\d+)/$', progress, name="progress"),

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
 from django.contrib.auth.base_user import BaseUserManager
-from TimeBank_app.models import Post 
+from django.db.models.fields import related
 from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
@@ -71,8 +71,8 @@ class Account(models.Model):
     mainwork = models.CharField(max_length=100, default='', null=False)
     subwork = models.CharField(max_length=100, default='', null=False)
     tok = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='거래금액')
-    giver_balance = models.IntegerField(default=0, verbose_name='주는사람 잔액')
-    taker_balance = models.IntegerField(default=0, verbose_name='받는사람 잔액')
+    giver_balance = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='주는사람 잔액')
+    taker_balance = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='받는사람 잔액')
 
 
 

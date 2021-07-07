@@ -135,7 +135,7 @@
                     <td><a href="{% url 'post_detail' post.id %}" name="progress" class="btn btn-secondary">{{ post.status }}</a></td> 
                   {% endif %}
                     <td>{{ post.service }}</td>
-                    <td><a href="{% url 'profile' user.username %}">{{ post.author }}</a></td>
+                    <td><a href="{% url 'profile' post.author.username %}">{{ post.author }}</a></td>
                     <td>{{ post.mainwork }}</td>
                     <td>{{ post.subwork }}</td>
                     <td>{{ post.tok }}</td>

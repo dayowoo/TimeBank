@@ -51,6 +51,7 @@ class Post(models.Model):
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
     # applicants = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='applicants', verbose_name='지원자', null=True)
+    # symmetrical 이 true로 되어 있다면, 한명이 follow 하면 바로 맞팔이 되어버림
     applicants = models.ManyToManyField('self', blank = True, related_name='apply_user', through='Apply', symmetrical=False)
     giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)

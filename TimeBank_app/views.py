@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.utils import timezone
 from TimeBank_app.models import Comment, Post, Apply
+from TimeBank_account.models import Account
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
@@ -19,32 +21,6 @@ import json
 # home
 def index(request):
     return render(request, 'index.html')
-
-
-# 거래글 목록
-def post_list(request):
-    # order_by : 순서정렬 / 최신순
-    posts = Post.objects.all().order_by('-id')
-    return render(request, 'post_list.html', {'posts': posts})
-
-
-
-
-# 자세히 보기
-def post_detail(request, post_id):
-    post = Post.objects.get(pk=post_id)
-    comments = Comment.objects.filter(post=post.id)
-    applies = Apply.objects.filter(from_post=post)
-    btn_msg = post.status
-    if post.status == "진행":
-        if post.taker == request.user:
-            btn_msg = "완료하기"
-        else:
-            btn_msg = "승인대기"
-    context = {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies}
-    return render(request, "post_detail.html", context)
-
-
 
 
 # 새 글 작성 페이지
@@ -73,26 +49,30 @@ def create(request):
 
 
 
+# 거래글 목록
+def post_list(request):
+    # order_by : 순서정렬 / 최신순
+    posts = Post.objects.all().order_by('-id')
+    return render(request, 'post_list.html', {'posts': posts})
 
 
 
-# 대기->진행
-def progress(request, post_id, user_id):
-    post = Post.objects.get(pk = post_id)
-    user = User.objects.get(pk = user_id)
-    to_user = Apply.objects.filter(to_user=user)
-    post.status = "진행"
-    if post.service == "주고 싶어요":
-        post.giver = post.author
-        post.taker = request.user
-    else:
-        post.giver = request.user
-        post.taker = post.author
-    post.save() 
-    return redirect('post_detail', post_id)
 
-
-
+# 자세히 보기
+def post_detail(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    comments = Comment.objects.filter(post=post.id)
+    applies = Apply.objects.filter(from_post=post)
+    btn_msg = post.status
+    if post.status == "진행":
+        if post.taker == request.user:
+            btn_msg = "완료하기"
+        # request.user == post.giver
+        else:               
+            btn_msg = "승인대기"
+    partner = [str(post.taker), str(post.giver)]
+    context = {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies, 'partner':partner}
+    return render(request, "post_detail.html", context)
 
 
 
@@ -115,16 +95,12 @@ def apply(request, post_id):
         'message': message,
         'status': status,
     }
-    return HttpResponse('json.dumps(context), content_type="application/json"')
+    return redirect('post_detail', post_id)
 
 
 
 
-'''
-def choice(request,post_id, user_id):
-    return HttpResponse("넘어온 데이터 : " +post_id +user_id)
-
-'''
+# 지원자 선택하기 (대기->진행)
 def choice(request, post_id, user_id):
     
     post = Post.objects.get(pk=post_id)
@@ -142,48 +118,45 @@ def choice(request, post_id, user_id):
         
     post.save()
     applicant.save()
+
+    return redirect("post_detail", post_id)
+
+
+
+
+# 진행 -> 완료하기
+def success(request, post_id, user_id):
+    post = Post.objects.get(pk=post_id)
+    account = Account()
+    user = request.user
+    post.status = "완료"
+    post.giver.balance += post.tok
+    post.taker.balance -= post.tok
+    post.save()
+    post.taker.save()
+    post.giver.save()
+
+    account.giver_balance = post.giver.balance
+    account.taker_balance = post.taker.balance
+    account.giver = post.giver
+    account.taker = post.taker
+    account.tok = post.tok
+    account.mainwork = post.mainwork
+    account.subwork = post.subwork
+    user.save()
+    account.save()
     return redirect('post_detail', post_id)
 
 
 
 
-'''    
-# 대기->선택
-def choice(self, request, post_id, user_id):
 
-    user = User.objects.get(pk = user_id)
-    # 한개의 post 가져오기
-    post = Post.objects.get(pk = post_id)
-    user = User.objects.get(pk = user_id)
-    # 신청 객체 중 해당 post에 대한 신청만 가져옴
-    apply_post = Apply.objects.get(from_post=post)
-    applicant = Apply.objects.get(to_user=user)
-
-
-    # 신청목록 중에서 선택한 유저의 신청만 가져오기
-
-
-    # 해당 신청에 대한 지원자 목록 가져오기
-    applicants = apply_post.get_user()
-    # 지원자 목록중에 한명의 지원자 가져오기
-    applicant = applicants.objects.get(id=user_id)
-
-
-    post.status = "진행"
-
-    if post.service == "주고 싶어요":
-        post.giver = post.author
-        post.taker = applicant
-    else:
-        post.giver = applicant
-        post.taker = post.author
-        
+# 진행 -> 중단하기
+def stop(request, post_id, user_id):
+    post = Post.objects.get(pk=post_id)
+    post.status = "중단"
     post.save()
-    user.save() 
-    applicant.save()
-    return redirect('post_detail', post_id, user_id)
-'''
-
+    return redirect('post_detail', post_id)
 
 
 

@@ -98,7 +98,16 @@
                                     <td>
                                    <!-- 글쓴이 = 로그인유저 -->
                                         {% if request.user == post.author %}
-                                        <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">{{post.status}}</a>
+                                        {% if post.status == "대기" %}
+                                                <button name="apply" class="btn btn-primary">대기</button>
+                                            {% elif post.status == "진행" %}
+                                                <button class="btn btn-success">{{ post.status }}</button>
+                                            {% elif post.status == "완료" %}
+                                                <button class="btn btn-warning">{{ post.status }}</button>
+                                            {% elif post.status == "중단" %}
+                                                <button class="btn btn-secondary">{{ post.status }}</button>
+                                            {% endif %}
+                                        <!--글쓴이 != 로그인유저-->
                                         {% elif request.user != post.author %}
                                             {% if post.status == "대기" %}
                                                 <form action="{% url 'apply' post.id %}" method="post">
@@ -177,19 +186,44 @@
                                                   <td><button name="choice" type="submit" value="{{ apply.to_user.id }}" class="btn btn-primary">선택</button> apply.to_user.id : {{apply.to_user.id}}</td>  
                                                 </form>
                                               {% elif post.status == "진행" %}
-                                                <td><button type="button" class="btn btn-success">{{ post.status }}</button></td>
+                                                {% if apply.to_user.username in partner %}
+                                                  {% if btn_msg == "완료하기" %}
+                                                  <td>
+                                                      <form action="{% url 'success' post.id apply.to_user.id %}" method="post">
+                                                        {% csrf_token %}
+                                                            <button type="submit" value="{{ apply.to_user.id }}" class="btn btn-success" style="margin: 5px;">{{btn_msg}}</button>
+                                                      </form>
+                                                      <form action="{% url 'stop' post.id apply.to_user.id%}" method="post">
+                                                        {% csrf_token %}
+                                                            <button type="submit" value="{{ apply.to_user.id }}" class="btn btn-danger" style="margin: 5px;">중단하기</button>
+                                                      </form>
+                                                    </td>
+                                                    {% elif btn_msg == "승인대기" %}
+                                                      <td><button type="submit" class="btn btn-success">{{btn_msg}}</button></td>
+                                                  {% endif %}
+                                                {% else %}
+                                                <td><button type="button" class="btn btn-success" disabled>미선택</button></td>
+                                                {% endif %}
                                               {% elif post.status == "완료" %}
+                                              {% if apply.to_user.username in partner %}
                                                 <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
+                                              {% else %}
+                                                <td><button type="button" class="btn btn-success" disabled>미선택</button></td>
+                                              {% endif %}
                                               {% elif post.status == "중단" %}
+                                              {% if apply.to_user.username in partner %}
                                                 <td><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
+                                              {% else %}
+                                                <td><button type="button" class="btn btn-success" disabled>미선택</button></td>
+                                              {% endif %}  
                                               {% endif %}
                                             {% endif %}                                            
-                                                <td>{{apply.to_user.username}}</td>
-                                                <td>{{apply.to_user.name}}</td>
-                                                <td>{{apply.to_user.user_age}}</td>
-                                                <td>{{apply.to_user.gender}}</td>
-                                                <td>{{apply.to_user.contact}}</td>
-                                                <td>{{apply.to_user.email}}</td>
+                                                <td style="text-align: center;">{{apply.to_user.username}}</td>
+                                                <td style="text-align: center;">{{apply.to_user.name}}</td>
+                                                <td style="text-align: center;">{{apply.to_user.user_age}}</td>
+                                                <td style="text-align: center;">{{apply.to_user.gender}}</td>
+                                                <td style="text-align: center;">{{apply.to_user.contact}}</td>
+                                                <td style="text-align: center;">{{apply.to_user.email}}</td>
                                         </tr>    
                                         {% endfor %}
                                         {% else %}

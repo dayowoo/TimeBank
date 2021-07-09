@@ -153,11 +153,11 @@
                               </div>
                               <h4 class="fw-bolder mb-4 mt-5">내용</h4>
                               <div class="card">
-                                <div class="card-body">
+                                <div class="card-body" >
                                   {{post.content}}
                                 </div>
                               </div>
-
+                            {% if request.user == post.author %}
                             <h2 class="fw-bolder mb-4 mt-5">신청내역</h2>
                             <table id="example" class="table table-striped table-bordered" style="width:100%; text-align: center;">
                                 <thead>
@@ -183,7 +183,7 @@
                                               {% if post.status == "대기" %}
                                                 <form action="{% url 'choice' post.id apply.to_user.id %}" method="post">
                                                 {% csrf_token %}
-                                                  <td><button name="choice" type="submit" value="{{ apply.to_user.id }}" class="btn btn-primary">선택</button> apply.to_user.id : {{apply.to_user.id}}</td>  
+                                                  <td><button name="choice" type="submit" value="{{ apply.to_user.id }}" class="btn btn-primary">선택</button></td>  
                                                 </form>
                                               {% elif post.status == "진행" %}
                                                 {% if apply.to_user.username in partner %}
@@ -206,7 +206,9 @@
                                                 {% endif %}
                                               {% elif post.status == "완료" %}
                                               {% if apply.to_user.username in partner %}
-                                                <td><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
+                                                <td style="text-align: center;">
+                                                  <a href="{% url 'review' %}" class="btn btn-warning" style="margin: 2px;">후기작성</a>
+                                                </td>
                                               {% else %}
                                                 <td><button type="button" class="btn btn-success" disabled>미선택</button></td>
                                               {% endif %}
@@ -218,7 +220,7 @@
                                               {% endif %}  
                                               {% endif %}
                                             {% endif %}                                            
-                                                <td style="text-align: center;">{{apply.to_user.username}}</td>
+                                                <td style="text-align: center;"><a href="{% url 'profile' apply.to_user.username %}">{{apply.to_user.username}}</a></td>
                                                 <td style="text-align: center;">{{apply.to_user.name}}</td>
                                                 <td style="text-align: center;">{{apply.to_user.user_age}}</td>
                                                 <td style="text-align: center;">{{apply.to_user.gender}}</td>
@@ -249,6 +251,9 @@
                                         {% endif %}        
                                 </tbody>
                             </table>
+                            {% else %}
+                            <div></div>
+                            {% endif %}
                         </section>
                     </article>
                     <hr><br><br>

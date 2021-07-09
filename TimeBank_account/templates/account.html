@@ -149,15 +149,15 @@
             <tbody>
               {% for my_post in my_posts %}
                 <tr>
-                  <td style="text-align: center;">{{ my_post.id }}</td>
+                  <td style="text-align: center;"><a href="{% url 'post_detail' my_post.id %}">{{ my_post.id }}</td>
                   {% if my_post.status == "대기" %}
-                    <td style="text-align: center;"><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-primary">{{ my_post.status}}</a></td>
+                    <td style="text-align: center;"><button type="button" class="btn btn-primary">{{ my_post.status}}</button></td>
                   {% elif my_post.status == "진행" %}
-                    <td style="text-align: center;"><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-success">{{ my_post.status}}</a></td>
+                    <td style="text-align: center;"><button type="button" class="btn btn-success">{{ my_post.status}}</button></td>
                   {% elif my_post.status == "완료" %}
-                    <td style="text-align: center;"><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-warning">{{ my_post.status}}</a></td>   
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ my_post.status}}</button></td>   
                   {% elif my_post.status == "중단" %}
-                    <td style="text-align: center;"><a href="{% url 'my_post_detail' my_post.id %}" class="btn btn-secondary">{{ my_post.status}}</a></td>      
+                    <td style="text-align: center;"><button type="button" class="btn btn-secondary">{{ my_post.status}}</button></td>      
                   {% endif %}
                   <td style="text-align: center;">{{ my_post.service }}</td>
                   <td style="text-align: center;">{{ my_post.tok }}</td>
@@ -193,22 +193,22 @@
             </thead>
             {% for regsiter_post in regsiter_posts %}
                 <tr>
-                  <td style="text-align: center;">{{ regsiter_post.id }}</td>
-                  {% if regsiter_post.status == "대기" %}
-                    <td style="text-align: center;"><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-primary">{{ regsiter_post.status}}</a></td>
-                  {% elif regsiter_post.status == "진행" %}
-                    <td style="text-align: center;"><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-success">{{ regsiter_post.status}}</a></td>
-                  {% elif regsiter_post.status == "완료" %}
-                    <td style="text-align: center;"><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-warning">{{ regsiter_post.status}}</a></td>
-                  {% elif regsiter_post.status == "중단" %}
-                    <td style="text-align: center;"><a href="{% url 'my_register_detail' regsiter_post.id %}" class="btn btn-secondary">{{ regsiter_post.status}}</a></td>      
+                  <td style="text-align: center;"><a href="{% url 'post_detail' regsiter_post.from_post.id %}">{{ regsiter_post.from_post.id }}</a></td>
+                  {% if regsiter_post.from_post.status == "대기" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-primary">{{ regsiter_post.from_post.status}}</button></td>
+                  {% elif regsiter_post.from_post.status == "진행" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-success">{{ regsiter_post.from_post.status}}</button></td>
+                  {% elif regsiter_post.from_post.status == "완료" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ regsiter_post.from_post.status}}</button></td>
+                  {% elif regsiter_post.from_post.status == "중단" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-secondary">{{ regsiter_post.from_post.status}}</button></td>      
                   {% endif %}
-                    <td style="text-align: center;">{{ regsiter_post.service }}</td>
-                    <td style="text-align: center;">{{ regsiter_post.author }}</td>
-                    <td style="text-align: center;">{{ regsiter_post.tok }}</td>
-                    <td style="text-align: center;">{{ regsiter_post.date }}</td>
-                    <td style="text-align: center;">{{ regsiter_post.mainwork }}</td>
-                    <td style="text-align: center;">{{ regsiter_post.subwork }}</td>
+                    <td style="text-align: center;">{{ regsiter_post.from_post.service }}</td>
+                    <td style="text-align: center;">{{ regsiter_post.from_post.author }}</td>
+                    <td style="text-align: center;">{{ regsiter_post.from_post.tok }}</td>
+                    <td style="text-align: center;">{{ regsiter_post.from_post.date }}</td>
+                    <td style="text-align: center;">{{ regsiter_post.from_post.mainwork }}</td>
+                    <td style="text-align: center;">{{ regsiter_post.from_post.subwork }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

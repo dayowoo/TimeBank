@@ -41,7 +41,7 @@ class User(AbstractUser):
     user_age = models.CharField(max_length=50, verbose_name='연령대')
     gender_choice = [('여성','여성'),('남성','남성'),('기타','기타')]
     gender = models.CharField(max_length=2, choices=gender_choice, verbose_name='성별')
-    balance = models.DecimalField(decimal_places=2, max_digits=5,verbose_name='잔액', default=10)
+    balance = models.DecimalField(decimal_places=2, max_digits=5,verbose_name='잔액', default=0)
     registered_dtn = models.DateField(auto_now_add=True, verbose_name='가입일자')
     # media 폴더 내 'images'파일 저장
     image = models.ImageField(upload_to="images/", blank=True)

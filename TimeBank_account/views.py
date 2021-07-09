@@ -12,7 +12,7 @@ except ImportError:
     import json
 from django.http import HttpResponse
 from django.contrib import messages
-from TimeBank_app.models import Post
+from TimeBank_app.models import Post, Apply
 from .models import User, Account
 import json
 from datetime import datetime
@@ -44,6 +44,9 @@ def register(request):
         # 새로운 유저 생성
         user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
         auth.login(request, user)
+        # 가입 시간화폐값 생성
+        account = Account(timestamp=datetime.now(), taker=user, mainwork='가입', subwork='-', tok=10, taker_balance=10)
+        account.save()
     return redirect('index')
 
 
@@ -126,7 +129,7 @@ def account_history(request):
     # 내가 등록한 거래
     my_posts = posts.filter(author = request.user)
     # 내가 신청한 거래
-    regsiter_posts = posts.filter(applicants = request.user)
+    regsiter_posts = Apply.objects.filter(to_user = request.user)
     return render(request, "account.html", {'my_posts': my_posts, 'regsiter_posts': regsiter_posts})
 
 
@@ -162,7 +165,6 @@ def my_register_detail(request, post_id):
 
 
 
-'''
 # 내가 신청한 글 완료하기
 def reg_success(request, post_id):
     post = Post.objects.get(pk=post_id)
@@ -194,7 +196,7 @@ def reg_stop(request, post_id):
     post.status = "중단"
     post.save()
     return redirect('/account/account')
-'''
+
 
 
 # 내가 쓴글 자세히보기
@@ -207,6 +209,9 @@ def my_post_detail(request, post_id):
         else:
             btn_msg = "승인대기"
     return render(request, "my_post_detail.html", {'post':post, 'btn_msg':btn_msg})
+
+
+
 
 
 
@@ -242,8 +247,4 @@ def stop(request, post_id):
     post.status = "중단"
     post.save()
     return redirect('/account/account')
-
-
-
-
 

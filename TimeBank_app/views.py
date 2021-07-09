@@ -64,6 +64,9 @@ def post_detail(request, post_id):
     comments = Comment.objects.filter(post=post.id)
     applies = Apply.objects.filter(from_post=post)
     btn_msg = post.status
+    if post.service == "받고싶어요":
+        post.taker = post.author
+        
     if post.status == "진행":
         if post.taker == request.user:
             btn_msg = "완료하기"
@@ -184,6 +187,12 @@ def comment_delete(request, comment_id):
     comment = get_object_or_404(Comment, pk=comment_id)
     comment.delete()
     return redirect("post_detail", comment.post.id)
+
+
+
+# 리뷰 작성하기
+def review(request):
+    pass
 
 
 

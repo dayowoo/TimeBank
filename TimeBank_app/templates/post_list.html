@@ -134,15 +134,15 @@
                         {% elif post.status == "중단" %}
                     <td><a href="{% url 'post_detail' post.id %}" name="progress" class="btn btn-secondary">{{ post.status }}</a></td> 
                   {% endif %}
-                    <td>{{ post.service }}</td>
-                    <td><a href="{% url 'profile' post.author.username %}">{{ post.author }}</a></td>
-                    <td>{{ post.mainwork }}</td>
-                    <td>{{ post.subwork }}</td>
-                    <td>{{ post.tok }}</td>
-                    <td>{{ post.date }}</td>
-                    <td>{{ post.start_time }}</td>
-                    <td>{{ post.end_time }}</td>
-                    <td>{{ post.content }}</td>
+                    <td style="text-align: center;">{{ post.service }}</td>
+                    <td style="text-align: center;"><a href="{% url 'profile' post.author.username %}">{{ post.author }}</a></td>
+                    <td style="text-align: center;">{{ post.mainwork }}</td>
+                    <td style="text-align: center;">{{ post.subwork }}</td>
+                    <td style="text-align: center;">{{ post.tok }}</td>
+                    <td style="text-align: center;">{{ post.date }}</td>
+                    <td style="text-align: center;">{{ post.start_time }}</td>
+                    <td style="text-align: center;">{{ post.end_time }}</td>
+                    <td style="text-align: center;">{{ post.content }}</td>
                 </tr>
                 {% endfor %}
 

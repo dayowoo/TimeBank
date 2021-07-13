@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
-from TimeBank_app.models import Comment, Post, Apply
+from TimeBank_app.models import Comment, Post, Apply, Review
 from TimeBank_account.models import Account
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
@@ -190,9 +190,29 @@ def comment_delete(request, comment_id):
 
 
 
+# 리뷰 작성 페이지
+def new_review(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    context = {'post':post}
+    return render(request, "new_review.html", context)
+
+
 # 리뷰 작성하기
-def review(request):
-    pass
+def create_review(request, post_id):
+    if(request.method == 'POST'):
+        review = Review()
+        review.post = get_object_or_404(Post, pk=post_id)
+        review.author = request.user
+        review.content = request.POST['content']
+        review.hour = request.POST['hour']
+        review.star = request.POST['star']
+        review.image = request.FILES["image"]
+        review.save()
+    return redirect('post_detail', post_id)
+
+
+
+
 
 
 

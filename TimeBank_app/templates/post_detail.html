@@ -207,7 +207,7 @@
                                               {% elif post.status == "완료" %}
                                               {% if apply.to_user.username in partner %}
                                                 <td style="text-align: center;">
-                                                  <a href="{% url 'review' %}" class="btn btn-warning" style="margin: 2px;">후기작성</a>
+                                                  <a href="{% url 'new_review' post.id %}" class="btn btn-warning" style="margin: 2px;">후기작성</a>
                                                 </td>
                                               {% else %}
                                                 <td><button type="button" class="btn btn-success" disabled>미선택</button></td>
@@ -256,48 +256,70 @@
                             {% endif %}
                         </section>
                     </article>
-                    <hr><br><br>
-
-                    <!-- Comments section-->
-                    <section class="mb-5">
-                        <div class="card bg-light">
-                            <div class="card-body">
-                                <!-- Comment form-->
-                                <form class="mb-4" action="{% url 'create_comment' post.id %}" method="post">
-                                  {% csrf_token %}
-                                  <textarea class="form-control" rows="3" placeholder="로그인 후, 댓글을 남겨주세요!" name="content" id="content"></textarea>
-                                  <br>
-                                  <button name="#" class="btn btn-primary mb-1" style="float:right;">등록</button>
-                                </form>
-                                <!-- Comment with nested comments-->
-                                <br>
-                                {% for comment in comments %}
-                                <!-- Single comment-->
-                                <div class="d-flex" style="padding: 15px;">
-                                    <div class="flex-shrink-0" style="width:50px; height:50px;">
-                                      {% if comment.author.image %}
-                                      <img class="rounded-circle" src="{{ comment.author.image.url }}" alt="..." style="width:100%; height:100px; object-fit: cover;"/>
-                                      {% else %}
-                                      <img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." />
-                                      {% endif %}
+                    <br><br>
+                    <nav>
+                      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Comment</button>
+                        <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Review</button>
+                      </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent">
+                      <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <br>
+                          <!-- Comments section-->
+                          <section class="mb-5">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <!-- Comment form-->
+                                    <form class="mb-4" action="{% url 'create_comment' post.id %}" method="post">
+                                      {% csrf_token %}
+                                      <textarea class="form-control" rows="3" placeholder="로그인 후, 댓글을 남겨주세요!" name="content" id="content"></textarea>
+                                      <br>
+                                      <button name="#" class="btn btn-primary mb-1" style="float:right;">등록</button>
+                                    </form>
+                                    <!-- Comment with nested comments-->
+                                    <br>
+                                    {% for comment in comments %}
+                                    <!-- Single comment-->
+                                    <div class="d-flex" style="padding: 15px;">
+                                        <div class="flex-shrink-0" style="width:50px; height:50px;">
+                                          {% if comment.author.image %}
+                                          <img class="rounded-circle" src="{{ comment.author.image.url }}" alt="..." style="width:100%; height:100px; object-fit: cover;"/>
+                                          {% else %}
+                                          <img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." />
+                                          {% endif %}
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold"><a href="{% url 'profile' comment.author.username %}">{{ comment.author }}</a></div>
+                                            <div style="font-size: 14px; color: dimgray;">{{ comment.create_date }}</div>
+                                            {{ comment.content}}
+                                        </div>
                                     </div>
-                                    <div class="ms-3">
-                                        <div class="fw-bold"><a href="{% url 'profile' comment.author.username %}">{{ comment.author }}</a></div>
-                                        <div style="font-size: 14px; color: dimgray;">{{ comment.create_date }}</div>
-                                        {{ comment.content}}
-                                    </div>
-                                      
+                                    <!-- <div>
+                                      <a href="#" style="float:right; padding: 5px;">삭제</a>
+                                      <a href="#" style="float:right; padding: 5px;">수정</a>
+                                    </div> -->
+                                    {% endfor %}
                                 </div>
-                                <!-- <div>
-                                  <a href="#" style="float:right; padding: 5px;">삭제</a>
-                                  <a href="#" style="float:right; padding: 5px;">수정</a>
-                                </div> -->
-                                {% endfor %}
+                                
                             </div>
                             
-                        </div>
-                        
-                    </section>
+                        </section>
+                      </div>
+
+                      <!--Review-->
+                      <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <section class="mb-5">
+                          <div class="card bg-light">
+                              <div class="card-body">
+                              </div>
+                          </div>         
+                      </section>
+                      </div>
+                      <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+                    </div>
+
+                    
                     
                 </div>
                 <!-- Side widgets-->

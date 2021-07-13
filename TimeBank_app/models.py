@@ -2,6 +2,10 @@ from django.db import models
 from django.conf import settings
 # from TimeBank_account.models import User
 import TimeBank_account.models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
+
 
 class MainCategory(models.Model):
     name = models.CharField(max_length = 100)
@@ -86,9 +90,26 @@ class Apply(models.Model):
 # 댓글 기능
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='글', null=True)
-    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='작성자')
+    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='댓글작성자')
     content = models.TextField()
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='댓글등록시간')
+
+
+
+# 리뷰
+class Review(models.Model):
+    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='후기작성자')
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name='댓글등록시간')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='글', null=True)
+    content = models.TextField()
+    hour = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='실거래시간')
+    star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    image = models.ImageField(upload_to="images/", blank=True)
+
+
+
+
+
 
 
 '''

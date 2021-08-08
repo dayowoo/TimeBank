@@ -4,13 +4,15 @@ import TimeBank_app.views
 from django.urls import path, include
 from django. conf.urls.static import static
 from django.conf import settings
-
+import socialLogin.views
 
 urlpatterns = [
     path('', TimeBank_app.views.index, name="index"),
     path('admin/', admin.site.urls),
     path('post/', include('TimeBank_app.urls')),
     path('account/', include('TimeBank_account.urls')),
+    path('social/', include('socialLogin.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -1,0 +1,15 @@
+{% load socialaccount %}
+{% providers_media_js %}
+
+<h1>Hello world</h1>
+<a href="/accounts/signup">회원가입</a>
+<br>
+
+{% if user.is_authenticated %}
+<a href="/accounts/logout">로그아웃</a>
+<br>
+{{user.username}} 님 반갑습니다
+{% else %}
+<a href="{% provider_login_url 'google' %}">구글 로그인</a>
+로그인 해주세요
+{% endif %}

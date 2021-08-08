@@ -1,3 +1,15 @@
+from django import forms
+from django.db.models import fields
+from .models import Review
+# from .widgets import CounterTextInput, starWidget
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ["content", "hour", "star", "image"]
+
+
+
 '''
 from django import forms
 from TimeBank_app.models import MessageItem

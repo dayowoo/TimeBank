@@ -1,11 +1,13 @@
+from django.core import paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
-from TimeBank_app.models import Comment, Post, Apply, Review
+from TimeBank_app.models import Comment, Post, Apply, ReComment, Review
 from TimeBank_account.models import Account
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
+from django.core.paginator import Paginator
 try:
     from django.utils import simplejson as json
 except ImportError:
@@ -17,9 +19,30 @@ from django.contrib import messages
 from django.utils import timezone
 # from .forms import PostForm, MsgForm
 import json
+import decimal
+from datetime import datetime
+import time
+
+
+
+
 
 # home
 def index(request):
+    time_1 = datetime.strptime('05:00 AM', "%H:%M %p")
+    time_2 = datetime.strptime('10:45 AM', "%H:%M %p")
+
+    time_difference = time_2 - time_1
+    second = str(time_difference)[:4]
+    print(second)
+    hour = int(second[:1])*60
+    minute = int(second[2:4])
+    sum_tok = hour + minute
+    tok = sum_tok / 60
+    print(round(tok,2))
+    
+    print(type(time_difference))    # 'datetime.timedelta'
+    print(type(str(time_difference)))     # 5:00:00 ->str
     return render(request, 'index.html')
 
 
@@ -45,7 +68,58 @@ def create(request):
         post.tok = request.POST['tok']
         post.status = '대기'
         post.save()
+    if post.service == "주고싶어요":
+        post.giver = request.user
+    else :
+        post.taker = request.user
+    post.save()
     return redirect('post_list')
+
+
+
+
+# 글 수정페이지 보여주기
+def update_page(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    context = {'post':post}
+    return render(request, 'post_update.html', context)
+
+
+
+# 글 수정
+def update(request, post_id):
+    post = Post.objects.get(pk=post_id)
+
+    if(request.method == 'POST'):
+        post.date = request.POST['date']
+        post.start_time = request.POST['start_time']
+        post.end_time = request.POST['end_time']
+        post.service = request.POST['service']
+        post.location = request.POST['location']
+        post.mainwork = request.POST['mainwork']
+        post.subwork = request.POST['subwork']
+        post.content = request.POST['content']
+        post.author = request.user
+        post.tok = request.POST['tok']
+        post.status = '대기'
+        post.save()
+    if post.service == "주고싶어요":
+        post.giver = post.author
+    else :
+        post.taker = post.author
+    post.save()
+    return redirect('post_detail', post_id)
+
+
+
+
+# 글 삭제
+def delete(request, post_id):
+    post = Post.objects.get(pk=post_id)
+    post.delete()
+    return redirect('post_list')
+
+
 
 
 
@@ -53,7 +127,18 @@ def create(request):
 def post_list(request):
     # order_by : 순서정렬 / 최신순
     posts = Post.objects.all().order_by('-id')
-    return render(request, 'post_list.html', {'posts': posts})
+    return render(request, 'post_list.html', {'posts':posts})
+
+
+
+
+#### AJAX ####
+def post_ajax(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    user = request.user.username
+    content = {'content':post.content, 'author':post.author.username, 'id':post.id, 'user': user}
+    return HttpResponse(json.dumps(content), content_type="application/json")
 
 
 
@@ -62,19 +147,33 @@ def post_list(request):
 def post_detail(request, post_id):
     post = Post.objects.get(pk=post_id)
     comments = Comment.objects.filter(post=post.id)
+    account = Account.objects.filter(post=post.id)
+    reviews = Review.objects.filter(post=post.id)
     applies = Apply.objects.filter(from_post=post)
+    
+    # 신청한 유저 확인
+    apply_list = Apply.objects.filter(from_post=post).values('to_user')
+    apply_name = []
+    for i in range(0,len(apply_list)):
+        apply_name.append(apply_list[i]['to_user'])
+
+    
     btn_msg = post.status
+    success_btn = "완료확정"
+    
     if post.service == "받고싶어요":
         post.taker = post.author
         
     if post.status == "진행":
         if post.taker == request.user:
             btn_msg = "완료하기"
-        # request.user == post.giver
         else:               
             btn_msg = "승인대기"
+
     partner = [str(post.taker), str(post.giver)]
-    context = {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies, 'partner':partner}
+    context = {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies, 'partner':partner,
+                 'reviews':reviews, 'success_btn':success_btn, 'account':account, 'apply_list':apply_list,
+                 'apply_name':apply_name}
     return render(request, "post_detail.html", context)
 
 
@@ -130,27 +229,92 @@ def choice(request, post_id, user_id):
 # 진행 -> 완료하기
 def success(request, post_id, user_id):
     post = Post.objects.get(pk=post_id)
-    account = Account()
-    user = request.user
     post.status = "완료"
-    post.giver.balance += post.tok
-    post.taker.balance -= post.tok
+    post.save()
+    return redirect('post_detail', post_id)
+
+
+
+
+# 완료 확정하기 
+def success_ck(request, post_id, user_id):
+    post = Post.objects.get(pk=post_id)
+    
+    account = Account()
+    start_time = request.POST['start_time']
+    end_time = request.POST['end_time']
+    
+    time_start = datetime.strptime(start_time, "%H:%M %p")
+    time_end = datetime.strptime(end_time, "%H:%M %p")
+    time_difference = time_end - time_start
+    sec_del = str(time_difference)[:4]
+    hour = int(sec_del[:1])*60
+    minute = int(sec_del[2:4])
+    sum_time = hour + minute
+    tok = round(sum_time/60, 2)
+
+    post.status = "완료확정"
+    post.giver.balance += decimal.Decimal(tok)
+    post.taker.balance -= decimal.Decimal(tok)
     post.save()
     post.taker.save()
     post.giver.save()
 
+    account.post = post
     account.giver_balance = post.giver.balance
     account.taker_balance = post.taker.balance
     account.giver = post.giver
     account.taker = post.taker
-    account.tok = post.tok
+    account.tok = decimal.Decimal(tok)
     account.mainwork = post.mainwork
     account.subwork = post.subwork
-    user.save()
+    account.giver.save()
+    account.taker.save()
     account.save()
+
+    btn_success_ck = "완료확정"
+    if request.user == post.taker:
+        btn_success_ck = "완료확정"
+    else:
+        btn_success_ck = "완료"
+
     return redirect('post_detail', post_id)
 
 
+'''
+# 완료 확정하기 
+def success_ck(request, post_id, user_id):
+    post = Post.objects.get(pk=post_id)
+    account = Account()
+    tok = request.POST['tok']
+    post.status = "완료확정"
+    post.giver.balance += decimal.Decimal(tok)
+    post.taker.balance -= decimal.Decimal(tok)
+    post.save()
+    post.taker.save()
+    post.giver.save()
+
+    account.post = post
+    account.giver_balance = post.giver.balance
+    account.taker_balance = post.taker.balance
+    account.giver = post.giver
+    account.taker = post.taker
+    account.tok = decimal.Decimal(tok)
+    account.mainwork = post.mainwork
+    account.subwork = post.subwork
+    account.giver.save()
+    account.taker.save()
+    account.save()
+
+
+    btn_success_ck = "완료확정"
+    if request.user == post.taker:
+        btn_success_ck = "완료확정"
+    else:
+        btn_success_ck = "완료"
+
+    return redirect('post_detail', post_id)
+'''
 
 
 
@@ -179,14 +343,35 @@ def create_comment(request, post_id):
 
 
 
-
-
-
 # 댓글 삭제하기
-def comment_delete(request, comment_id):
-    comment = get_object_or_404(Comment, pk=comment_id)
+@login_required
+def delete_comment(request, post_id, comment_id):
+    comment = Comment.objects.get(pk=comment_id)
     comment.delete()
-    return redirect("post_detail", comment.post.id)
+    return redirect("post_detail", post_id)
+
+
+# 답글 달기
+@login_required
+def create_recomment(request, post_id, comment_id):
+    recomment = ReComment()
+    recomment.content = request.POST['recontent']
+    recomment.comment = get_object_or_404(Comment, pk=comment_id)
+    recomment.author = request.user
+    recomment.save()
+    return redirect('post_detail', post_id)
+
+
+
+
+# 답글 삭제
+@login_required
+def delete_recomment(request, post_id, recomment_id):
+    recomment = ReComment.objects.get(pk=recomment_id)
+    recomment.delete()
+    return redirect('post_detail', post_id)
+
+
 
 
 
@@ -197,24 +382,69 @@ def new_review(request, post_id):
     return render(request, "new_review.html", context)
 
 
-# 리뷰 작성하기
+
+
+# 리뷰 작성하기 (완료 확정하기)
 def create_review(request, post_id):
-    if(request.method == 'POST'):
+    if request.method == 'POST':
+        post = Post.objects.get(pk=post_id)
+        if request.user == post.giver:
+            partner = post.taker
+        else:
+            partner = post.giver
         review = Review()
         review.post = get_object_or_404(Post, pk=post_id)
         review.author = request.user
+        review.partner = partner
         review.content = request.POST['content']
-        review.hour = request.POST['hour']
         review.star = request.POST['star']
         review.image = request.FILES["image"]
         review.save()
+        
+        review.partner.star = review.star
+        review.partner.save()
+        return redirect('post_detail', post_id)
+
+
+
+# 리뷰 자세히보기
+def review_detail(request, post_id, review_id):
+    post = Post.objects.get(pk=post_id)
+    review = Review.objects.get(pk=review_id)
+    context = {'post':post, 'review':review}
+    return render(request, "review_detail.html", context)
+
+
+
+# 리뷰 수정페이지 보기
+@login_required
+def review_update_page(request, post_id, review_id):
+    post = Post.objects.get(pk=post_id)
+    review = Review.objects.get(pk=review_id)
+    context = {'post':post, 'review':review}
+    return render(request, "review_update.html", context)
+
+
+
+# 리뷰 수정하기
+def review_update(request, post_id, review_id):
+    post = Post.objects.get(pk=post_id)
+    review = Review.objects.get(pk=review_id)
+    
+    review.content = request.GET["content"]
+    review.star = request.GET["star"]
+    # review.image = request.POST["image"]
+    review.save()
+
+    return redirect('review_detail', post_id, review_id)
+
+
+
+# 리뷰 삭제하기
+def review_delete(request, post_id, review_id):
+    review = Review.objects.get(pk=review_id)
+    review.delete()
     return redirect('post_detail', post_id)
-
-
-
-
-
-
 
 
 # # 지원하기
@@ -240,19 +470,12 @@ def create_review(request, post_id):
 
 
 
+
+
+
+
+
 '''
-#### AJAX ####
-def post_ajax(request):
-    pk = request.POST.get('pk', None)
-    post = get_object_or_404(Post, pk=pk)
-    user = request.user.username
-    content = {'content':post.content, 'author':post.author.username, 'user': user}
-    return HttpResponse(json.dumps(content), content_type="application/json")
-
-
-
-
-
 # 진행
 def progress_ajax(request):
     pk = request.POST.get('pk', None)

@@ -1,8 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, AbstractBaseUser, UserManager
 from django.contrib.auth.base_user import BaseUserManager
+from django.db.models.deletion import CASCADE
 from django.db.models.fields import related
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+
 
 class CustomUserManager(BaseUserManager):
 
@@ -48,6 +52,9 @@ class User(AbstractUser):
     about = models.TextField(verbose_name="소개말", blank=True)
     # apply_posts = models.ManyToManyField("Post", related_name='apply_users', verbose_name='신청글')
     object = CustomUserManager()
+    user_mode = [('코디네이터','코디네이터'),('사용자','사용자')]
+    mode = models.CharField(max_length=60, choices=user_mode, verbose_name='유저등급', default='사용자', null=True)
+    star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, verbose_name='평균평점')
 
     # USERNAME_FIELD = 'username'
     # REQUIRED_FIELDS = ['email']
@@ -65,6 +72,8 @@ class User(AbstractUser):
 
 # 계좌 
 class Account(models.Model):
+    # on_delete=models.DO_NOTHING
+    post = models.ForeignKey('TimeBank_app.Post', on_delete=CASCADE, null=True, related_name='post', verbose_name='거래글')
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='거래일자')
     giver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='giver', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('User', on_delete=models.CASCADE, related_name='taker', verbose_name='받는사람', null=True)

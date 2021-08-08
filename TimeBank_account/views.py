@@ -1,3 +1,5 @@
+from decimal import Context
+from django.db.models.aggregates import Avg
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import auth
 from .models import *
@@ -10,13 +12,13 @@ try:
     from django.utils import simplejson as json
 except ImportError:
     import json
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from TimeBank_app.models import Post, Apply
+from TimeBank_app.models import Post, Apply, Review
 from .models import User, Account
 import json
 from datetime import datetime
-
+from django.db.models import F, Sum, Count, Case, When, Q
 
 
 
@@ -43,11 +45,28 @@ def register(request):
             return render(request, "register.html")
         # 새로운 유저 생성
         user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
-        auth.login(request, user)
-        # 가입 시간화폐값 생성
-        account = Account(timestamp=datetime.now(), taker=user, mainwork='가입', subwork='-', tok=10, taker_balance=10)
-        account.save()
+        auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
     return redirect('index')
+
+
+# ID 중복 조회
+def id_overlap_check(request):
+    username = request.GET.get('username')
+    try:
+        # 중복 검사 실패
+        user = User.objects.get(username=username)
+    except:
+        # 중복 검사 성공
+        user = None
+    if user is None:
+        overlap = "pass"
+    else:
+        overlap = "fail"
+    context = {'overlap': overlap}
+    return JsonResponse(context)   
+
+
+
 
 
 # 로그인
@@ -75,10 +94,48 @@ def logout(request):
 
 
 
+
 # 프로필
 def profile(requset,username):
     user_profile = get_object_or_404(User,username=username)
-    return render(requset, "profile.html", {"user_profile":user_profile, 'username': username})
+    
+    reviews = Review.objects.filter(author=user_profile)
+     # 받은 거래
+    recieved_reviews = Review.objects.filter(partner=user_profile)
+    recieved_review_num = len(recieved_reviews)
+
+    # 평균평점
+    if recieved_review_num == 0:
+        avg_star = 0
+    else:
+        avg_star = user_profile.star/recieved_review_num
+
+    if 0<=avg_star<1:
+        avg_star_view = 0
+    elif 1<=avg_star<2:
+        avg_star_view = 1
+    elif 2<=avg_star<3:
+        avg_star_view = 2
+    elif 3<=avg_star<4:
+        avg_star_view = 3
+    elif 4<=avg_star<5:
+        avg_star_view = 4
+    elif avg_star==5:
+        avg_star_view = 5
+
+    plus_list = Account.objects.filter(giver= user_profile).aggregate(Sum('tok'))
+    plus_tok = plus_list['tok__sum']
+    minus_list = Account.objects.filter(taker= user_profile).aggregate(Sum('tok'))
+    minus_tok = minus_list['tok__sum']
+    if minus_tok == None:
+        minus_tok = 0
+    else:
+        minus_tok
+    if plus_tok == None:
+        plus_tok = 0
+
+    context = {"user_profile":user_profile, 'username': username, 'plus_tok':plus_tok, 'minus_tok':minus_tok, "avg_star":avg_star, "avg_star_view":avg_star_view}
+    return render(requset, "profile.html", context)
 
 
 
@@ -87,7 +144,20 @@ def profile(requset,username):
 @login_required
 def profile_update_page(request,username):
     user = get_object_or_404(User,username=username)
-    return render(request, "profile_update.html", {"user_profile":user, 'username': username})
+
+    plus_list = Account.objects.filter(giver= user).aggregate(Sum('tok'))
+    plus_tok = plus_list['tok__sum']
+    minus_list = Account.objects.filter(taker= user).aggregate(Sum('tok'))
+    minus_tok = minus_list['tok__sum']
+    if minus_tok == None:
+        minus_tok = 0
+    else:
+        minus_tok
+    if plus_tok == None:
+        plus_tok = 0
+
+    context = {"user_profile":user, 'username': username, 'plus_tok':plus_tok, 'minus_tok':minus_tok}
+    return render(request, "profile_update.html", context)
 
 
 
@@ -110,7 +180,6 @@ def profile_update(request,username):
     user.about = request.POST["about"]
     user.save()
     return redirect('profile', user.username)
-    # return render(request, "profile.html", {"user_profile":user, 'username': username})
 
 
 
@@ -119,30 +188,189 @@ def create_account_no(request):
     account = Account.create(request.user)
     account.save()
     account_no = account.account_no
+    
     return render(request, "balance.html", {"account_no":account_no})
 
 
 
 # 계좌 내역 보여주기
-def account_history(request):
+def account_history(request, username):
+    user_profile = get_object_or_404(User,username=username)
     posts = Post.objects.all()
     # 내가 등록한 거래
-    my_posts = posts.filter(author = request.user)
+    my_posts = posts.filter(author = user_profile)
     # 내가 신청한 거래
-    regsiter_posts = Apply.objects.filter(to_user = request.user)
-    return render(request, "account.html", {'my_posts': my_posts, 'regsiter_posts': regsiter_posts})
+    regsiter_posts = Apply.objects.filter(to_user = user_profile)
+    plus_list = Account.objects.filter(giver= user_profile).aggregate(Sum('tok'))
+    plus_tok = plus_list['tok__sum']
+    minus_list = Account.objects.filter(taker= user_profile).aggregate(Sum('tok'))
+    minus_tok = minus_list['tok__sum']
+    if minus_tok == None:
+        minus_tok = 0
+    else:
+        minus_tok
+    if plus_tok == None:
+        plus_tok = 0
+
+ # 받은 거래
+    recieved_reviews = Review.objects.filter(partner=user_profile)
+    recieved_review_num = len(recieved_reviews)
+
+    # 평균평점
+    if recieved_review_num == 0:
+        avg_star = 0
+    else:
+        avg_star = user_profile.star/recieved_review_num
+
+    if 0<=avg_star<1:
+        avg_star_view = 0
+    elif 1<=avg_star<2:
+        avg_star_view = 1
+    elif 2<=avg_star<3:
+        avg_star_view = 2
+    elif 3<=avg_star<4:
+        avg_star_view = 3
+    elif 4<=avg_star<5:
+        avg_star_view = 4
+    elif avg_star==5:
+        avg_star_view = 5
+
+    context = {'user_profile':user_profile, 'my_posts': my_posts, 'regsiter_posts': regsiter_posts,
+         'plus_tok':plus_tok, 'minus_tok':minus_tok, 'avg_star':avg_star, "avg_star_view":avg_star_view}
+    return render(request, "account.html",context)
 
 
 
 
 # 계좌내역 Account 모델 사용
 @login_required
-def balance(request):
-    accounts = Account.objects.filter(giver=request.user) | Account.objects.filter(taker=request.user)
-    account_posts = Post.objects.filter(giver= request.user) | Post.objects.filter(taker= request.user)
-    giver_balances = Account.objects.filter(giver=request.user)
+def balance(request, username):
+    user_profile = get_object_or_404(User,username=username)
+    accounts = Account.objects.filter(giver= user_profile) | Account.objects.filter(taker= user_profile)
+    accounts = accounts.order_by('-timestamp')
+    giver_balances = Account.objects.filter(giver=user_profile)
     
-    return render(request, 'balance.html', {'accounts':accounts, 'account_posts':account_posts, 'giver_balances':giver_balances})
+     # 받은 거래
+    recieved_reviews = Review.objects.filter(partner=user_profile)
+    recieved_review_num = len(recieved_reviews)
+
+    # 평균평점
+    if recieved_review_num == 0:
+        avg_star = 0
+    else:
+        avg_star = user_profile.star/recieved_review_num
+
+    if 0<=avg_star<1:
+        avg_star_view = 0
+    elif 1<=avg_star<2:
+        avg_star_view = 1
+    elif 2<=avg_star<3:
+        avg_star_view = 2
+    elif 3<=avg_star<4:
+        avg_star_view = 3
+    elif 4<=avg_star<5:
+        avg_star_view = 4
+    elif avg_star==5:
+        avg_star_view = 5
+
+    plus_list = Account.objects.filter(giver= user_profile).aggregate(Sum('tok'))
+    plus_tok = plus_list['tok__sum']
+    minus_list = Account.objects.filter(taker= user_profile).aggregate(Sum('tok'))
+    minus_tok = minus_list['tok__sum']
+    if minus_tok == None:
+        minus_tok = 0
+    else:
+        minus_tok
+    if plus_tok == None:
+        plus_tok = 0
+    context = {'user_profile':user_profile,'accounts':accounts, 'giver_balances':giver_balances, 
+                'plus_tok':plus_tok, 'minus_tok':minus_tok,'avg_star':avg_star, "avg_star_view":avg_star_view}
+    return render(request, 'balance.html', context)
+
+
+
+
+
+
+# 거래 후기 페이지 보기
+def my_review(request, username):
+    user_profile = get_object_or_404(User,username=username)
+    post = Post.objects.filter(giver= user_profile) | Post.objects.filter(taker= user_profile)
+    
+    reviews = Review.objects.filter(author=user_profile)    # 내가 작성한 거래
+    recieved_reviews = Review.objects.filter(partner=user_profile)  # 받은 리뷰
+    admin = user_profile
+
+    if request.user.mode == '코디네이터':
+        admin = request.user, user_profile
+    else:
+        admin = user_profile
+
+    # 미작성 거래후기
+    my_review = post & Post.objects.filter(status="완료확정")   #작성가능 리뷰
+    ck_review = Review.objects.filter(post__in=my_review) # 리뷰작성여부 판단
+    print(ck_review)
+
+    # 후기요약
+    post_num = len(post)    #총 거래 횟수
+    my_review_num = len(my_review)  # 완료한 거래확정수
+    not_success_cks = Post.objects.filter(taker= user_profile) & Post.objects.filter(status="완료") #미완료 거래확정
+    not_success_ck_num = len(not_success_cks)      # 미완료 거래확정 수
+    review_num = len(reviews)       # 작성한 거래후기
+    not_created_review_num = len(my_review)-len(ck_review)  # 미작성 거래후기수
+    recieved_review_num = len(recieved_reviews)    # 받은 거래후기
+
+
+
+    if reviews:
+        reviews = reviews
+    else:
+        reviews = None
+
+    # 평균평점
+    if recieved_review_num == 0:
+        avg_star = 0
+    else:
+        avg_star = user_profile.star/recieved_review_num
+
+    if 0<=avg_star<1:
+        avg_star_view = 0
+    elif 1<=avg_star<2:
+        avg_star_view = 1
+    elif 2<=avg_star<3:
+        avg_star_view = 2
+    elif 3<=avg_star<4:
+        avg_star_view = 3
+    elif 4<=avg_star<5:
+        avg_star_view = 4
+    elif avg_star==5:
+        avg_star_view = 5
+ 
+    plus_list = Account.objects.filter(giver= user_profile).aggregate(Sum('tok'))
+    plus_tok = plus_list['tok__sum']
+    minus_list = Account.objects.filter(taker= user_profile).aggregate(Sum('tok'))
+    minus_tok = minus_list['tok__sum']
+    if minus_tok == None:
+        minus_tok = 0
+    else:
+        minus_tok
+    if plus_tok == None:
+        plus_tok = 0
+
+    context = {"user_profile":user_profile, "post_num":post_num, "review_num":review_num, "reviews":reviews, 'post':post, 'not_created_review_num':not_created_review_num,
+                'plus_tok':plus_tok, "minus_tok":minus_tok, "recieved_reviews":recieved_reviews,"not_success_ck_num":not_success_ck_num
+                ,"avg_star":avg_star,"avg_star_view":avg_star_view,"recieved_review_num":recieved_review_num,"admin":admin
+                ,"not_success_cks": not_success_cks,'reviews':reviews,'my_review_num':my_review_num, 'review_num':review_num
+                ,"ck_review":ck_review}
+    return render(request, 'my_review.html', context)
+
+
+
+# 내가 쓴 거래후기 자세히보기
+def my_review_detail(request, review_id):
+    reviews = Review.objects.filter(pk=review_id)
+    context = {"reviews":reviews}
+    return render(request, "my_review_detail.html", context)
 
 
 

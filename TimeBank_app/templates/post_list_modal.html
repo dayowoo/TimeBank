@@ -123,7 +123,7 @@
                   <!--요청상태 modal-->
                   <td>
                     <button type="button" id="post_ajax" class="btn btn-primary" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}" >
-                      <div class="btnStatus"></div>
+                      <div class="btnStatus">{{post.status}}</div>
                     </button>
                   </td>
                   <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -140,7 +140,7 @@
                              </div>
                               <div class="modal-footer">
                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                 <button type="submit" class="btn btn-primary" id="progress_ajax" name="{{post.id}}"><div class="modal-moreBtn"></div></button>
+                                 <a href="{% url 'post_detail' post.id %}" class="btn btn-primary">자세히보기</a>
                                   </div>
                                 </div>
                               </div>
@@ -206,13 +206,7 @@ $(document).on('click', '#post_ajax', function(){
       console.log(response.post)
         $(".modal-body").html(response.content)
         $('.modal-author').html(response.author)
-        if(response.user == response.author)
-          {  // 글쓴이일 때
-           $('.modal-moreBtn').html("자세히보기")
-        } else if(response.user != response.author)
-          { // 글쓴이가 아닐때
-            $('.modal-moreBtn').html("신청하기")
-          }
+        $('.modal-moreBtn').html("자세히보기")
     },
     error: function(requset, status, error){
       console
@@ -222,6 +216,7 @@ $(document).on('click', '#post_ajax', function(){
 
 
 // progressBtn -> 진행중
+/*
 $(document).on('click', '#progress_ajax', function(){
   var pk = $(this).attr('name');
   $.ajax({
@@ -238,7 +233,7 @@ $(document).on('click', '#progress_ajax', function(){
     }
   })
 });
-
+*/
 </script>
 
 </body>

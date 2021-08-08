@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '*'
-    # '13.125.168.10', # LightSail IP 주소
+    # '3.34.49.30' # LightSail IP 주소
 ]
 
 
@@ -40,6 +40,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -47,7 +48,16 @@ INSTALLED_APPS = [
     'TimeBank_account',
     'TimeBank_app',
     'TimeBank_transaction',
+    'socialLogin',
     # 'debug_toolbar',    # DEBUG
+
+    #allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
+    #provider
+    'allauth.socialaccount.providers.google'
 ]
 
 MIDDLEWARE = [
@@ -153,3 +163,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = 'TimeBank_account.User'
+
+
+
+# 소셜로그인
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+
+    'allauth.account.auth_backends.AuthenticationBackend'
+)
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = '/'

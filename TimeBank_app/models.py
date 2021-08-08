@@ -50,7 +50,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
     tok = models.DecimalField(default=1, decimal_places=2, max_digits=5, verbose_name='거래시간')
     author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='작성자')
-    status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('중단','중단'))
+    status_list = (('대기','대기'),('진행','진행'),('완료','완료'),('완료확정','완료확정'),('중단','중단'))
     status = models.CharField(max_length=50, choices=status_list, default='대기')
     respond_list = (('요청대기','요청대기'),('요청승인', '요청승인'),('요청거절','요청거절'))
     respond = models.CharField(max_length=50, choices=respond_list, verbose_name='승인상태', default='요청대기')
@@ -96,14 +96,24 @@ class Comment(models.Model):
 
 
 
+# 답글
+class ReComment(models.Model):
+    comment = models.ForeignKey(Comment, related_name="recomments", on_delete=models.CASCADE, verbose_name='댓글', null=True)
+    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='답글작성자')
+    content = models.TextField()
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name='답글등록시간')
+
+    
+
 # 리뷰
 class Review(models.Model):
-    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='후기작성자')
-    create_date = models.DateTimeField(auto_now_add=True, verbose_name='댓글등록시간')
+    author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name="author", verbose_name='후기작성자')
+    partner = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name="partner", verbose_name='거래자')
+    create_date = models.DateTimeField(auto_now_add=True, verbose_name='리뷰등록시간')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, verbose_name='글', null=True)
-    content = models.TextField()
+    content = models.TextField(blank=True)
     hour = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='실거래시간')
-    star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True)
     image = models.ImageField(upload_to="images/", blank=True)
 
 

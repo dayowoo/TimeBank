@@ -22,9 +22,9 @@ from django.db.models import F, Sum, Count, Case, When, Q
 
 
 
-# 홈화면
-def index(request):
-    return render(request, 'index.html')
+# test
+def contact(request):
+    return render(request, 'contact.html')
 
 
 
@@ -37,16 +37,21 @@ def register(request):
         email = request.POST["email"]
         name = request.POST["name"]
         password = request.POST["password"]
-        password_check = request.POST["pw_check"]
-        image = request.FILES["image"]
+        password_check = request.POST["password_check"]
+        image = request.POST["image"]
+
+        if request.FILES.get("image") is not None:
+            image = request.FILES.get('image')
 
         # 비밀번호 재확인 불일치
         if password != password_check:
             return render(request, "register.html")
+
         # 새로운 유저 생성
         user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
         auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
     return redirect('index')
+
 
 
 # ID 중복 조회

@@ -1,0 +1,253 @@
+{% load static %}
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TimeBank</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+  <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+ <!-- Navigation -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+        </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
+      </li>
+        <!--로그인 상태-->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
+        </li>
+        <li class="nav-item">
+          <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %} 
+            <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
+          </form>
+        </li>
+        
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+  <header class="bg-primary text-white">
+    <div class="container text-center">
+      <h1>회원가입</h1>
+    </div>
+  </header>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-8">
+
+        <!-- Title -->
+        <h1 class="mt-4" style="color:mediumvioletred;">회원가입</h1>
+
+        <!-- Author -->
+        
+        <hr>
+
+        <!-- Date/Time -->
+        <p>회원 정보를 입력해주세요.</p>
+
+        <hr>
+
+        <!-- Comments Form -->
+        <div class="card my-4">
+          <h5 class="card-header"></h5>
+          <div class="card-body">
+            <form action="{% url 'register' %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form.as_p }}
+
+              <div class="form-group">
+                <label for="userid">사용자 ID</label>
+                <p style="color: blue;">영문, 숫자 조합으로만 입력 가능합니다.</p>
+                <div class="form-inline">
+                  <input type="text" class="form-control d-flex username_input" id="userid" name="username" pattern="[a-zA-Z0-9]+" title="한글, 특수문자, 공백 입력불가" placeholder="영문, 숫자 조합으로만 입력 가능합니다." required>
+                  <button type="button" class="form-control btn btn-outline-primary id_overlap_button " onclick="id_overlap_check()" style="margin-left: 20px;">ID조회</button>
+                  <img id="id_check_sucess" style="display: none; width: 25px; height: 25px; margin-left: 10px;" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMjsiIHhtbDpzcGFjZT0icHJlc2VydmUiPg0KPGc+DQoJPGNpcmNsZSBzdHlsZT0iZmlsbDojMTEzOEY3OyIgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMjM2LjE3Ii8+DQoJPHBhdGggc3R5bGU9ImZpbGw6IzExMzhGNzsiIGQ9Ik0yNTYsNTEyQzExNC44NTMsNTEyLDAsMzk3LjE2NywwLDI1NkMwLDExNC44NTMsMTE0Ljg1MywwLDI1NiwwYzE0MS4xNjcsMCwyNTYsMTE0Ljg1MywyNTYsMjU2DQoJCUM1MTIsMzk3LjE2NywzOTcuMTY3LDUxMiwyNTYsNTEyeiBNMjU2LDM5LjY1OUMxMzYuNzA1LDM5LjY1OSwzOS42NTksMTM2LjcwNSwzOS42NTksMjU2UzEzNi43MDUsNDcyLjM0MSwyNTYsNDcyLjM0MQ0KCQlTNDcyLjM0MSwzNzUuMjc1LDQ3Mi4zNDEsMjU2QzQ3Mi4zNDEsMTM2LjcwNSwzNzUuMjk1LDM5LjY1OSwyNTYsMzkuNjU5eiIvPg0KPC9nPg0KPHBhdGggc3R5bGU9ImZpbGw6I0ZGRkZGRjsiIGQ9Ik0yMjUuMDY2LDM1MC4xOTFjLTUuMzE0LDAtMTAuMzkxLTIuMTIyLTE0LjEzOS01LjkyOWwtNzMuMTcxLTc0LjM2MQ0KCWMtNy42NzQtNy44MTMtNy41NzUtMjAuMzQ1LDAuMjM4LTI4LjAzOWM3LjgxMy03LjY1NCwyMC4zNjUtNy41NzUsMjguMDM5LDAuMjM4bDU4LjQ1OCw1OS40MDlsMTIwLjk0MS0xMzMuMTk1DQoJYzcuMzk2LTguMTEsMTkuOTI5LTguNjg1LDI3Ljk5OS0xLjM0OGM4LjExLDcuMzU3LDguNzA1LDE5Ljg4OSwxLjM0OCwyOC4wMTlMMjM5Ljc0LDM0My43MDZjLTMuNjY4LDQuMDQ1LTguODI0LDYuMzg1LTE0LjI3Nyw2LjUwNA0KCUMyMjUuMzI0LDM1MC4xOTEsMjI1LjIwNSwzNTAuMTkxLDIyNS4wNjYsMzUwLjE5MXoiLz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="email">이메일 주소</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="이메일 형식으로 입력해주세요" required>
+              </div>
+
+              <div class="form-group">
+                <label for="password1">비밀번호</label>
+                <input type="password" class="form-control" id="id_password1" name="password" type="password" pattern="/[^-가-?a-zA-Z0-9/]/" title="영문, 숫자, 특수문자 조합으로만 입력 가능합니다." required>
+              </div>
+
+              <div class="form-group">
+                <label for="id_password2">비밀번호 확인</label>
+                <input type="password" class="form-control" id="id_password2" name="pw_check" pattern="/[^-가-?a-zA-Z0-9/]/" placeholder="확인을 위해 이전과 동일한 비밀번호를 입력하세요." required>
+              </div>
+
+              <div class="form-group">
+                <label for="name">사용자 이름</label>
+                <input type="text" class="form-control" id="username" name="name" type="text" required>
+              </div>
+
+          
+              <div class="form-group">
+                <label for="image">프로필 사진</label>
+                <input id="image" name="image" type="file">
+              </div> 
+              <br>
+
+              <br><br>
+              <div class="shortcut" style="float: right; margin: 20px;">
+                <button type="submit" class="btn btn-success">회원 가입</button>
+                <p class="link">계정이 있으신가요? <a href="{% url 'login' %}">로그인</a></p>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Widgets Column -->
+      <div class="col-md-4">
+
+        <!-- Side Widget -->
+        <div class="card my-4">
+          <h5 class="card-header">문의사항</h5>
+          <div class="card-body">
+            031-408-1225
+          </div>
+        </div> 
+
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+  
+  
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Dayoung Seon 2021</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+  <!-- Custom JavaScript for this theme -->
+  <script src="{% static 'js/scrolling-nav.js' %}"></script>
+
+  <!--ID chek-->
+  <script>
+   function id_overlap_check() {
+
+    // ID 중복확인 후, 수정 시
+    $('.username_input').change(function () {
+      $('#id_check_sucess').hide();
+      $('.id_overlap_button').show();
+      $('.username_input').attr("check_result", "fail");
+    })
+
+    // 아무런 값을 입력하지 않은 경우
+    if ($('.username_input').val() == '') {
+      alert('ID를 입력해주세요.')
+      return;
+    }
+
+    if ($('.username_input').attr("check_result") == "fail"){
+    alert("아이디 중복체크를 해주시기 바랍니다.");
+    $('.username_input').focus();
+    return false;
+  }
+
+    // Ajax
+    id_overlap_input = document.querySelector('input[name="username"]');
+
+    $.ajax({
+      url: "{% url 'id_overlap_check' %}",
+      data: {
+        'username': id_overlap_input.value
+      },
+      datatype: 'json',
+      success: function (data) {
+        console.log(data['overlap']);
+        if (data['overlap'] == "fail") {
+          alert("이미 존재하는 아이디 입니다.");
+          id_overlap_input.focus();
+          return;
+        } else {
+          alert("사용가능한 아이디 입니다.");
+          $('.username_input').attr("check_result", "success");
+          $('#id_check_sucess').show();
+          $('.id_overlap_button').hide();
+          return;
+        }
+      }
+    });
+    }
+  </script>
+
+</body>
+
+

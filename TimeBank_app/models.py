@@ -23,9 +23,9 @@ class SubCategory(models.Model):
 
 # 거래글 등록
 class Post(models.Model): 
-    date = models.CharField(max_length=140)
-    start_time = models.CharField(max_length=140)
-    end_time = models.CharField(max_length=140)
+    date = models.CharField(max_length=140, blank=True)
+    start_time = models.CharField(max_length=140, blank=True)
+    end_time = models.CharField(max_length=140, blank=True)
     service_choice = (('주고싶어요','주고싶어요'),('받고싶어요','받고싶어요'))
     service = models.CharField(max_length=50, choices=service_choice)
     location = models.CharField(max_length=140)
@@ -59,6 +59,7 @@ class Post(models.Model):
     applicants = models.ManyToManyField('self', blank = True, related_name='apply_user', through='Apply', symmetrical=False)
     giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)
+    image = models.ImageField(upload_to="images/", blank=True)
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:

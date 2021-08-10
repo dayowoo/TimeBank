@@ -56,9 +56,9 @@ def new_post(request):
 def create(request):
     if(request.method == 'POST'):
         post = Post()
-        post.date = request.POST['date']
-        post.start_time = request.POST['start_time']
-        post.end_time = request.POST['end_time']
+        post.date = request.POST.get('date')
+        post.start_time = request.POST.get('start_time')
+        post.end_time = request.POST.get('end_time')
         post.service = request.POST['service']
         post.location = request.POST['location']
         post.mainwork = request.POST['mainwork']
@@ -66,6 +66,10 @@ def create(request):
         post.content = request.POST['content']
         post.author = request.user
         post.tok = request.POST['tok']
+        
+        if request.FILES.get("image") is not None:
+            post.image = request.FILES.get('image')
+
         post.status = '대기'
         post.save()
     if post.service == "주고싶어요":

@@ -114,7 +114,7 @@
         <div class="card my-4">
           <h5 class="card-header"></h5>
           <div class="card-body">
-            <form action="{% url 'create' %}" method="post">
+            <form action="{% url 'create' %}" method="post" enctype="multipart/form-data">
               {% csrf_token %}
               <div class="form-group">
                 <label for="date">연-월-일</label>
@@ -172,6 +172,11 @@
               <div class="form-group">
                 <label for="tok">거래 시간 (단위:시간)</label>
                 <input type="number" class="form-control" name="tok" id="tok" placeholder="" value=1>
+              </div>
+
+              <div class="form-group">
+                <label for="image">이미지 등록</label>
+                <input id="image" name="image" class="form-control" type="file">
               </div>
 
               <div class="form-group">
@@ -234,7 +239,6 @@
         interval: 15,
         minTime: '7',
         maxTime: '11:59pm',
-        defaultTime: '11',
         startTime: '7:00',
         dynamic: false,
         dropdown: true,

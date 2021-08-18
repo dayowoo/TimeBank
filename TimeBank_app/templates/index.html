@@ -81,7 +81,8 @@
     <div class="container text-center">
       <h3 style="font-family: 'Pretendard-Regular'">쌍용종합 사회복지관</h3>
       <h1>TimeBank</h1>
-      
+      <button type="button" onclick="dateCheck()" >테스트</button>
+      <div id="date" value="1">1</div>
       <div><img src="/static/img/logo.png" alt="logo" style="padding-top:5%;" ></div>
       <p class="lead" style="padding:5%; font-family: 'Pretendard-Regular'">
         이곳은,<br>
@@ -150,6 +151,13 @@
   <!-- Custom JavaScript for this theme -->
   <script src="{% static 'js/scrolling-nav.js' %}"></script>
 
+  <script>
+    function dateCheck() {
+      const name = document.getElementById('date');
+      console.log(name.value);
+      alert(name.value);
+    }
+  </script>
 </body>
 
 

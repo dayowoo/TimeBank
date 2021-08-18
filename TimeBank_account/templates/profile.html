@@ -17,6 +17,17 @@
 
 </head>
 
+<style>
+  @font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  line-height: 150%;
+}
+body{font-family: 'Pretendard-Regular';}
+</style>
+
 <body id="page-top">
 
   <!-- Navigation -->
@@ -130,6 +141,8 @@
         </div>
       </div>
       <p><br><br></p>
+      {% if user.is_authenticated %}
+      <!--접속유저=프로필유저-->
       {% if request.user.username == user_profile.username %}
         <div class="list-group">
           <a href="{% url 'profile' user_profile.username %}" class="list-group-item active">프로필</a>
@@ -138,7 +151,9 @@
           <a href="{% url 'my_review' user_profile.username %}" class="list-group-item">거래후기</a>
         </div>
         <br><br>
+
       {% else %}
+      <!--접속유저!=프로필유저-->
         {% if request.user.mode == '코디네이터' %}
         <div class="list-group">
           <a href="{% url 'profile' user_profile.username %}" class="list-group-item active">프로필</a>
@@ -153,7 +168,15 @@
           <a href="{% url 'my_review' user_profile.username %}" class="list-group-item">거래후기</a>
         </div>
         {% endif %}
+      
       {% endif %}
+    <!--로그인X-->
+    {% else %}
+    <div class="list-group">
+      <a href="{% url 'profile' user_profile.username %}" class="list-group-item active">프로필</a>
+      <a href="{% url 'my_review' user_profile.username %}" class="list-group-item">거래후기</a>
+    </div>
+    {% endif %}
       <br><br>
       <ul class="list-group">
         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -179,6 +202,7 @@
           회원정보
         </div>
         <div class="card-body">
+          {% if user.is_authenticated %}
           <h5>회원 정보<br><br></h5>
           
           <table class="table">
@@ -232,6 +256,9 @@
           <a href="{% url 'profile_update_page' user.username %}" class="btn btn-success" style="float: right; margin: 20px;">수정</a>
           {% endif %}
         </div>
+        {% else %}
+        <div>로그인 후, 프로필을 확인하실 수 있습니다.</div>
+        {% endif %}
       </div>
       <!-- /.card -->
 

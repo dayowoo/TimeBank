@@ -96,6 +96,11 @@
                         <figure class="mb-4"><img class="img-fluid rounded" src="https://dummyimage.com/900x400/ced4da/6c757d.jpg" alt="..." /></figure> -->
                         <!-- Post content-->
                         <section class="mb-5">
+                          {% if post.image %}
+                          <div class="form-group" style="margin: 20px 0px 20px 0px;">
+                            <img class="card-img-top border" src="{{ post.image.url }}" style="height: 200px;">
+                          </div> 
+                          {% endif %}
                             
                             <table id="example" class="table table-striped table-bordered" style="width:100%; text-align: center;">
                                 <thead>
@@ -419,7 +424,9 @@
                                 {% endif %}
                                 {% for review in reviews %}
                                 <div class="card border-info" style="margin: 10px;">
+                                  {% if post.image %}
                                   <img class="card-img-top border-info" src="{{ review.image.url }}" alt="Card image cap" style="height: 200px;">
+                                  {% endif %}
                                   <div class="card-body">
                                     <h5 class="card-title">
                                       {% if review.star == 1 %}

@@ -1,0 +1,278 @@
+{% load static %}
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+      
+    <title>TimeBank</title>
+      
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+      
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+    <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
+
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+
+</head>
+
+<style>
+@font-face {
+        font-family: 'Pretendard-Regular';
+        src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+        line-height: 150%;
+    }
+    
+.interestBtn {
+  border-radius: 0.5em;
+}
+</style>
+
+<body id="page-top">
+
+ <!-- Navigation -->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+  <div class="container">
+    <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
+        </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
+      </li>
+        <!--로그인 상태-->
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
+        </li>
+        <li class="nav-item">
+          <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %} 
+            <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
+          </form>
+        </li>
+        
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+            <!-- Page content-->
+            <section class="py-5">
+                <div class="container px-5">
+                    <!-- Contact form-->
+                    <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                        <div class="text-center mb-5">
+                            <!-- <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div> -->
+                            <div class="d-flex flex-row justify-content-center" style="margin: 10px"> 
+                                <div class="p-2">
+                                    <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDI4Ni4wNTQgMjg2LjA1NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjg2LjA1NCAyODYuMDU0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojMjM5NEJDOyIgZD0iTTE0My4wMjcsMEM2NC4wMzEsMCwwLDY0LjA0LDAsMTQzLjAyN2MwLDc4Ljk5Niw2NC4wMzEsMTQzLjAyNywxNDMuMDI3LDE0My4wMjcNCgkJczE0My4wMjctNjQuMDMxLDE0My4wMjctMTQzLjAyN0MyODYuMDU0LDY0LjA0LDIyMi4wMjIsMCwxNDMuMDI3LDB6IE0xNDMuMDI3LDI1OS4yMzZjLTY0LjE4MywwLTExNi4yMDktNTIuMDI2LTExNi4yMDktMTE2LjIwOQ0KCQlTNzguODQ0LDI2LjgxOCwxNDMuMDI3LDI2LjgxOHMxMTYuMjA5LDUyLjAyNiwxMTYuMjA5LDExNi4yMDlTMjA3LjIxLDI1OS4yMzYsMTQzLjAyNywyNTkuMjM2eiIvPg0KCTxwYXRoIHN0eWxlPSJmaWxsOiMyMzk0QkM7IiBkPSJNMTUwLjAyNiw4MC4zOWgtMjIuODRjLTYuOTEsMC0xMC45MzMsNy4wNDQtMTAuOTMzLDEzLjE1OGMwLDUuOTM2LDMuMjA5LDEzLjE1OCwxMC45MzMsMTMuMTU4DQoJCWg3LjI1OXY4NS4zNmMwLDguNzM0LDYuMjU3LDEzLjYwNSwxMy4xNzYsMTMuNjA1czEzLjE4NS00Ljg4MSwxMy4xODUtMTMuNjA1VjkyLjc3MUMxNjAuNzk4LDg1Ljc4OSwxNTYuOTQ1LDgwLjM5LDE1MC4wMjYsODAuMzl6Ig0KCQkvPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPC9zdmc+DQo=" width="30px" height="30px"/>
+                                    <div style="font-family: Pretendard-Regular; float: right; margin-left: 10px; margin-top: 3px; font-size: small; font-weight: 100;">기본 정보</div>
+                                </div>
+                                <div class="p-2">
+                                  <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDI4Ni4wNTQgMjg2LjA1NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjg2LjA1NCAyODYuMDU0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojM0RCMzlFOyIgZD0iTTE0My4wMzEsMEM2NC4wMjcsMCwwLjAwNCw2NC4wNCwwLjAwNCwxNDMuMDI3YzAsNzguOTk2LDY0LjAzMSwxNDMuMDI3LDE0My4wMjcsMTQzLjAyNw0KCQljNzguOTg3LDAsMTQzLjAxOC02NC4wMzEsMTQzLjAxOC0xNDMuMDI3QzI4Ni4wNDksNjQuMDQ5LDIyMi4wMTgsMCwxNDMuMDMxLDB6IE0xNDMuMDMxLDI1OS4yMzYNCgkJYy02NC4xODMsMC0xMTYuMjA5LTUyLjAyNi0xMTYuMjA5LTExNi4yMDlTNzguODU3LDI2LjgxOCwxNDMuMDMxLDI2LjgxOHMxMTYuMiw1Mi4wMjYsMTE2LjIsMTE2LjIwOQ0KCQlTMjA3LjIwNiwyNTkuMjM2LDE0My4wMzEsMjU5LjIzNnogTTE5OS4yNDEsODIuMTg3Yy02LjA3OS0zLjYyOS0xMy44NDctMS40NzUtMTcuMzQyLDQuODI3bC00Ny45NTksODYuMTQ3bC0yNi43MS0zMi41MTINCgkJYy00LjgzNi01LjU2OS0xMS4yNjMtOC40NTYtMTcuMzMzLTQuODI3Yy02LjA3OSwzLjYzOC04LjU5MSwxMi4zOS00LjY1NywxOC4wMDRsMzcuMTY5LDQ1LjI0MWMyLjc4LDMuNjExLDUuOTUzLDUuNzc1LDkuMjcsNi4zOTINCgkJbDAuMDI3LDAuMDU0bDAuMzQsMC4wMThjMC43NTEsMC4xMTYsMTEuOTc5LDIuMTksMTYuODE1LTYuNDYzbDU1LjA0OC05OC44NzZDMjA3LjQwMiw5My44NzksMjA1LjMyLDg1LjgyNSwxOTkuMjQxLDgyLjE4N3oiLz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K" width="30px" height="30px"/>
+                                  <div style="font-family: Pretendard-Regular; float: right; margin-left: 10px; margin-top: 3px; font-size: small; font-weight: 100;">프로필</div>
+                                </div>
+                                <div class="p-2">
+                                    <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDI4Ni4wNTQgMjg2LjA1NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjg2LjA1NCAyODYuMDU0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojMjM5NEJDOyIgZD0iTTE0My4wMjcsMEM2NC4wNCwwLDAsNjQuMDQsMCwxNDMuMDI3YzAsNzguOTk2LDY0LjA0LDE0My4wMjcsMTQzLjAyNywxNDMuMDI3DQoJCXMxNDMuMDI3LTY0LjAzMSwxNDMuMDI3LTE0My4wMjdDMjg2LjA1NCw2NC4wNCwyMjIuMDE0LDAsMTQzLjAyNywweiBNMTQzLjAyNywyNTkuMjM2Yy02NC4xODMsMC0xMTYuMjA5LTUyLjAyNi0xMTYuMjA5LTExNi4yMDkNCgkJUzc4Ljg0NCwyNi44MTgsMTQzLjAyNywyNi44MThzMTE2LjIwOSw1Mi4wMjYsMTE2LjIwOSwxMTYuMjA5UzIwNy4yMSwyNTkuMjM2LDE0My4wMjcsMjU5LjIzNnogTTE2Ny43MTcsMTM3LjYzNw0KCQljOC45NjYtNS45MzYsMTMuMzY0LTE1LjI3NywxMy4zNjQtMjUuOTc3YzAtMTMuMjM5LTExLjI1NC0zMS4wODItMzQuNzI5LTMxLjA4MmMtMTguMDkzLDAtMzUuNTQyLDE0LjI3Ni0zNS41NDIsMjcuNTE1DQoJCWMwLDYuMjg0LDMuOTE1LDEyLjU2LDEwLjYwMiwxMi41NmMxMS4wODUsMCw4Ljk2Ni0xNi42MzYsMjQuNDQ5LTE2LjYzNmM3LjMzOSwwLDExLjczNyw0LjkyNSwxMS43MzcsMTEuMzcxDQoJCWMwLDE4Ljg1My0yMy4xNTIsNi43OTQtMjMuMTUyLDI0LjYyN2MwLDIwLjAzMywyNy43MiwyLjU0OCwyNy43MiwyNi4zMTdjMCw5LjAwMi02Ljg1NiwxNS43OTYtMTUuMzMxLDE1Ljc5Ng0KCQljLTE4LjQyNCwwLTE1LjgxMy0xOS44NzItMjYuODk4LTE5Ljg3MmMtNS44NzMsMC0xMi41NTEsNC43NTYtMTIuNTUxLDExLjM4YzAsMTMuNDE4LDE1LDMxLjkyMiwzOS4xMjcsMzEuOTIyDQoJCWMyMy4xNTIsMCw0MS4wODQtMTcuMTU0LDQxLjA4NC0zNy41MjdDMTg3LjU5OCwxNTQuNjIxLDE3OS40NDUsMTQzLjI1LDE2Ny43MTcsMTM3LjYzN3oiLz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K" width="30px" height="30px"/>
+                                    <div style="font-family: Pretendard-Regular; float: right; margin-left: 10px; margin-top: 3px; font-size: small; font-weight: 100;">시작하기</div>
+                                </div>
+                            </div>
+                            <h1 class="fw-bolder" style="font-family: Pretendard-Regular; margin-top: 20px;">{{user.username}} 님 반가워요</h1>
+                            <p class="lead fw-normal text-muted mb-0" style="font-family: Pretendard-Regular; font-size: medium;">프로필을 설정하고 맞춤 TimeBank 서비스를 시작해보세요.⏰</p>
+                        </div>
+                        <div class="row gx-5 justify-content-center">
+                            <div class="col-lg-8 col-xl-6">
+                                <!-- * * * * * * * * * * * * * * *-->
+                                <!-- * * SB Forms Contact Form * *-->
+                                <!-- * * * * * * * * * * * * * * *-->
+                                <!-- This form is pre-integrated with SB Forms.-->
+                                <!-- To make this form functional, sign up at-->
+                                <!-- https://startbootstrap.com/solution/contact-forms-->
+                                <!-- to get an API token!-->
+                                <form action="#" method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <!-- contact input-->
+                                    <div class="form-floating mb-3">
+                                      <input class="form-control" id="contact" type="contact" placeholder="(123) 456-7890" />
+                                      <label for="contact" style="font-family: Pretendard-Regular;">연락처</label>
+                                    </div>
+                                    
+                                    <!-- birth address input-->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="birth" type="date" name="birth" required />
+                                        <label for="birth" style="font-family: Pretendard-Regular; font-weight: 100;">생년월일</label>
+                                        <small class="form-text text-muted"  style="font-family: Pretendard-Regular; float: left;">생년월일을 입력해주세요.</small>
+                                    </div>
+                                    <br>
+
+
+                                    <!-- gender Check input-->
+                                    <label for="gender" style="font-family: Pretendard-Regular;">성별</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="btn-group-toggle" data-toggle="buttons">
+                                          <label class="btn btn-outline-info active">
+                                            <input type="radio" name="gender" id="woman" autocomplete="off" checked  style="font-family: Pretendard-Regular;">여성
+                                          </label>
+                                          <label class="btn btn-outline-info">
+                                            <input type="radio" name="gender" id="man" autocomplete="off"  style="font-family: Pretendard-Regular; font-weight: bold;">남성
+                                          </label>
+                                          <label class="btn btn-outline-info">
+                                            <input type="radio" name="gender" id="etc" autocomplete="off"  style="font-family: Pretendard-Regular; font-weight: bold;">기타
+                                          </label>
+                                        </div>
+                                    </div>
+                                    <hr style="margin: 25px 0 25px 0">
+                                    <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">관심항목 설정</div>
+
+                                    <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">
+                                      <small class="form-text" style="font-family: Pretendard-Regular; color:mediumblue;">* 주고싶어요</small>
+                                      <div class="form-floating mb-3" style="margin-top: 10px;">
+                                        
+                                        <div class="form-control" style="height: 10rem;">
+
+                                          <!--ToggleBtn-->
+                                          <button type="button" class="btn btn-outline-info btn-rounded interestBtn">Info</button>
+                                          <button type="button" class="btn btn-outline-info btn-rounded interestBtn">Info</button>
+                                          <button type="button" class="btn btn-outline-info btn-rounded interestBtn">Info</button>
+                                          <!--End ToggleBtn-->
+
+                                        </div>
+
+                                      </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">
+                                      <small class="form-text" style="font-family: Pretendard-Regular; color:mediumblue;">* 받고싶어요</small>
+                                      <div class="form-floating mb-3" style="margin-top: 10px;">
+                                        <div class="form-control" style="word-break:break-all;">
+
+                                        </div>
+                                      </div>
+                                    <hr style="margin: 25px 0 25px 0">
+
+                                    <!-- about input-->
+                                    <div class="form-floating mb-3">
+                                      <textarea class="form-control" id="about" type="about" placeholder="Enter your message here..." style="height: 10rem"></textarea>
+                                      <label for="about">소개</label>
+                                  </div>
+                                  <br>
+
+                                    <!-- Submit success message-->
+                                    
+                                    <!-- Submit error message-->
+                                    <!---->
+                                    <!-- This is what your users will see when there is-->
+                                    <!-- an error submitting the form-->
+                                    <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error !</div></div>
+                                    <!-- Submit Button-->
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary btn-lg" id="submitButton" type="submit" style="font-family: Pretendard-Regular;">시작하기</button>
+                                        <br>
+                                        <div><p class="link" style="font-family: Pretendard-Regular; float: right;">나중에 설정할게요 🙂<a href="{% url 'index' %}" style="margin-left: 10px;">건너뛰기</a></p></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contact cards-->
+                    <div class="row gx-5 row-cols-2 row-cols-lg-4 py-5">
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-chat-dots"></i></div>
+                            <div class="h5 mb-2">Chat with us</div>
+                            <p class="text-muted mb-0">Chat live with one of our support specialists.</p>
+                        </div>
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-people"></i></div>
+                            <div class="h5">Ask the community</div>
+                            <p class="text-muted mb-0">Explore our community forums and communicate with other users.</p>
+                        </div>
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-question-circle"></i></div>
+                            <div class="h5">Support center</div>
+                            <p class="text-muted mb-0">Browse FAQ's and support articles to find solutions.</p>
+                        </div>
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-telephone"></i></div>
+                            <div class="h5">Call us</div>
+                            <p class="text-muted mb-0">Call us during normal business hours at (555) 892-9403.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Footer-->
+        <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Your Website 2021</div></div>
+                    <div class="col-auto">
+                        <a class="link-light small" href="#!">Privacy</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Terms</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+        
+    <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+  <script>
+    window.onload = function(){
+      alert('환영합니다.');
+    };
+  </script>
+
+
+ </body>
+</html>

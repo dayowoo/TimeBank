@@ -184,7 +184,9 @@
 
                                   <div class="form-group" style="margin-top: 35px; margin-bottom: 10px;">
                                     <h4 class="fw-bolder">후기 사진</h4>
+                                    {% if review.image %}
                                     <img class="card-img-top border" src="{{ review.image.url }}" alt="Card image cap" style="height: 200px;">
+                                    {% endif %}
                                   </div> 
                     
                                   <div class="form-group" style="margin-top: 35px; margin-bottom: 10px;">

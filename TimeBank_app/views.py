@@ -402,7 +402,10 @@ def create_review(request, post_id):
         review.partner = partner
         review.content = request.POST['content']
         review.star = request.POST['star']
-        review.image = request.FILES["image"]
+
+        if request.FILES.get("image") is not None:
+            review.image = request.FILES.get('image')
+            
         review.save()
         
         review.partner.star = review.star

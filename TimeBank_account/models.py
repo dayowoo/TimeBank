@@ -41,6 +41,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=64, verbose_name='이름')
     password = models.CharField(max_length=100, verbose_name='비밀번호')
     contact = models.CharField(max_length=150, verbose_name='연락처')
+    contactCk = models.BooleanField(default=True, null=True)
     birth = models.CharField(max_length=150, verbose_name='생년월일')
     user_age = models.CharField(max_length=50, verbose_name='연령대')
     gender_choice = [('여성','여성'),('남성','남성'),('기타','기타')]

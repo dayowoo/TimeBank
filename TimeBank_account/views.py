@@ -38,7 +38,6 @@ def register(request):
         name = request.POST["name"]
         password = request.POST["password"]
         password_check = request.POST["password_check"]
-        image = request.POST["image"]
 
         if request.FILES.get("image") is not None:
             image = request.FILES.get('image')
@@ -50,7 +49,20 @@ def register(request):
         # 새로운 유저 생성
         user = User.object.create_user(username=username, email=email, password=password, name=name, image=image)
         auth.login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        context = {'username':request.user}
     return redirect('index')
+    # return render(request, 'register_profile.html', context)
+
+
+
+
+# 회원가입 2단계 - 프로필 설정
+@login_required
+def register_profile(request, username):
+    user = request.user
+    context = {"user":user}
+    return render(request, 'register_profile.html', context)
+
 
 
 
@@ -105,7 +117,7 @@ def profile(requset,username):
     user_profile = get_object_or_404(User,username=username)
     
     reviews = Review.objects.filter(author=user_profile)
-     # 받은 거래
+    # 받은 거래
     recieved_reviews = Review.objects.filter(partner=user_profile)
     recieved_review_num = len(recieved_reviews)
 
@@ -139,7 +151,13 @@ def profile(requset,username):
     if plus_tok == None:
         plus_tok = 0
 
-    context = {"user_profile":user_profile, 'username': username, 'plus_tok':plus_tok, 'minus_tok':minus_tok, "avg_star":avg_star, "avg_star_view":avg_star_view}
+    context = {"user_profile":user_profile, 
+                'username': username, 
+                'plus_tok': plus_tok, 
+                'minus_tok': minus_tok, 
+                "avg_star": avg_star, 
+                "avg_star_view": avg_star_view
+                }
     return render(requset, "profile.html", context)
 
 
@@ -174,6 +192,10 @@ def profile_update(request,username):
     # user.email = request.POST["email"]
     user.name = request.POST["name"]
     user.contact = request.POST["contact"]
+    if 'contactCk' in request.POST:
+        user.contactCk = request.POST['contactCk']
+    else:
+        user.contactCk = False
     user.birth = request.POST["birth"]
     # user.user_age = request.POST["user_age"]
     # 나이 계산하기
@@ -304,12 +326,7 @@ def my_review(request, username):
     
     reviews = Review.objects.filter(author=user_profile)    # 내가 작성한 거래
     recieved_reviews = Review.objects.filter(partner=user_profile)  # 받은 리뷰
-    admin = user_profile
 
-    if request.user.mode == '코디네이터':
-        admin = request.user, user_profile
-    else:
-        admin = user_profile
 
     # 미작성 거래후기
     my_review = post & Post.objects.filter(status="완료확정")   #작성가능 리뷰
@@ -364,7 +381,7 @@ def my_review(request, username):
 
     context = {"user_profile":user_profile, "post_num":post_num, "review_num":review_num, "reviews":reviews, 'post':post, 'not_created_review_num':not_created_review_num,
                 'plus_tok':plus_tok, "minus_tok":minus_tok, "recieved_reviews":recieved_reviews,"not_success_ck_num":not_success_ck_num
-                ,"avg_star":avg_star,"avg_star_view":avg_star_view,"recieved_review_num":recieved_review_num,"admin":admin
+                ,"avg_star":avg_star,"avg_star_view":avg_star_view,"recieved_review_num":recieved_review_num
                 ,"not_success_cks": not_success_cks,'reviews':reviews,'my_review_num':my_review_num, 'review_num':review_num
                 ,"ck_review":ck_review}
     return render(request, 'my_review.html', context)

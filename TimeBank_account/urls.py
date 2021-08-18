@@ -7,6 +7,7 @@ from django.conf import settings
 urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('register/', views.register, name='register'),
+    path('register/<str:username>/register_profile', views.register_profile, name='register_profile'),
     path('register/id_overlap_check/', views.id_overlap_check, name="id_overlap_check"),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),

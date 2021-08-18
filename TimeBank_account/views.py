@@ -19,12 +19,33 @@ from .models import User, Account
 import json
 from datetime import datetime
 from django.db.models import F, Sum, Count, Case, When, Q
-
+from PIL import Image
 
 
 # test
 def contact(request):
     return render(request, 'contact.html')
+
+
+
+
+# img resizing
+def rescale(image, width):
+    img = Image.open(image)
+
+    src_width, src_height = img.size
+    src_ratio = float(src_height) / float(src_width)
+    dst_height = round(src_ratio * width)
+
+    img = img.resize((width, dst_height), Image.LANCZOS)
+    img.save(image.name, 'PNG')
+    image.file = img
+    
+    # 이게 없으면 attribute error 발생
+    image.file.name = image.name
+
+    return image
+
 
 
 
@@ -41,6 +62,7 @@ def register(request):
 
         if request.FILES.get("image") is not None:
             image = request.FILES.get('image')
+            image = rescale(image, 700)
 
         # 비밀번호 재확인 불일치
         if password != password_check:

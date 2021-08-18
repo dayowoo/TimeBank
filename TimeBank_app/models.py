@@ -3,7 +3,8 @@ from django.conf import settings
 # from TimeBank_account.models import User
 import TimeBank_account.models
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+import os
+from TimeBank_proj import settings
 
 
 
@@ -70,6 +71,14 @@ class Post(models.Model):
     def get_user(self):
         return [i.from_post for i in self.to_user.all()]
 
+    
+    # 삭제시, MEDIA_ROOT파일 삭제
+    def imgDelete(self, *args, **kargs):
+        if self.upload_files:
+            os.remove(os.path.join(settings.MEDIA_ROOT, self.upload_files.path))
+        super(Post, self).delete(*args, **kargs)
+
+
     @property
     def user_count(self):
         return len(self.get_user)
@@ -116,6 +125,12 @@ class Review(models.Model):
     hour = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='실거래시간')
     star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True)
     image = models.ImageField(upload_to="images/", blank=True)
+
+    # 삭제시, MEDIA_ROOT파일 삭제
+    def imgDelete(self, *args, **kargs):
+        if self.upload_files:
+            os.remove(os.path.join(settings.MEDIA_ROOT, self.upload_files.path))
+        super(Review, self).delete(*args, **kargs)
 
 
 

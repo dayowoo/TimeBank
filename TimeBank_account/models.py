@@ -5,7 +5,8 @@ from django.db.models.deletion import CASCADE
 from django.db.models.fields import related
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
-
+import os
+from TimeBank_proj import settings
 
 
 class CustomUserManager(BaseUserManager):
@@ -63,6 +64,13 @@ class User(AbstractUser):
     # 문자열 반환(user_id문자열 반환)
     def __str__(self):
         return self.username
+
+    # 삭제시, MEDIA_ROOT파일 삭제
+    def imgDelete(self, *args, **kargs):
+        if self.upload_files:
+            os.remove(os.path.join(settings.MEDIA_ROOT, self.upload_files.path))
+        super(User, self).delete(*args, **kargs)
+
 
     class Meta:
         db_table = 'TimeBank_user'

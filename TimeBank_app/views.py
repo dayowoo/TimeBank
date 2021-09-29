@@ -22,33 +22,137 @@ import json
 import decimal
 from datetime import datetime
 import time
-
-
+from PIL import Image
+from django.db.models import F, Sum, Count, Case, When, Q
 
 
 
 # home
 def index(request):
-    time_1 = datetime.strptime('05:00 AM', "%H:%M %p")
-    time_2 = datetime.strptime('10:45 AM', "%H:%M %p")
-
-    time_difference = time_2 - time_1
-    second = str(time_difference)[:4]
-    print(second)
-    hour = int(second[:1])*60
-    minute = int(second[2:4])
-    sum_tok = hour + minute
-    tok = sum_tok / 60
-    print(round(tok,2))
-    
-    print(type(time_difference))    # 'datetime.timedelta'
-    print(type(str(time_difference)))     # 5:00:00 ->str
     return render(request, 'index.html')
+
+
+
+# 거래글 목록
+def post_list(request):
+    # order_by : 순서정렬 / 최신순
+    posts = Post.objects.all().order_by('-id')
+    return render(request, 'post_list.html', {'posts':posts})
+
+
+# 거래글 검색
+def post_list_search(request):
+    # 글
+    posts = None
+    query = None
+    if 'q' in request.GET:
+        query = request.GET.get('q')
+        posts = Post.objects.all().filter(Q(subwork__contains=query))
+
+    context = {
+        'posts':posts,
+        'query':query
+        }
+    return render(request, 'post_list_search.html', context)
+
+
+# 새 글 작성 페이지
+def new_post_step1(request):
+    return render(request, 'new_post_step1.html')
+
+
 
 
 # 새 글 작성 페이지
 def new_post(request):
     return render(request, 'new_post.html')
+
+
+# 완료된 거래 작성 페이지
+def completed_post(request):
+    return render(request, 'completed_post.html')
+
+
+
+
+# 파트너 유저 검색
+@login_required
+def completed_search(request):
+    # 유저검색
+    users = None
+    query = None
+    if 'q' in request.GET:
+        query = request.GET.get('q')
+        users = User.objects.all().filter(Q(username__contains=query))
+
+    context = {
+        'users':users,
+        'query':query
+        }
+    return render(request, 'completed_search.html', context)
+
+
+
+
+@login_required
+def completed_create(request):
+    if request.method == 'POST':
+        post = Post()
+
+        post.date = request.POST.get('date')
+        post.start_time = request.POST.get('start_time')
+        post.end_time = request.POST.get('end_time')
+        post.service = '주고싶어요'
+        post.location = request.POST['location']
+        post.mainwork = request.POST['mainwork']
+        post.subwork = request.POST['subwork']
+        post.content = request.POST['content']
+        post.author = request.user
+        post.tok = request.POST['tok']
+
+        if request.FILES.get("image") is not None:
+            post.image = request.FILES.get('image')
+
+        post.giver = request.user
+        post.taker = User.objects.get(username=request.POST["taker"])
+
+        post.status = '완료확정'
+        post.save()
+
+        account = Account()
+
+        # 시간 계산
+        time_start = datetime.strptime(post.start_time, "%H:%M %p")
+        time_end = datetime.strptime(post.end_time, "%H:%M %p")
+        time_difference = time_end - time_start
+        sec_del = str(time_difference)[:4]
+        hour = int(sec_del[:1])*60
+        minute = int(sec_del[2:4])
+        sum_time = hour + minute
+        tok = round(sum_time/60, 2)
+
+        # 계좌 저축
+        post.giver.balance += decimal.Decimal(tok)
+        post.taker.balance -= decimal.Decimal(tok)
+        post.taker.save()
+        post.giver.save()
+
+        account.post = post
+        account.giver_balance = post.giver.balance
+        account.taker_balance = post.taker.balance
+        account.giver = post.giver
+        account.taker = post.taker
+        account.tok = decimal.Decimal(tok)
+        account.mainwork = post.mainwork
+        account.subwork = post.subwork
+        account.giver.save()
+        account.taker.save()
+        account.save()
+
+    post.save()    
+    return redirect('post_list')
+
+
 
 
 
@@ -66,7 +170,7 @@ def create(request):
         post.content = request.POST['content']
         post.author = request.user
         post.tok = request.POST['tok']
-        
+
         if request.FILES.get("image") is not None:
             post.image = request.FILES.get('image')
 
@@ -127,11 +231,7 @@ def delete(request, post_id):
 
 
 
-# 거래글 목록
-def post_list(request):
-    # order_by : 순서정렬 / 최신순
-    posts = Post.objects.all().order_by('-id')
-    return render(request, 'post_list.html', {'posts':posts})
+
 
 
 
@@ -170,11 +270,19 @@ def post_detail(request, post_id):
         
     if post.status == "진행":
         if post.taker == request.user:
-            btn_msg = "완료하기"
+            reserve_date = post.date
+            current_date = str(datetime.now())
+            if(current_date < reserve_date):
+                btn_msg = "False"
+            elif(current_date >= reserve_date):
+                btn_msg = "완료하기"
         else:               
             btn_msg = "승인대기"
 
     partner = [str(post.taker), str(post.giver)]
+
+    # image resizing
+    
     context = {'post':post, 'btn_msg':btn_msg, 'comments':comments, 'applies':applies, 'partner':partner,
                  'reviews':reviews, 'success_btn':success_btn, 'account':account, 'apply_list':apply_list,
                  'apply_name':apply_name}
@@ -248,6 +356,7 @@ def success_ck(request, post_id, user_id):
     start_time = request.POST['start_time']
     end_time = request.POST['end_time']
     
+    # 시간 계산
     time_start = datetime.strptime(start_time, "%H:%M %p")
     time_end = datetime.strptime(end_time, "%H:%M %p")
     time_difference = time_end - time_start
@@ -257,6 +366,7 @@ def success_ck(request, post_id, user_id):
     sum_time = hour + minute
     tok = round(sum_time/60, 2)
 
+    # 계좌 저축
     post.status = "완료확정"
     post.giver.balance += decimal.Decimal(tok)
     post.taker.balance -= decimal.Decimal(tok)
@@ -284,41 +394,6 @@ def success_ck(request, post_id, user_id):
 
     return redirect('post_detail', post_id)
 
-
-'''
-# 완료 확정하기 
-def success_ck(request, post_id, user_id):
-    post = Post.objects.get(pk=post_id)
-    account = Account()
-    tok = request.POST['tok']
-    post.status = "완료확정"
-    post.giver.balance += decimal.Decimal(tok)
-    post.taker.balance -= decimal.Decimal(tok)
-    post.save()
-    post.taker.save()
-    post.giver.save()
-
-    account.post = post
-    account.giver_balance = post.giver.balance
-    account.taker_balance = post.taker.balance
-    account.giver = post.giver
-    account.taker = post.taker
-    account.tok = decimal.Decimal(tok)
-    account.mainwork = post.mainwork
-    account.subwork = post.subwork
-    account.giver.save()
-    account.taker.save()
-    account.save()
-
-
-    btn_success_ck = "완료확정"
-    if request.user == post.taker:
-        btn_success_ck = "완료확정"
-    else:
-        btn_success_ck = "완료"
-
-    return redirect('post_detail', post_id)
-'''
 
 
 
@@ -336,7 +411,7 @@ def stop(request, post_id, user_id):
 
 # 댓글 등록하기
 @login_required
-def create_comment(request, post_id):
+def create_post_comment(request, post_id):
     comment = Comment()
     comment.content = request.POST['content']
     comment.post = get_object_or_404(Post, pk=post_id)
@@ -349,7 +424,7 @@ def create_comment(request, post_id):
 
 # 댓글 삭제하기
 @login_required
-def delete_comment(request, post_id, comment_id):
+def delete_post_comment(request, post_id, comment_id):
     comment = Comment.objects.get(pk=comment_id)
     comment.delete()
     return redirect("post_detail", post_id)
@@ -357,9 +432,9 @@ def delete_comment(request, post_id, comment_id):
 
 # 답글 달기
 @login_required
-def create_recomment(request, post_id, comment_id):
+def create_post_recomment(request, post_id, comment_id):
     recomment = ReComment()
-    recomment.content = request.POST['recontent']
+    recomment.content = request.POST['recomment']
     recomment.comment = get_object_or_404(Comment, pk=comment_id)
     recomment.author = request.user
     recomment.save()
@@ -370,7 +445,7 @@ def create_recomment(request, post_id, comment_id):
 
 # 답글 삭제
 @login_required
-def delete_recomment(request, post_id, recomment_id):
+def delete_post_recomment(request, post_id, recomment_id):
     recomment = ReComment.objects.get(pk=recomment_id)
     recomment.delete()
     return redirect('post_detail', post_id)
@@ -402,10 +477,11 @@ def create_review(request, post_id):
         review.partner = partner
         review.content = request.POST['content']
         review.star = request.POST['star']
+        review.condition = request.POST.getlist('answers[]')
 
         if request.FILES.get("image") is not None:
             review.image = request.FILES.get('image')
-            
+
         review.save()
         
         review.partner.star = review.star
@@ -418,7 +494,10 @@ def create_review(request, post_id):
 def review_detail(request, post_id, review_id):
     post = Post.objects.get(pk=post_id)
     review = Review.objects.get(pk=review_id)
-    context = {'post':post, 'review':review}
+    context = {
+        'post':post,
+        'review':review
+        }
     return render(request, "review_detail.html", context)
 
 

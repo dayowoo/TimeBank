@@ -3,7 +3,7 @@
 <head>
 
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="description" content="">
   <meta name="author" content="">
 
@@ -14,8 +14,14 @@
 
   <!-- Custom styles for this template -->
   <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+  <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
 
+  <!--JQuery TimePicker-->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+  
 </head>
+
 <style>
   @font-face {
   font-family: 'Pretendard-Regular';
@@ -26,57 +32,61 @@
 }
 body{font-family: 'Pretendard-Regular';}
 </style>
-<body id="page-top">
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
-          </li>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
-        </li>
-          <!--로그인 상태-->
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
-          </li>
-          <li class="nav-item">
-            <form action="{% url 'logout' %}" method="POST">
-              {% csrf_token %} 
-              <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
-            </form>
-          </li>
-          
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
+
+<body class="d-flex flex-column h-100" style="padding-top: 0px;">
+    <main class="flex-shrink-0">
+
+             <!-- Navigation-->
+             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                  <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                              </ul>
+                          </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                                </ul>
+                            </li>
+                            <!--로그인 상태-->
+                            {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                    <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="POST">
+                                        {% csrf_token %} 
+                                        <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                    </form></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 
 
   <header class="bg-primary text-white">
@@ -275,17 +285,121 @@ body{font-family: 'Pretendard-Regular';}
                   <label class="form-check-label" for="SecreteContact">연락처 비공개</label>
                 </div>
                 <div class="SecreteMsg" style="color: blue; display: None;">쉿!🤐 나만 볼 수 있어요</div>
-            </div>
+            </div><br>
+            <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">
+              * 주고싶어요
+              <div class="form-floating mb-3" style="margin-top: 10px;">
+                
+                <div class="form-control" style="height: 10rem; padding: 10px;">
+
+                  <!--CheckBox-->
+                  <label for="cleanG" class="btn btn-outline-info active" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="청소 / 심부름" id="cleanG" autocomplete="off" checked> 청소 / 심부름
+                  </label>
+                  <label for="makeupG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="몸 가꾸기 / 치장하기" id="makeupG" autocomplete="off"> 몸 가꾸기 / 치장하기
+                  </label>
+                  <label for="repairG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="수선/ 수리" id="repairG" autocomplete="off"> 수선/ 수리
+                  </label>
+                  <label for="cleanG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="정서지지" id="cleanG" autocomplete="off"> 정서지지
+                  </label>
+                  <label for="consultG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="상담" id="consultG" autocomplete="off"> 상담
+                  </label>
+                  <label for="moveG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="이동" id="moveG" autocomplete="off"> 이동
+                  </label>
+                  <label for="eatG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="먹기" id="eatG" autocomplete="off"> 먹기
+                  </label>
+                  <label for="educationG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="교육/여가생활" id="educationG" autocomplete="off"> 교육/여가생활
+                  </label>
+                  <label for="careG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="돌봄" id="careG" autocomplete="off"> 돌봄
+                  </label>
+                  <label for="plantsG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="식물 가꾸기" id="plantsG" autocomplete="off"> 식물 가꾸기
+                  </label>
+                  <label for="meetingG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="모임 장소 대여" id="meetingG" autocomplete="off"> 모임 장소 대여
+                  </label>
+                  <label for="communiationG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="의사소통" id="communiationG" autocomplete="off"> 의사소통
+                  </label>
+                  <label for="healthG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="건강관리" id="healthG" autocomplete="off"> 건강관리
+                  </label>
+                  <label for="etcG" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersG[]" value="기타" id="etcG" autocomplete="off"> 기타
+                  </label>
+                <!--endCheckBox-->
+
+                </div>
+
+              </div>
+            </div><br>
+
+            <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">
+              * 받고싶어요
+              <div class="form-floating mb-3" style="margin-top: 10px;">
+                <div class="form-control" style="height: 10rem; padding: 10px;">
+
+                  <!--CheckBox-->
+                  <label for="cleanT" class="btn btn-outline-info active" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="청소 / 심부름" id="cleanT" autocomplete="off" checked> 청소 / 심부름
+                  </label>
+                  <label for="makeupT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="몸 가꾸기 / 치장하기" id="makeupT" autocomplete="off"> 몸 가꾸기 / 치장하기
+                  </label>
+                  <label for="repairT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="수선/ 수리" id="repairT" autocomplete="off"> 수선/ 수리
+                  </label>
+                  <label for="cleanT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="정서지지" id="cleanT" autocomplete="off"> 정서지지
+                  </label>
+                  <label for="consultT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="상담" id="consultT" autocomplete="off"> 상담
+                  </label>
+                  <label for="moveT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="이동" id="moveT" autocomplete="off"> 이동
+                  </label>
+                  <label for="eatT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="먹기" id="eatT" autocomplete="off"> 먹기
+                  </label>
+                  <label for="educationT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="교육/여가생활" id="educationT" autocomplete="off"> 교육/여가생활
+                  </label>
+                  <label for="careT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="돌봄" id="careT" autocomplete="off"> 돌봄
+                  </label>
+                  <label for="plantsT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="식물 가꾸기" id="plantsT" autocomplete="off"> 식물 가꾸기
+                  </label>
+                  <label for="meetingT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="모임 장소 대여" id="meetingT" autocomplete="off"> 모임 장소 대여
+                  </label>
+                  <label for="communiationT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="의사소통" id="communiationT" autocomplete="off"> 의사소통
+                  </label>
+                  <label for="healthT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="건강관리" id="healthT" autocomplete="off"> 건강관리
+                  </label>
+                  <label for="etcT" class="btn btn-outline-info" data-toggle="buttons">
+                    <input type="checkbox" name="answersT[]" value="기타" id="etcT" autocomplete="off"> 기타
+                  </label>
+                <!--endCheckBox-->
+
+                </div>
+              </div>
             <div class="form-group">
               <label for="about">소개</label>
               <textarea class="form-control" id="about" name="about" value="{{user.about}}" rows="3"></textarea>
             </div>
             <br>
-            <div class="form-group">
-              <label for="image">프로필 사진</label>
-              <input class="form-control" id="image" name="image" type="file">
-            </div> 
-            <br><br>
+            <br>
             <button type="submit" class="btn btn-success" style="float: right; margin: 20px;">수정 완료</button>
           </form>
       </div>
@@ -323,23 +437,31 @@ body{font-family: 'Pretendard-Regular';}
   </div>
 </section>
 
-  <!-- Footer -->
-  <footer class="py-5 bg-dark">
-    <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Dayoung Seon 2021</p>
-    </div>
-    <!-- /.container -->
-  </footer>
+<footer class="bg-dark py-4 mt-auto">
+  <div class="container px-5">
+      <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+          <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; TimeBank 2021</div></div>
+          <div class="col-auto">
+              <a class="link-light small" href="#!">Privacy</a>
+              <span class="text-white mx-1">&middot;</span>
+              <a class="link-light small" href="#!">Terms</a>
+              <span class="text-white mx-1">&middot;</span>
+              <a class="link-light small" href="#!">Contact</a>
+          </div>
+      </div>
+  </div>
+</footer>
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Plugin JavaScript -->
-  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
 
-  <!-- Custom JavaScript for this theme -->
-  <script src="{% static 'js/scrolling-nav.js' %}"></script>
+<!-- Plugin JavaScript -->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+<!-- Custom JavaScript for this theme -->
+<script src="{% static 'js/scripts.js' %}"></script>
 
   <!--연락처 공개여부-->
   <script>

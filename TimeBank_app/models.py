@@ -5,6 +5,9 @@ import TimeBank_account.models
 from django.core.validators import MinValueValidator, MaxValueValidator
 import os
 from TimeBank_proj import settings
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill
+from imagekit.models import ImageSpecField
 
 
 
@@ -61,6 +64,13 @@ class Post(models.Model):
     giver = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='give_user', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, related_name='take_user', verbose_name='받는사람', null=True)
     image = models.ImageField(upload_to="images/", blank=True)
+    image_thumbnail = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(120,80)],
+        format='JPEG'
+        )
+
+    
 
     # 객체 목록 가져오기 (작성 순서대로)
     class Meta:
@@ -108,7 +118,7 @@ class Comment(models.Model):
 
 # 답글
 class ReComment(models.Model):
-    comment = models.ForeignKey(Comment, related_name="recomments", on_delete=models.CASCADE, verbose_name='댓글', null=True)
+    comment = models.ForeignKey(Comment, related_name="recomment", on_delete=models.CASCADE, verbose_name='댓글', null=True)
     author = models.ForeignKey('TimeBank_account.User', on_delete=models.CASCADE, verbose_name='답글작성자')
     content = models.TextField()
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='답글등록시간')
@@ -125,6 +135,8 @@ class Review(models.Model):
     hour = models.DecimalField(default=0, decimal_places=2, max_digits=5, verbose_name='실거래시간')
     star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True)
     image = models.ImageField(upload_to="images/", blank=True)
+    condition_choice = (('좋았어요','좋았어요'),('친절해요','친절해요'),('도움이 해결되었어요', '도움이 해결되었어요'),('시간약속을 잘 지켰어요','시간약속을 잘 지켰어요'))
+    condition = models.CharField(max_length=50, choices=condition_choice, verbose_name='후기코멘트', default='좋았어요')
 
     # 삭제시, MEDIA_ROOT파일 삭제
     def imgDelete(self, *args, **kargs):

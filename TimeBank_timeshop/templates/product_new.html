@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>TimeBank</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+
+    <style>
+        @font-face {
+        font-family: 'Pretendard-Regular';
+        src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+        line-height: 150%;
+      }
+      body{font-family: 'Pretendard-Regular';}
+      </style>
+
+    <body class="d-flex flex-column h-100">
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                                </ul>
+                            </li>
+                            <!--로그인 상태-->
+                            {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                    <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="POST">
+                                        {% csrf_token %} 
+                                        <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                    </form></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+  <br>
+  <div class="container">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-8">
+        {% if user.is_authenticated %}
+        <form action="{% url 'product_create' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Title -->
+        <h1 class="mt-4" style="display: flex;">
+            <select class="form-control" name="category" id="category" style="flex:1; margin-right: 30px; height: 60px;">
+                <option>디지털기기</option>
+                <option>생활가전</option>
+                <option>가구/인테리어</option>
+                <option>유아동</option>
+                <option>스포츠/레저</option>
+                <option>여성잡화</option>
+                <option>여성의류</option>
+                <option>남성패션/잡화</option>
+                <option>게임/취미</option>
+                <option>뷰티/미용</option>
+                <option>반려동물용품</option>
+                <option>도서/티켓/음반</option>
+                <option>식물</option>
+                <option>기타</option>
+                <option>삽니다</option>
+            </select>
+            <input type="text" class="form-control" id="title" name="title" placeholder="제목" style="flex:2; height: 60px;">
+        </h1>
+
+        <!-- Author -->
+        <p class="lead" style="float: right;">
+          by {{request.user}}
+        </p>
+
+        <br><br><hr>
+
+        <div class="form-group">
+            <label for="content">거래시간</label>
+            <input type="text" class="form-control" name="tok" id="tok" placeholder="거래 시간을 입력해주세요">
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            <label for="content">거래장소</label>
+            <input type="text" class="form-control" name="location" id="location" placeholder="거래 장소를 입력해주세요">
+        </div>
+
+        <br>
+
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea class="form-control" name="content" id="content" rows="20" placeholder="물품에 대한 세부사항을 입력해주세요"></textarea>
+        </div>
+
+        <br>
+
+        <!-- Preview Image -->
+        <div class="form-group">
+            <label for="image">이미지 등록</label>
+            <input id="image" name="image" class="form-control" type="file" required>
+          </div>
+
+        <hr>
+
+        <hr>
+
+
+      </div>
+      {% else %}
+        <script type="text/javascript">
+            alert('로그인 후, 이용하실 수 있습니다.')
+            window.location.href = '{% url "login" %}';
+        </script>
+    {% endif %}
+    
+
+      <!-- Sidebar Widgets Column -->
+      <div class="col-md-4">
+        
+        <div class="card my-4">
+            <button type="submit" class="btn btn-primary">작성</button>
+        </div>
+    </form>
+
+        <!-- Side Widget -->
+        <div class="card my-4">
+          <h5 class="card-header">문의사항</h5>
+          <div class="card-body">
+            📧 kkbo5222@gmail.com
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>

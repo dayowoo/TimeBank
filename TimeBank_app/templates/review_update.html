@@ -7,61 +7,30 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>TimeBank</title>
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
-        <link href="{% static 'css/star.scss' %}" rel="stylesheet" />
-    </head>
 
-    <body>
-        <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-      <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
-          </li>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
-        </li>
-          <!--로그인 상태-->
-          {% if user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
-          </li>
-          <li class="nav-item">
-            <form action="{% url 'logout' %}" method="POST">
-              {% csrf_token %} 
-              <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
-            </form>
-          </li>
-          
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
+
+         <!-- Bootstrap core CSS -->
+        <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+        <!-- Custom styles for this template -->
+        <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
+
+
+    </head>
+    <style>
+      @font-face {
+      font-family: 'Pretendard-Regular';
+      src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+      font-weight: 400;
+      font-style: normal;
+      line-height: 150%;
+    }
+    body{font-family: 'Pretendard-Regular';}
+    </style>
+    <body id="page-top">
+    
+            <!-- Navigation-->
+        {% block content %}
         <!-- Page content-->
         <div class="container mt-5">
             <div class="row">
@@ -76,8 +45,8 @@
                             <div class="text-muted fst-italic mb-2">Posted on {{post.created_at}}</div>
                             <div class="mb-2" style="color: blue;">작성자 {{request.user}}</div>
                             <!-- Post categories-->
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.service}}</a>
-                            <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{ post.mainwork }}</a>
+                            <div class="badge bg-secondary text-decoration-none link-light">{{ post.service}}</div>
+                            <div class="badge bg-secondary text-decoration-none link-light">{{ post.mainwork }}</div>
                         </header>
                         <hr><br>
                         <!-- Preview image figure
@@ -217,18 +186,29 @@
                 
             </div>
         </div>
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="{% static 'js/scripts.js' %}"></script>
 
-        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-        <script src="{% static 'js/addons/rating.js' %}"></script>
+        <footer class="bg-dark py-4 mt-auto">
+          <div class="container px-5">
+              <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                  <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; TimeBank 2021</div></div>
+                  <div class="col-auto">
+                      <a class="link-light small" href="#!">Privacy</a>
+                      <span class="text-white mx-1">&middot;</span>
+                      <a class="link-light small" href="#!">Terms</a>
+                      <span class="text-white mx-1">&middot;</span>
+                      <a class="link-light small" href="#!">Contact</a>
+                  </div>
+              </div>
+          </div>
+        </footer>
+      <!-- Bootstrap core JS-->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Core theme JS-->
+      <script src="{% static 'js/scripts.js' %}"></script>
+
+      <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+      <script src="{% static 'js/addons/rating.js' %}"></script>
 
     </body>
 </html>
-
+{% endblock %}

@@ -1,0 +1,563 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>TimeBank</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+        <!-- Bootstrap core CSS -->
+        <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    </head>
+
+    <style>
+        @font-face {
+        font-family: 'Pretendard-Regular';
+        src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+        line-height: 150%;
+      }
+      body{font-family: 'Pretendard-Regular';}
+      </style>
+
+    <body class="d-flex flex-column h-100">
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                                </ul>
+                            </li>
+                            <!--로그인 상태-->
+                            {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                    <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="POST">
+                                        {% csrf_token %} 
+                                        <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                    </form></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+        <!-- Product section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="row gx-4 gx-lg-5 align-items-center">
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ product.image.url }}" alt="..."></div>
+                    <div class="col-md-6">
+                        <div class="small mb-1">{{product.created_at}}</div>
+                        <h1 class="display-5 fw-bolder">{{product.title}}</h1>
+                        <p class="badge badge-dark badge-pill">{{product.category}}</p>
+                        <p class="badge badge-dark badge-pill">{{product.location}}</p>
+                        <hr>
+                        <div class="fs-5 mb-5">
+                            <div class="card">
+                                <div class="card-body row">
+                                  <p class="card-text col-auto">
+                                    {% if comment.author.image %}
+                                        <img class="rounded-circle" src="{{ product.author.image.url }}" style="width: 50px; height: 50px; float: left;"/>
+                                    {% else %}
+                                        <img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" style="float: left;"/>
+                                    {% endif %}
+                                  </p>
+                                  <div class="col-sm-6 col-md-8">
+                                    <a href="{% url 'profile' product.author.username %}">{{product.author}}</a>
+                                    <h6 class="card-subtitle mb-2 text-muted" style="padding-top: 3px;">{{product.author.email}}</h6>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="lead">{{product.content}}</p>
+
+                        <!-- <div class="d-flex">
+                            <input class="form-control text-center me-3" id="inputQuantity" type="num" value="1" style="max-width: 3rem" />
+                            <button class="btn btn-outline-dark flex-shrink-0" type="button">
+                                <i class="bi-cart-fill me-1"></i>
+                                Add to cart
+                            </button>
+                        </div> -->
+
+                    </div>
+
+                    <!--상품정보 table-->
+                    <h5 style="padding-top: 30px; padding-bottom: 15px;">🛒 상품정보</h5>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col" style="text-align: center;">거래ID</th>
+                            <th scope="col" style="text-align: center;">지역</th>
+                            <th scope="col" style="text-align: center;">카테고리</th>
+                            <th scope="col" style="text-align: center;">진행상태</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td style="text-align: center;">{{product.id}}</th>
+                            <td style="text-align: center;">{{product.location}}</td>
+                            <td style="text-align: center;">{{product.category}}</td>
+                            <td style="text-align: center;">
+                                {% if product.status == "대기" %}
+                                    {% if request.user == product.author %}
+                                        <button class="btn btn-primary">{{product.status}}</button>
+                                    {% else %}
+                                        <form action="{% url 'product_apply' product.id %}" method="post">
+                                            {% csrf_token %}
+                                            {% if request.user.id in apply_name %}
+                                                <button class="btn btn-primary" id="cancel">신청취소</button>
+                                            {% else %}
+                                                <button class="btn btn-primary" id="apply">신청하기</button>
+                                            {% endif %}
+                                        </form>    
+                                    {% endif %}
+                                {% elif product.status == "진행" %}
+                                    <button class="btn btn-success">{{product.status}}</button>
+                                {% elif product.status == "완료" %}
+                                    <button class="btn btn-warning">{{product.status}}</button>
+                                {% elif product.status == "완료확정" %}
+                                    <button class="btn btn-warning">거래확정</button>
+                                {% else %}
+                                    <button class="btn btn-secondary">{{product.status}}</button>
+                                {% endif %}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    <!--상품정보 table-->
+
+
+                    {% if request.user == product.author %}
+                    <h5 style="padding-top: 30px; padding-bottom: 15px;">👤 신청자 목록</h5>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col" style="text-align: center;">사용자 ID</th>
+                            <th scope="col" style="text-align: center;">이름</th>
+                            <th scope="col" style="text-align: center;">이메일</th>
+                            <th scope="col" style="text-align: center;">진행상태</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% if applies %}
+                          {% for apply in applies %}
+                          <tr>
+                            <td style="text-align: center;"><a href="{% url 'profile' apply.to_user.username %}">{{apply.to_user.username}}</a></th>
+                            <td style="text-align: center;">{{apply.to_user.name}}</td>
+                            <td style="text-align: center;">{{apply.to_user.email}}</td>
+                            <td style="text-align: center;">
+                                {% if product.status == "대기" %}
+                                    <form action="{% url 'product_choice' product.id apply.to_user.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button name="choice" type="submit" value="{{ apply.to_user.id }}" class="btn btn-primary">선택</button>
+                                    </form>
+                                {% elif product.status == "진행" %}
+                                    {% if product.buyer == apply.to_user %}
+                                        <form action="{% url 'product_success' product.id apply.to_user.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button name="success" type="submit" value="{{ apply.to_user.id }}" class="btn btn-success" onclick="return confirm('거래를 완료하시겠습니까?')">완료하기</button>
+                                        </form>
+                                        <div style="padding:5px;"></div>
+                                        <form action="{% url 'product_stop' product.id apply.to_user.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button name="stop" type="submit" value="{{ apply.to_user.id }}" class="btn btn-danger" onclick="return confirm('거래를 중단하시겠습니까?')">중단하기</button>
+                                        </form>
+                                    {% else %}
+                                        <button type="button" value="{{ apply.to_user.id }}" class="btn btn-primary" disabled>미선택</button>
+                                    {% endif %}
+
+                                {% elif product.status == "완료" %}
+                                    {% if product.buyer == apply.to_user %}
+                                        {% if request.user == product.author %}
+                                            <button type="button" id="btn_toggle" value="{{apply.to_user.id}}" class="btn btn-warning">거래확정</button>
+                                        {% else %}
+                                            <button type="button" value="{{apply.to_user.id}}" class="btn btn-warning">확정대기</button>
+                                        {% endif %}
+                                    {% else %}
+                                        <button type="button" value="{{ apply.to_user.id }}" class="btn btn-primary" disabled>미선택</button>
+                                    {% endif %}
+
+                                {% elif product.status == "완료확정" %}
+                                    {% if product.buyer == apply.to_user %}
+                                        <button type="button" value="{{apply.to_user.id}}" class="btn btn-warning">후기작성</button>
+                                    {% else %}
+                                        <button type="button" value="{{ apply.to_user.id }}" class="btn btn-primary" disabled>미선택</button>
+                                    {% endif %}
+                                  
+                                <!--중단-->
+                                {% else %}
+                                    {% if product.buyer == apply.to_user %}
+                                        <button type="button" value="{{apply.to_user.id}}" class="btn btn-danger">중단</button>
+                                    {% else %}
+                                        <button type="button" value="{{ apply.to_user.id }}" class="btn btn-primary" disabled>미선택</button>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                          </tr>
+                          {% endfor %}
+
+                          <tr id="Toggle" style="display:None;">
+                            <td colspan="7">
+                                <div style="color: blue; size: 15px; float:left; font-size: 17px;">※ 실거래 금액을 입력해주세요.</div>
+                                <br>
+                                <form action="{% url 'product_success_ck' product.id user.id %}" method="post" style="margin: 20px;"> 
+                                  {% csrf_token %}
+                                  <div class="form-group">
+                                    <label for="start_time" style="float: left; margin-bottom: 10px; margin-top: 10px;">거래 금액</label>
+                                    <input type="text" class="form-control" name="tok">
+                                  </div>
+                                  <button type="submit" class="btn btn-warning" style="flex-grow: 1; float: right; margin: 20px; font-weight:bold;">거래확정</button>
+                              </form>
+                            </td>
+                          </tr>
+
+                          {% else %}
+                          <tr>
+                            <th colspan="7" style="text-align: center;">아직 신청한 유저가 없습니다.</th>
+                          </tr>
+                          {% endif %}
+                        </tbody>
+                      </table>
+                    {% endif %}
+
+                </div>
+
+                <div style="padding-bottom: 60px;"></div><hr>
+            
+                <section style="padding-top: 30px;">
+                    <!--Tab-->
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="comment-tab" data-bs-toggle="tab" data-bs-target="#comment" type="button" role="tab" aria-controls="comment" aria-selected="true">댓글</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review" type="button" role="tab" aria-controls="review" aria-selected="false">후기</button>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+
+                        <div class="tab-pane fade show active" id="comment" role="tabpanel" aria-labelledby="comment-tab">
+                            <section>
+                                <div class="card bg-light">
+                                    <div class="card-body">
+
+                                        <!-- Comment form-->
+                                        <form class="mb-4" action="{% url 'create_product_comment' product.id %}" method="post" style="padding-bottom: 30px;">
+                                            {% csrf_token %}
+                                            <textarea class="form-control" rows="3" name="content" placeholder="로그인 후, 댓글을 작성해보세요!"></textarea>
+                                            <button type="submit" class="btn btn-primary btn-sm" style="margin: 20px; float: right;">등록</button>
+                                        </form>
+
+                                        <!-- Single comment-->
+                                        {% for comment in comments %}
+                                        <div class="media">
+                                            {% if comment.author.image %}
+                                                <img class="mr-3 rounded-circle" src="{{ comment.author.image.url }}" alt="..." style="width: 50px; height: 50px; float: left;"/>
+                                            {% else %}
+                                                <img class="mr-3 rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..." style="float: left;"/>
+                                            {% endif %}
+                                            <div class="media-body">
+                                                <div class="mt-0">
+                                                    <a href="{% url 'profile' comment.author.username %}" class="fw-bold">{{comment.author}}</a>
+                                                    <br>
+                                                    <div style="font-size: small;">{{comment.create_date}}</div>
+                                                </div>
+                                                    <div>{{comment.content}}</div>
+                                                    <br>
+                                                    <div style="float: right;">
+                                                        {% if request.user == comment.author %}
+                                                        <a href="{% url 'delete_product_comment' product.id comment.id %}" class="btn btn-light btn-sm"  style="float:right; padding: 5px;" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+                                                        <button id="btnToggle{{comment.id}}" value="{{comment.id}}" type="button" class="btn btn-light btn-sm" style="float:right; padding: 5px;">답글</button>
+                                                        {% else %}
+                                                        <button id="btnToggle{{comment.id}}" value="{{comment.id}}" type="button" class="btn btn-light btn-sm" style="float:right; padding: 5px;">답글</button>
+                                                        {% endif %}
+                                                    </div>
+                                                    
+                                                    <!-- Comment form-->
+                                                    <div id="replyToggle{{comment.id}}" style="display: none;">
+                                                        <form class="mb-4 " action="{% url 'create_product_recomment' product.id comment.id %}" method="post" style="margin-top:50px;">
+                                                          {% csrf_token %}
+                                                          <textarea class="form-control" rows="3" placeholder="로그인 후, 답글을 남겨주세요!" name="recomment"></textarea>
+                                                          <br>
+                                                          <button type="submit" class="btn btn-primary mb-1" style="float:right;">등록</button>
+                                                        </form>
+                                                    </div>
+                                                    <!--EndCommentForm-->
+                                                    <br>
+    
+                                                    <!-- Child comment 1-->
+                                                    {% for recomment in comment.recomment.all %}
+                                                    <div class="media mt-3" style="padding-top: 20px;">
+                                                        {% if recomment.author.image %}
+                                                            <img class="mr-3 rounded-circle" src="{{ recomment.author.image.url }}" alt="..." style="width: 50px; height: 50px;"/>
+                                                        {% else %}
+                                                            <img class="mr-3 rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
+                                                        {% endif %}
+                                                        <div class="media-body">
+                                                            <div class="mt-0">
+                                                                <a href="{% url 'profile' recomment.author.username %}">{{recomment.author}}</a>
+                                                                <br>
+                                                                <div style="font-size: small;">{{recomment.create_date}}</div>
+                                                                    <a class="badge bg-light text-decoration-none link-light" href="#!" style="color: black;">{{recomment.mention}}</a>
+                                                                    {{recomment.content}}
+                                                                <div style="float: right;">
+                                                                    {% if request.user == recomment.author %}
+                                                                        <a href="{% url 'delete_product_recomment' product.id comment.id recomment.id %}" class="btn btn-light btn-sm" style="float:right; padding: 5px;" onclick="return confirm('정말 삭제하시겠습니까?')">삭제</a>
+                                                                        <button id="btnReply{{recomment.id}}" value="{{recomment.id}}" type="button" class="btn btn-light btn-sm" style="float:right; padding: 5px;">답글</button>
+                                                                    {% else %}
+                                                                    <button id="btnReply{{recomment.id}}" value="{{recomment.id}}" type="button" class="btn btn-light btn-sm" style="float:right; padding: 5px;">답글</button>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <!-- Comment form-->
+                                                                <div id="recommentToggle{{recomment.id}}" style="display: none;">
+                                                                    <form class="mb-4 " action="{% url 'create_product_rerecomment' product.id comment.id recomment.id %}" method="post" style="margin-top:50px;">
+                                                                    {% csrf_token %}
+        
+                                                                    <textarea class="form-control" rows="3" placeholder="로그인 후, 답글을 남겨주세요!" name="recomment"></textarea>
+                                                                    <br>
+                                                                    <button type="submit" class="btn btn-primary mb-1" style="float:right;">등록</button>
+                                                                    </form>
+                                                                </div>
+                                                                <!--EndCommentForm-->
+                                                            </div>
+
+                                                        </div>
+                                                        
+                                                    </div>
+                                                    {% endfor %}
+    
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            {% endfor %}
+                                        </div>
+                                    </section>
+                        </div>
+
+                        <!--후기 tab-->
+                        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                            <button class="btn btn-primary" style="margin:20px; float: right;">작성</button>
+                        </div>
+                    
+                    </div>
+                    <!--EndTab-->
+                </div>  
+                
+                </section>
+                
+        </section>
+
+        
+
+        <!-- Related items section-->
+        <section class="py-5 bg-light">
+            <div class="container px-4 px-lg-5 mt-5">
+                <h2 class="fw-bolder mb-4">✨ 관심 지역의 다른 상품</h2>
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Fancy Product</h5>
+                                    <!-- Product price-->
+                                    $40.00 - $80.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Special Item</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <!-- Product price-->
+                                    <span class="text-muted text-decoration-line-through">$20.00</span>
+                                    $18.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Sale Item</h5>
+                                    <!-- Product price-->
+                                    <span class="text-muted text-decoration-line-through">$50.00</span>
+                                    $25.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Product image-->
+                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">Popular Item</h5>
+                                    <!-- Product reviews-->
+                                    <div class="d-flex justify-content-center small text-warning mb-2">
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                        <div class="bi-star-fill"></div>
+                                    </div>
+                                    <!-- Product price-->
+                                    $40.00
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Add to cart</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+                <!-- Footer-->
+                <footer class="bg-dark py-4 mt-auto">
+                    <div class="container px-5">
+                        <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                            <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; TimeBank 2021</div></div>
+                            <div class="col-auto">
+                                <a class="link-light small" href="#!">Privacy</a>
+                                <span class="text-white mx-1">&middot;</span>
+                                <a class="link-light small" href="#!">Terms</a>
+                                <span class="text-white mx-1">&middot;</span>
+                                <a class="link-light small" href="#!">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+        <script>
+
+            //실거래시간 입력
+            $(function (){
+            $("#btn_toggle").click(function (){
+              $("#Toggle").toggle();
+            });
+          });
+
+            //댓글의 답글 달기
+            //btn으로 시작하는 모든 id를 갖고있는 DOM을 잡음
+            $("[id^=btn]").on('click', function(event){
+                // 해당 instance의 속성인 id값을 잡음 
+                var id = $(this).attr("id");
+                var number = id.replace("btnToggle", "");
+                var btn = "replyToggle" + number;
+                $("#replyToggle"+number).toggle(); 
+            });
+
+            // 답글의 답글달기
+            //btn으로 시작하는 모든 id를 갖고있는 DOM을 잡음
+            $("[id^=btn]").on('click', function(event){
+                // 해당 instance의 속성인 id값을 잡음 
+                var id = $(this).attr("id");
+                var number = id.replace("btnReply", "");
+                var btn = "recommentToggle" + number;
+                $("#recommentToggle"+number).toggle(); 
+            });
+
+            $("#apply").click(function() {
+	          alert("신청완료");
+            });
+
+            $("#cancel").click(function() {
+	          alert("신청취소");
+            });
+        </script>
+
+    </body>
+</html>
+

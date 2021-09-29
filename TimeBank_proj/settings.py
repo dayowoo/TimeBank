@@ -38,6 +38,8 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
+    'TimeBank_chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.sites',
@@ -48,7 +50,8 @@ INSTALLED_APPS = [
     'TimeBank_account',
     'TimeBank_app',
     'TimeBank_board',
-    'TimeBank_transaction',
+    'TimeBank_timeshop',
+    'TimeBank_admin',
     'socialLogin',
     # 'debug_toolbar',    # DEBUG
 
@@ -58,8 +61,16 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 
     #provider
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
+
+    'imagekit',
+
+    # tag
+    'taggit',
 ]
+
+# Channels
+ASGI_APPLICATION = 'TimeBank_proj.routing.application'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -81,7 +92,7 @@ ROOT_URLCONF = 'TimeBank_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['TimeBank_proj/templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'TimeBank_proj/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -176,3 +187,10 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+
+
+# 해쉬태그
+# taggit
+TAGGIT_CASE_INSENSITIVE = True
+TAGGIT_TAGS_FROM_STRING = 'TimeBank_account.utils.hashtag_splitter'
+TAGGIT_STRING_FROM_TAGS = 'TimeBank_account.utils.hashtag_joiner'

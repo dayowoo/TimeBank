@@ -19,55 +19,56 @@
 
 <body id="page-top">
 
- <!-- Navigation -->
- <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
-  <div class="container">
-    <a class="navbar-brand js-scroll-trigger" href="{% url 'index' %}">TimeBank</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">소개</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">서비스</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'index' %}">문의하기</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'new_post' %}">거래등록</a>
-        </li>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link js-scroll-trigger" href="{% url 'post_list' %}">거래목록</a>
-      </li>
-        <!--로그인 상태-->
-        {% if user.is_authenticated %}
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'profile' user.username %}">{{ user.get_username }}</a>
-        </li>
-        <li class="nav-item">
-          <form action="{% url 'logout' %}" method="POST">
-            {% csrf_token %} 
-            <input type="submit" class="nav-link logout" href="{% url 'logout' %}" value="Logout" style="border: none; background: transparent;">
-          </form>
-        </li>
-        
-        {% else %}
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link js-scroll-trigger" href="{% url 'register' %}">SignUp</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
+             <!-- Navigation-->
+             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+              <div class="container px-5">
+                  <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                          <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                          <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                          <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                          <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                            </ul>
+                        </li>
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                  <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                              </ul>
+                          </li>
+                          <!--로그인 상태-->
+                          {% if user.is_authenticated %}
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                  <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                  <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                  <li>
+                                      <form action="{% url 'logout' %}" method="POST">
+                                      {% csrf_token %} 
+                                      <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                  </form></li>
+                              </ul>
+                          </li>
+                          {% else %}
+                          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                          {% endif %}
+                      </ul>
+                  </div>
+              </div>
+          </nav>
 
 
   <header class="bg-primary text-white">
@@ -143,7 +144,7 @@
         {% else %}
         <!--접속유저!=프로필유저-->
           {% if request.user.mode == '코디네이터' %}
-          <div class="list-group">
+          <div class="list-group">0
             <a href="{% url 'profile' user_profile.username %}" class="list-group-item active">프로필</a>
             <a href="{% url 'balance' user_profile.username %}" class="list-group-item">시간계좌</a>
             <a href="{% url 'account' user_profile.username %}" class="list-group-item">거래내역</a>
@@ -236,8 +237,8 @@
                 <th style="font-size: 13px; text-align: center;">거래자</th>
               </tr>
           </thead>
+              {% for not_success_ck in not_success_cks %}
               <tr>
-                {% for not_success_ck in not_success_cks %}
                 <td style="text-align: center;"><a href="{% url 'post_detail' not_success_ck.id %}" title="완료확정하러 가기">{{not_success_ck.id}}</a></td>
                 <td style="text-align: center;">{{not_success_ck.date}}</td>
                 <td style="text-align: center;">{{not_success_ck.tok}}</td>
@@ -248,8 +249,9 @@
                 {% else %}
                 <td style="text-align: center;"><a href="{% url 'profile' not_success_ck.taker.username %}">{{not_success_ck.taker}}</a></td>
                 {% endif %}
-                {% endfor %}
               </tr>
+                {% endfor %}
+              
           </tbody>
         </table>
       </div>
@@ -641,8 +643,8 @@
         {% endif %}
       </div>
       </div>
-      {% endif %}
-      {% endif %}
+  {% endif %}
+  {% endif %}
 <!--로그인X-->
     {% else %}
         <!--받은 거래후기-->

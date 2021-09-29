@@ -7,7 +7,10 @@ from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 import os
 from TimeBank_proj import settings
-
+from taggit.managers import TaggableManager
+from taggit.models import (
+    TagBase, TaggedItemBase
+)
 
 class CustomUserManager(BaseUserManager):
 
@@ -35,6 +38,41 @@ class CustomUserManager(BaseUserManager):
 
 
 
+
+
+# TagBase를 상속받은 tag model
+class PropertyTag(TagBase):
+    slug = models.SlugField(
+        verbose_name="slug",
+        unique=True,
+        max_length=100,
+        allow_unicode=True,
+    )
+
+
+#    def slugify(self, tag, i=None):
+#        return default_slugify(tag, allow_unicode=True)
+
+
+
+# N:M 중개모델
+class TaggedProperty(TaggedItemBase):
+    content_object = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+    )
+
+    tag = models.ForeignKey(
+        'PropertyTag',
+        related_name="tagged_properties",
+        on_delete=models.CASCADE,
+        null=True
+    )
+
+
+
+
+
 # 사용자 모델
 class User(AbstractUser):
     username = models.CharField(max_length=64, verbose_name='사용자ID', unique=True)
@@ -57,6 +95,41 @@ class User(AbstractUser):
     user_mode = [('코디네이터','코디네이터'),('사용자','사용자')]
     mode = models.CharField(max_length=60, choices=user_mode, verbose_name='유저등급', default='사용자', null=True)
     star = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], null=True, verbose_name='평균평점')
+
+    give_list = (('청소 / 심부름','청소 / 심부름'),
+     ('몸 가꾸기 / 치장하기','몸 가꾸기 / 치장하기'),
+     ('수선/ 수리','수선/ 수리'),
+     ('상담','상담'),
+     ('이동','이동'),
+     ('먹기','먹기'),
+     ('교육 / 여가생활','교육 / 여가생활'),
+     ('정서지지','정서지지'),
+     ('돌봄','돌봄'),
+     ('식물 가꾸기','식물 가꾸기'),
+     ('모임 장소 대여','모임 장소 대여'),
+     ('의사소통','의사소통'),
+     ('건강관리','건강관리'),
+     ('기타','기타'),
+     )
+    give = models.CharField(max_length=50, choices=give_list, verbose_name='주고싶어요', default='청소 / 심부름')
+    take_list = (('청소 / 심부름','청소 / 심부름'),
+     ('몸 가꾸기 / 치장하기','몸 가꾸기 / 치장하기'),
+     ('수선/ 수리','수선/ 수리'),
+     ('상담','상담'),
+     ('이동','이동'),
+     ('먹기','먹기'),
+     ('교육 / 여가생활','교육 / 여가생활'),
+     ('정서지지','정서지지'),
+     ('돌봄','돌봄'),
+     ('식물 가꾸기','식물 가꾸기'),
+     ('모임 장소 대여','모임 장소 대여'),
+     ('의사소통','의사소통'),
+     ('건강관리','건강관리'),
+     ('기타','기타'),
+     )
+    take = models.CharField(max_length=50, choices=take_list, verbose_name='받고싶어요', default='청소 / 심부름')
+    tags = TaggableManager(verbose_name='tags', blank=True, through=TaggedProperty)
+
 
     # USERNAME_FIELD = 'username'
     # REQUIRED_FIELDS = ['email']
@@ -83,6 +156,7 @@ class User(AbstractUser):
 class Account(models.Model):
     # on_delete=models.DO_NOTHING
     post = models.ForeignKey('TimeBank_app.Post', on_delete=CASCADE, null=True, related_name='post', verbose_name='거래글')
+    product = models.ForeignKey('TimeBank_timeshop.Product', on_delete=CASCADE, null=True, related_name='product', verbose_name='중고거래글')
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='거래일자')
     giver = models.ForeignKey('User', on_delete=models.CASCADE, related_name='giver', verbose_name='주는사람', null=True)
     taker = models.ForeignKey('User', on_delete=models.CASCADE, related_name='taker', verbose_name='받는사람', null=True)

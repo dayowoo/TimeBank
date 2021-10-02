@@ -186,7 +186,7 @@ def product_choice(request, product_id, user_id):
 def proudct_success(request, product_id, user_id):
     product = Product.objects.get(pk=product_id)
     product.status = "완료"
-    product.save
+    product.save()
     return redirect('product_detail', product_id)
 
 

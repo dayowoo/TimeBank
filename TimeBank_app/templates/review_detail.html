@@ -73,8 +73,10 @@
                                             {% elif post.status == "진행" %}
                                                 <button class="btn btn-success">{{ post.status }}</button>
                                             {% elif post.status == "완료" %}
-                                                <button class="btn btn-warning">{{ post.status }}</button>
-                                            {% elif post.status == "중단" %}
+                                                <button class="btn btn-warning">완료확정</button>
+                                            {% elif post.status == "완료확정" %}
+                                                <button class="btn btn-warning">완료확정</button>
+                                            {% else %}
                                                 <button class="btn btn-secondary">{{ post.status }}</button>
                                             {% endif %}
                                     </td>

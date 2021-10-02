@@ -228,9 +228,9 @@ body{font-family: 'Pretendard-Regular';}
                   {% elif my_post.status == "진행" %}
                     <td style="text-align: center;"><button type="button" class="btn btn-success">{{ my_post.status}}</button></td>
                   {% elif my_post.status == "완료" %}
-                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ my_post.status}}</button></td>
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">매칭완료</button></td>
                   {% elif my_post.status == "완료확정" %}
-                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ my_post.status}}</button></td>   
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">매칭완료</button></td>   
                   {% elif my_post.status == "중단" %}
                     <td style="text-align: center;"><button type="button" class="btn btn-secondary">{{ my_post.status}}</button></td>      
                   {% endif %}
@@ -274,9 +274,9 @@ body{font-family: 'Pretendard-Regular';}
                   {% elif regsiter_post.from_post.status == "진행" %}
                     <td style="text-align: center;"><button type="button" class="btn btn-success">{{ regsiter_post.from_post.status}}</button></td>
                   {% elif regsiter_post.from_post.status == "완료" %}
-                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ regsiter_post.from_post.status}}</button></td>
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">매칭완료</button></td>
                   {% elif regsiter_post.from_post.status == "완료확정" %}
-                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ regsiter_post.from_post.status}}</button></td>
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">매칭완료</button></td>
                   {% elif regsiter_post.from_post.status == "중단" %}
                     <td style="text-align: center;"><button type="button" class="btn btn-secondary">{{ regsiter_post.from_post.status}}</button></td>      
                   {% endif %}

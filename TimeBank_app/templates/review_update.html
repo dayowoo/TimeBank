@@ -67,15 +67,17 @@
                                 <tbody>
                                     <td>{{post.id}}</td>
                                     <td>
-                                        {% if post.status == "대기" %}
-                                                <button name="apply" class="btn btn-primary">대기</button>
-                                            {% elif post.status == "진행" %}
-                                                <button class="btn btn-success">{{ post.status }}</button>
-                                            {% elif post.status == "완료" %}
-                                                <button class="btn btn-warning">{{ post.status }}</button>
-                                            {% elif post.status == "중단" %}
-                                                <button class="btn btn-secondary">{{ post.status }}</button>
-                                            {% endif %}
+                                      {% if post.status == "대기" %}
+                                          <button name="apply" class="btn btn-primary">대기</button>
+                                      {% elif post.status == "진행" %}
+                                          <button class="btn btn-success">{{ post.status }}</button>
+                                      {% elif post.status == "완료" %}
+                                          <button class="btn btn-warning">완료확정</button>
+                                      {% elif post.status == "완료확정" %}
+                                          <button class="btn btn-warning">완료확정</button>
+                                      {% else %}
+                                          <button class="btn btn-secondary">{{ post.status }}</button>
+                                      {% endif %}
                                     </td>
                                         <td>{{ post.service }}</td>
                                         <td>{{ post.author }}</td>

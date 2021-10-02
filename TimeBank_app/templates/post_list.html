@@ -112,9 +112,9 @@ body{font-family: 'Pretendard-Regular';}
                     {% elif post.status == "진행" %}
                     <td style="text-align: center;"><button type="button" class="btn btn-success" id="post_ajax" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}">{{ post.status }}</button></td> 
                     {% elif post.status == "완료" %}
-                    <td style="text-align: center;"><button type="button" class="btn btn-warning" id="post_ajax" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}">{{ post.status }}</button></td>
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning" id="post_ajax" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}">매칭완료</button></td>
                     {% elif post.status == "완료확정" %}
-                    <td style="text-align: center;"><button type="button" class="btn btn-warning" id="post_ajax" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}">완료</button></td>  
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning" id="post_ajax" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}">매칭완료</button></td>  
                     {% elif post.status == "중단" %}
                     <td style="text-align: center;"><button type="button" class="btn btn-secondary" id="post_ajax" data-toggle="modal" data-target="#staticBackdrop" name="{{post.id}}">{{ post.status }}</button></td> 
                   {% endif %}

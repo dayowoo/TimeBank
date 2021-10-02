@@ -8,21 +8,25 @@ from TimeBank_proj import settings
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 from imagekit.models import ImageSpecField
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 
-class MainCategory(models.Model):
-    name = models.CharField(max_length = 100)
-    
+
+class Category(MPTTModel):
+    category_name = models.CharField(max_length=50)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='children')
+
+    class MPTTMeta:
+        order_insertion_by = ['category_name']
+
+    class Meta:
+        db_table = 'categories'
+
     def __str__(self):
-        return self.name
+        return self.category_name
 
-class SubCategory(models.Model):
-    main_category = models.ForeignKey(MainCategory, on_delete = models.CASCADE, null=True)
-    name  = models.CharField(max_length = 100)
 
-    def __str__(self):
-        return self.name
 
 
 # 거래글 등록
@@ -33,23 +37,15 @@ class Post(models.Model):
     service_choice = (('주고싶어요','주고싶어요'),('받고싶어요','받고싶어요'))
     service = models.CharField(max_length=50, choices=service_choice)
     location = models.CharField(max_length=140)
-    main_list = (('청소 / 심부름','청소 / 심부름'),
-     ('몸 가꾸기 / 치장하기','몸 가꾸기 / 치장하기'),
-     ('수선/ 수리','수선/ 수리'),
-     ('상담','상담'),
-     ('이동','이동'),
-     ('먹기','먹기'),
-     ('교육 / 여가생활','교육 / 여가생활'),
-     ('정서지지','정서지지'),
-     ('돌봄','돌봄'),
-     ('식물 가꾸기','식물 가꾸기'),
-     ('모임 장소 대여','모임 장소 대여'),
-     ('의사소통','의사소통'),
-     ('건강관리','건강관리'),
-     ('기타','기타'),
-     )
-    mainwork = models.CharField(max_length=100, choices=main_list, null=True)
-    subwork = models.CharField(max_length=200, verbose_name='세부 목록', default='')
+    category = TreeForeignKey(
+        'Category',
+        verbose_name='대분류',
+        null=True,
+        blank=True,
+        db_index=True,
+        on_delete=models.SET_NULL,
+    )
+    sub_category = models.CharField(max_length=140, blank=True, verbose_name='소분류')
     content = models.TextField(verbose_name='내용')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='등록시간')
     tok = models.DecimalField(default=1, decimal_places=2, max_digits=5, verbose_name='거래시간')

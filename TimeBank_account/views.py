@@ -14,7 +14,7 @@ except ImportError:
     import json
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from TimeBank_app.models import Post, Apply, Review, MainCategory
+from TimeBank_app.models import Post, Apply, Review
 from .models import User, Account
 import json
 from datetime import datetime

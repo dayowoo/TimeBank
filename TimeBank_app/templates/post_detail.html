@@ -84,9 +84,9 @@ body{font-family: 'Pretendard-Regular';}
                                             {% elif post.status == "진행" %}
                                                 <button class="btn btn-success">{{ post.status }}</button>
                                             {% elif post.status == "완료" %}
-                                                <button class="btn btn-warning">{{ post.status }}</button>
+                                                <button class="btn btn-warning">매칭완료</button>
                                             {% elif post.status == "완료확정" %}
-                                                <button class="btn btn-warning">완료</button>
+                                                <button class="btn btn-warning">매칭완료</button>
                                             {% elif post.status == "중단" %}
                                                 <button class="btn btn-secondary">{{ post.status }}</button>
                                             {% endif %}
@@ -241,7 +241,7 @@ body{font-family: 'Pretendard-Regular';}
                                                 {% if apply.to_user.username in partner %}
                                                 {% if request.user == post.taker %}
                                                   <td style="text-align: center;">
-                                                    <button id="btn_toggle" class="btn btn-warning">거래확정</button>
+                                                    <button id="btn_toggle" class="btn btn-warning">시간입력</button>
                                                   </td>
                                                 {% else %}
                                                   <td style="text-align: center;">

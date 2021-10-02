@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
     'imagekit',
-
+    'mptt',
     # tag
     'taggit',
 ]

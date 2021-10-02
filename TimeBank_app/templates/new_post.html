@@ -133,6 +133,20 @@ body{font-family: 'Pretendard-Regular';}
                 </select>
               </div>
 
+              {% load mptt_tags %}
+              <ul>
+                  {% recursetree category_tree %}
+                      <li>
+                          {{ node.name }}
+                          {% if not node.is_leaf_node %}
+                              <ul class="children">
+                                  {{ children }}
+                              </ul>
+                          {% endif %}
+                      </li>
+                  {% endrecursetree %}
+              </ul>
+
               <div class="form-group">
                 <label for="subwork">소분류</label>
                 <input type="text" class="form-control" id="subwork" name="subwork" placeholder="">

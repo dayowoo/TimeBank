@@ -2,7 +2,7 @@ from django.core import paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
-from TimeBank_app.models import Comment, Post, Apply, ReComment, Review
+from TimeBank_app.models import Comment, Post, Apply, ReComment, Review, Category
 from TimeBank_account.models import Account
 from TimeBank_account.models import User
 from django.contrib.auth.decorators import login_required
@@ -42,18 +42,35 @@ def post_list(request):
 
 # 거래글 검색
 def post_list_search(request):
-    # 글
     posts = None
     query = None
-    if 'q' in request.GET:
-        query = request.GET.get('q')
-        posts = Post.objects.all().filter(Q(subwork__contains=query))
 
+    query = request.GET.get('q')
+    search_type = request.GET.get('type')
+        
+    if search_type == 'all':
+        posts = Post.objects.filter(Q(date__icontains=query) | Q(author__username__icontains = query) | Q(start_time__icontains=query) | Q(end_time__icontains=query) | Q(service__icontains=query) | Q(location__icontains=query) | Q(content__icontains=query) | Q(date__icontains=query))
+    if search_type == 'author':
+        posts = Post.objects.filter(Q(author__username__icontains = query))
+    if search_type == 'location':
+        posts = Post.objects.filter(Q(location__icontains = query))
     context = {
         'posts':posts,
         'query':query
         }
+    print(search_type)
+    print(query)
     return render(request, 'post_list_search.html', context)
+
+
+
+
+# 고급 검색 필터링
+def post_search_filter(request):
+
+    return render(request, 'post_search_filter.html')
+
+
 
 
 # 새 글 작성 페이지
@@ -65,7 +82,11 @@ def new_post_step1(request):
 
 # 새 글 작성 페이지
 def new_post(request):
-    return render(request, 'new_post.html')
+    categories = Category.objects.all()
+    context = {
+        'categories': categories
+    }
+    return render(request, 'new_post.html', context)
 
 
 # 완료된 거래 작성 페이지
@@ -83,7 +104,7 @@ def completed_search(request):
     query = None
     if 'q' in request.GET:
         query = request.GET.get('q')
-        users = User.objects.all().filter(Q(username__contains=query))
+        users = User.objects.all().filter(Q(username__icontains=query))
 
     context = {
         'users':users,

@@ -41,17 +41,15 @@ body{font-family: 'Pretendard-Regular';}
              <!-- Navigation-->
              
   {% block content %}
-  <header class="bg-primary text-white">
-    <div class="container text-center">
-      <h1>완료된 거래 등록</h1>
+  <!-- Page header with logo and tagline-->
+  <header class="py-5 bg-light border-bottom mb-4">
+    <div class="container">
+        <div class="text-center my-5">
+            <h1 class="fw-bolder">시간 거래 등록</h1>
+            <p class="lead mb-0"></p>
+        </div>
     </div>
-  </header>
-
-  <div class="row mt-5">
-    <div class="col-12">
-      
-    </div>
-  </div>
+</header>
 
   <!-- Page Content -->
   <div class="container">
@@ -181,6 +179,9 @@ body{font-family: 'Pretendard-Regular';}
 
       <!-- Sidebar Widgets Column -->
       <div class="col-md-4">
+        <div>
+          <a href="{% url 'index' %}" class="btn btn-light">홈</a>/<a href="{% url 'post_list'%}" class="btn btn-light">거래목록</a>
+        </div>
 
         <!-- Side Widget -->
         <div class="card my-4">

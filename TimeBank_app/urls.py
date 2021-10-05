@@ -7,6 +7,7 @@ from django.conf import settings
 urlpatterns = [
     path('post_list/', post_list, name="post_list"),
     path('post_list_search/', post_list_search, name="post_list_search"),
+    path('post_search_filter/', post_search_filter, name="post_search_filter"),
     path('post_ajax/', post_ajax, name="post_ajax"),
     path('new_post/', new_post, name="new_post"),
     path('new_post_step1/', new_post_step1, name="new_post_step1"),

@@ -1,4 +1,12 @@
-.vscode/
-venv/
-.idea/
-__pycache__
+# Created by https://www.toptal.com/developers/gitignore/api/django,python
+# Edit at https://www.toptal.com/developers/gitignore?templates=django,python
+
+### Django ###
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media

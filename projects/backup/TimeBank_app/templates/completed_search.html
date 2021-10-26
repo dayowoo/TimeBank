@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TimeBank</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+  <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+
+  <!--JQuery TimePicker-->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+  
+</head>
+
+<style>
+  @font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  line-height: 150%;
+}
+body{font-family: 'Pretendard-Regular';}
+</style>
+
+
+<body class="d-flex flex-column h-100" style="padding-top: 0px;">
+    <main class="flex-shrink-0">
+
+             <!-- Navigation-->
+             
+    {% block content %}
+  <header class="bg-primary text-white">
+    <div class="container text-center">
+      <h1>완료된 거래 등록</h1>
+    </div>
+  </header>
+
+  <div class="row mt-5">
+    <div class="col-12">
+      
+    </div>
+  </div>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-8">
+
+        <!-- Title -->
+        <h1 class="mt-4" style="color:mediumvioletred;">완료된 거래 등록</h1>
+
+        <!-- Author -->
+        <p class="lead">
+          by
+          <a href="#">{{ request.user }}</a>
+        </p>
+
+        <hr>
+
+        <!-- Date/Time -->
+        <p>주고받고자 하는 작업에 대해 오른쪽의 양식에 맞게 내용을 작성해주세요.<br>
+          내용 작성에 도움이 될 만한 이야기들을 적어주세요.</p>
+
+        <hr>
+
+        <!-- Comments Form -->
+        <div class="card my-4">
+          <h5 class="card-header"></h5>
+          <div class="card-body">
+            {% if user.is_authenticated %}
+            <!--search-->
+            <div id="partner">거래자 선택</div>
+            <div class="form-group" style="display: flex; margin: 10px 0 20px 0;">
+                <select class="custom-select" style="margin-right: 10px; float: left; width: 100px;">
+                <option selected>사용자 ID</option>
+                </select>
+            
+            <form class="form-inline" style="float: right;" action="{% url 'completed_search' %}" method="get">
+              {% csrf_token %}
+              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+              <button class="btn btn-outline-success my-2 my-sm-0" value="search" type="submit">Search</button>
+            </form>
+            
+          </div>
+          <!--endSearch-->
+
+          <form action="{% url 'completed_create' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+          {% if user %}
+          <table id="example" class="table table-striped table-bordered" style="width:100%">
+              <thead>
+                <tr>
+                  <th style="font-size: 13px; text-align: center;">#</th>
+                  <th style="font-size: 13px; text-align: center;">사용자 ID</th>
+                  <th style="font-size: 13px; text-align: center;">Email</th>
+                  <th style="font-size: 13px; text-align: center;">이름</th>
+                  <th style="font-size: 13px; text-align: center;">선택</th>
+                 </tr>
+              </thead>
+              <tbody>
+              {% for user in users %}
+                  <td style="text-align: center;">{{user.id}}</td>
+                  <td style="text-align: center;"><a href="{% url 'profile' user.username %}">{{user.username}}</a></td>
+                  <td style="text-align: center;">{{user.email}}</td>
+                  <td style="text-align: center;">{{user.name}}</td>
+                  <td style="text-align: center;">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="taker" id="choice" value="{{user}}">
+                        <label class="form-check-label" for="giver"></label>
+                      </div>
+                  </td>
+              </tr>
+              {% endfor %}
+                </tbody>
+              </table>
+          {% else %}
+          <br>
+          <h3>🙅‍♀️ 검색된 결과가 없습니다.</h3>
+          {% endif %}
+            
+
+              <div class="form-group">
+                <label for="service">요청 분류</label>
+                <div class="form-control">
+                  받고 싶어요
+                </div>
+              </div>
+
+          <div class="form-group">
+            <label for="date">연-월-일</label>
+            <input type="date" class="form-control" name="date" id="date">
+            <small class="form-text text-muted">거래가 완료된 일자를 입력해주세요</small>
+          </div>
+                
+             <div class="form-group">
+                <label for="start_time">거래 시작 시간</label>
+                <input class="form-control timepicker" name="start_time" id="start_time">
+              </div>
+
+              <div class="form-group">
+                <label for="end_time">거래 완료 시간</label>
+                <input class="form-control timepicker" name="end_time" id="end_time">
+              </div>
+
+              <div class="form-group">
+                <label for="location">봉사 장소</label><br>
+                <input type="text" class="form-control" name="location" id="location" placeholder="">
+              </div>
+
+          
+              <div class="form-group">
+                <label for="mainwork">대분류</label>
+                <select class="form-control" name="mainwork" id="mainwork">
+                  <option>청소 / 심부름</option>
+                  <option>몸 가꾸기 / 치장하기</option>
+                  <option>수선/ 수리</option>
+                  <option>상담</option>
+                  <option>이동</option>
+                  <option>먹기</option>
+                  <option>교육 / 여가생활</option>
+                  <option>정서지지</option>
+                  <option>돌봄</option>
+                  <option>의사소통</option>
+                  <option>식물 가꾸기</option>
+                  <option>건강관리</option>
+                  <option>모임 장소 대여</option>
+                  <option>기타</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="subwork">소분류</label>
+                <input type="text" class="form-control" id="subwork" name="subwork" placeholder="">
+              </div> 
+
+              <div class="form-group">
+                <label for="tok">거래 시간 (단위:시간)</label>
+                <input type="text" class="form-control" name="tok" id="tok" placeholder="" value=1>
+              </div>
+
+              <div class="form-group">
+                <label for="content">요청 설명</label>
+                <textarea class="form-control" name="content" id="content" rows="3"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="image">이미지 등록</label>
+                <input id="image" name="image" class="form-control" type="file">
+              </div>
+
+              <button type="submit" class="btn btn-success" value="deal" style="float:right;">거래 등록</button>
+            </form>
+
+              {% else %}
+              <script type="text/javascript">
+                alert('로그인 후, 이용하실 수 있습니다.')
+                window.location.href = '{% url "login" %}';
+              </script>
+              {% endif %}
+            
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Sidebar Widgets Column -->
+      <div class="col-md-4">
+
+        <!-- Side Widget -->
+        <div class="card my-4">
+          <h5 class="card-header">문의사항</h5>
+          <div class="card-body">
+            031-408-1225
+          </div>
+        </div> 
+
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+  </div>
+  <!-- /.container -->
+  
+</main>  
+
+<footer class="bg-dark py-4 mt-auto">
+  <div class="container px-5">
+      <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+          <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; TimeBank 2021</div></div>
+          <div class="col-auto">
+              <a class="link-light small" href="#!">Privacy</a>
+              <span class="text-white mx-1">&middot;</span>
+              <a class="link-light small" href="#!">Terms</a>
+              <span class="text-white mx-1">&middot;</span>
+              <a class="link-light small" href="#!">Contact</a>
+          </div>
+      </div>
+  </div>
+</footer>
+
+
+<!-- Bootstrap core JavaScript -->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<!-- Plugin JavaScript -->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+<!-- Custom JavaScript for this theme -->
+<script src="{% static 'js/scripts.js' %}"></script>
+
+  <!--JQuery TimePicker-->
+  <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+
+  <script>
+    $(document).ready(function(){
+      $('input.timepicker').timepicker({
+        timeFormat: 'h:mm p',
+        interval: 15,
+        minTime: '7',
+        maxTime: '11:59pm',
+        startTime: '7:00',
+        dynamic: false,
+        dropdown: true,
+        scrollbar: true
+      })
+    });
+
+  </script>
+
+</body>
+</html>
+{% endblock %}

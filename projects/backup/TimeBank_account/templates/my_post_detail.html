@@ -1,0 +1,250 @@
+{% load static %}
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TimeBank</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+             <!-- Navigation-->
+             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+              <div class="container px-5">
+                  <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                          <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                          <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                          <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                          <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                            </ul>
+                        </li>
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                  <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                              </ul>
+                          </li>
+                          <!--로그인 상태-->
+                          {% if user.is_authenticated %}
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                  <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                  <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                  <li>
+                                      <form action="{% url 'logout' %}" method="POST">
+                                      {% csrf_token %} 
+                                      <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                  </form></li>
+                              </ul>
+                          </li>
+                          {% else %}
+                          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                          <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                          {% endif %}
+                      </ul>
+                  </div>
+              </div>
+          </nav>
+
+
+  <header class="bg-primary text-white">
+    <div class="container text-center">
+      <h1>계좌관리</h1>
+      
+    </div>
+  </header>
+
+  
+
+ <!-- Page Content -->
+ <div class="container">
+
+  <div class="row">
+      
+    <div class="col-lg-3">
+      <div class="card mt-4">
+        {% if user.image %}
+        <img class="card-img-top img-fluid" src="{{ user.image.url }}" alt="user" style="padding: 30px;">
+        {% else %}
+        <img class="card-img-top img-fluid" src="/static/img/user.png" alt="user" style="padding: 30px;">
+        {% endif %}
+        <div class="card-body">
+          
+          <h3 class="card-title">{{ user.get_username }}님 😃</h3>
+          <h4>{{ user.name }}</h4><br>
+          <h6>{{ user.email }}</h6>
+          <p class="card-text"></p>
+          <span class="text-warning">&#9733; &#9733; &#9733; &#9733; &#9734;</span>
+          4.0 stars
+        </div>
+      </div>
+      <p><br><br></p>
+      <div class="list-group">
+        <a href="{% url 'profile' user.username %}" class="list-group-item active">프로필</a>
+        <a href="{% url 'balance' %}" class="list-group-item">시간계좌</a>
+        <a href="{% url 'account' %}" class="list-group-item">거래내역</a>
+      </div>
+    </div>
+    <!-- /.col-lg-3 -->
+
+    <div class="col-lg-9">
+
+      <div class="card card-outline-secondary my-5">
+        <div class="card-header">
+          내가 등록한 거래
+        </div>
+        <div class="card-body">
+          <h5>{{post.service}}</h5> <br>
+          
+          <table id="example" class="table table-striped table-bordered" style="width:100%">
+            <thead>
+              <tr>
+                <th style="font-size: 13px; text-align: center;">요청상태</th>
+                <th style="font-size: 13px; text-align: center;">글번호</th>
+                <th style="font-size: 13px; text-align: center;">요청 분류</th>
+                <th style="font-size: 13px; text-align: center;">작성자</th>
+                <th style="font-size: 13px; text-align: center;">요청톡</th>
+                <th style="font-size: 13px; text-align: center;">날짜</th>
+                <th style="font-size: 13px; text-align: center;">요청 세부 내용</th>
+            </tr>
+            </thead>
+            <tbody>
+                  <!-- 진행상태 보여주기 -->
+                  <tr>
+                    {% if post.status == "대기" %}
+                      <td style="text-align:center;"><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
+                      {% elif post.status == "진행" %}
+                      <td style="text-align:center;"><button type="button" class="btn btn-success">{{ post.status }}</button></td>
+                      {% elif post.status == "완료" %}
+                      <td style="text-align:center;"><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
+                      {% elif post.status == "중단" %}
+                      <td style="text-align:center;"><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
+                      {% endif %}
+                      <td style="text-align:center;">{{ post.id }}</td>
+                      <td style="text-align:center;">{{ post.service }}</td>
+                      <td style="text-align:center;">{{ post.author }}</td>
+                      <td style="text-align:center;">{{ post.tok }}</td>
+                      <td style="text-align:center;">{{ post.created_at|date:"Y-m-d h:i A" }}</td>
+                      <td style="text-align:center;">{{ post.content }}</td>
+                </tr>            
+            </tbody>
+            <thead>
+                <tr>
+                  <th style="font-size: 13px; text-align:center;">승인상태</th>
+                  <th style="font-size: 13px; text-align:center;">글번호</th>
+                  <th style="font-size: 13px; text-align:center;">신청자</th>
+                  <th style="font-size: 13px; text-align:center;">이름</th>
+                  <th style="font-size: 13px; text-align:center;">나이</th>
+                  <th style="font-size: 13px; text-align:center;">이메일</th>
+                  <th style="font-size: 13px; text-align:center;">성별</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr>
+                    <!-- 거래 승인하기 -->
+                    {% if post.status == "대기" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-primary">{{ post.status }}</button></td>
+                    {% elif post.status == "진행" %}
+                    <td>
+                      {% if btn_msg == "완료하기" %}
+                        <form action="{% url 'success' post.id %}" method="post">
+                          {% csrf_token %}
+                              <button type="submit" class="btn btn-success">{{btn_msg}}</button>
+                        </form>
+                        <form action="{% url 'stop' post.id %}" method="post">
+                          {% csrf_token %}
+                              <button type="submit" class="btn btn-danger">중단하기</button>
+                        </form>
+                      {% elif btn_msg == "승인대기" %}
+                        <button type="submit" class="btn btn-success">{{btn_msg}}</button>
+                    {% endif %}
+                  </td>
+                    {% elif post.status == "완료" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-warning">{{ post.status }}</button></td>
+                    {% elif post.status == "중단" %}
+                    <td style="text-align: center;"><button type="button" class="btn btn-secondary">{{ post.status }}</button></td>
+                    {% endif %}
+                    <td style="text-align: center;">{{ post.id }}</td>
+                    <td style="text-align: center;">{{ post.applicants }}</td>
+                    <td style="text-align: center;">{{ post.applicants.name }}</td>
+                    <td style="text-align: center;">{{ post.applicants.user_age }}</td>
+                    <td style="text-align: center;">{{ post.applicants.email }}</td>
+                    <td style="text-align: center;">{{ post.applicants.gender }}</td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- /.card -->
+
+    </div>
+    <!-- /.col-lg-9 -->
+
+    <div class="container">
+
+      <div class="row">
+          
+        <div class="col-lg-3">
+        </div>
+    <div class="col-lg-9">
+
+      
+
+    </div>
+    <!-- /.col-lg-9 -->
+</div>
+  </div>
+</div>
+</div>
+<!-- /.container -->
+<section id="about">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+      </div>
+    </div>
+  </div>
+</section>
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Dayoung Seon 2021</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+  <!-- Custom JavaScript for this theme -->
+  <script src="{% static 'js/scrolling-nav.js' %}"></script>
+
+</body>

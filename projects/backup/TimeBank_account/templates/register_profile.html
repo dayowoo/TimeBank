@@ -1,0 +1,355 @@
+{% load static %}
+<html lang="en">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>TimeBank</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/scrolling-nav.css' %}" rel="stylesheet">
+  <link href="{% static 'css/blog-post.css' %}" rel="stylesheet">
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+
+  <!--JQuery TimePicker-->
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+  
+</head>
+
+<style>
+  @font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  line-height: 150%;
+}
+body{font-family: 'Pretendard-Regular';}
+</style>
+
+
+<body class="d-flex flex-column h-100" style="padding-top: 0px;">
+    <main class="flex-shrink-0">
+
+             <!-- Navigation-->
+             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                  <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                  <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                              </ul>
+                          </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                                </ul>
+                            </li>
+                            <!--로그인 상태-->
+                            {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                    <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="POST">
+                                        {% csrf_token %} 
+                                        <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                    </form></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Page content-->
+            <section class="py-5">
+                <div class="container px-5">
+                    <!-- Contact form-->
+                    <div class="bg-light rounded-3 py-5 px-4 px-md-5 mb-5">
+                        <div class="text-center mb-5">
+                            <!-- <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div> -->
+                            <div class="d-flex flex-row justify-content-center" style="margin: 10px"> 
+                                <div class="p-2">
+                                    <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDI4Ni4wNTQgMjg2LjA1NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjg2LjA1NCAyODYuMDU0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojMjM5NEJDOyIgZD0iTTE0My4wMjcsMEM2NC4wMzEsMCwwLDY0LjA0LDAsMTQzLjAyN2MwLDc4Ljk5Niw2NC4wMzEsMTQzLjAyNywxNDMuMDI3LDE0My4wMjcNCgkJczE0My4wMjctNjQuMDMxLDE0My4wMjctMTQzLjAyN0MyODYuMDU0LDY0LjA0LDIyMi4wMjIsMCwxNDMuMDI3LDB6IE0xNDMuMDI3LDI1OS4yMzZjLTY0LjE4MywwLTExNi4yMDktNTIuMDI2LTExNi4yMDktMTE2LjIwOQ0KCQlTNzguODQ0LDI2LjgxOCwxNDMuMDI3LDI2LjgxOHMxMTYuMjA5LDUyLjAyNiwxMTYuMjA5LDExNi4yMDlTMjA3LjIxLDI1OS4yMzYsMTQzLjAyNywyNTkuMjM2eiIvPg0KCTxwYXRoIHN0eWxlPSJmaWxsOiMyMzk0QkM7IiBkPSJNMTUwLjAyNiw4MC4zOWgtMjIuODRjLTYuOTEsMC0xMC45MzMsNy4wNDQtMTAuOTMzLDEzLjE1OGMwLDUuOTM2LDMuMjA5LDEzLjE1OCwxMC45MzMsMTMuMTU4DQoJCWg3LjI1OXY4NS4zNmMwLDguNzM0LDYuMjU3LDEzLjYwNSwxMy4xNzYsMTMuNjA1czEzLjE4NS00Ljg4MSwxMy4xODUtMTMuNjA1VjkyLjc3MUMxNjAuNzk4LDg1Ljc4OSwxNTYuOTQ1LDgwLjM5LDE1MC4wMjYsODAuMzl6Ig0KCQkvPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPC9zdmc+DQo=" width="30px" height="30px"/>
+                                    <div style="font-family: Pretendard-Regular; float: right; margin-left: 10px; margin-top: 3px; font-size: small; font-weight: 100;">기본 정보</div>
+                                </div>
+                                <div class="p-2">
+                                  <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDI4Ni4wNTQgMjg2LjA1NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjg2LjA1NCAyODYuMDU0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojM0RCMzlFOyIgZD0iTTE0My4wMzEsMEM2NC4wMjcsMCwwLjAwNCw2NC4wNCwwLjAwNCwxNDMuMDI3YzAsNzguOTk2LDY0LjAzMSwxNDMuMDI3LDE0My4wMjcsMTQzLjAyNw0KCQljNzguOTg3LDAsMTQzLjAxOC02NC4wMzEsMTQzLjAxOC0xNDMuMDI3QzI4Ni4wNDksNjQuMDQ5LDIyMi4wMTgsMCwxNDMuMDMxLDB6IE0xNDMuMDMxLDI1OS4yMzYNCgkJYy02NC4xODMsMC0xMTYuMjA5LTUyLjAyNi0xMTYuMjA5LTExNi4yMDlTNzguODU3LDI2LjgxOCwxNDMuMDMxLDI2LjgxOHMxMTYuMiw1Mi4wMjYsMTE2LjIsMTE2LjIwOQ0KCQlTMjA3LjIwNiwyNTkuMjM2LDE0My4wMzEsMjU5LjIzNnogTTE5OS4yNDEsODIuMTg3Yy02LjA3OS0zLjYyOS0xMy44NDctMS40NzUtMTcuMzQyLDQuODI3bC00Ny45NTksODYuMTQ3bC0yNi43MS0zMi41MTINCgkJYy00LjgzNi01LjU2OS0xMS4yNjMtOC40NTYtMTcuMzMzLTQuODI3Yy02LjA3OSwzLjYzOC04LjU5MSwxMi4zOS00LjY1NywxOC4wMDRsMzcuMTY5LDQ1LjI0MWMyLjc4LDMuNjExLDUuOTUzLDUuNzc1LDkuMjcsNi4zOTINCgkJbDAuMDI3LDAuMDU0bDAuMzQsMC4wMThjMC43NTEsMC4xMTYsMTEuOTc5LDIuMTksMTYuODE1LTYuNDYzbDU1LjA0OC05OC44NzZDMjA3LjQwMiw5My44NzksMjA1LjMyLDg1LjgyNSwxOTkuMjQxLDgyLjE4N3oiLz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K" width="30px" height="30px"/>
+                                  <div style="font-family: Pretendard-Regular; float: right; margin-left: 10px; margin-top: 3px; font-size: small; font-weight: 100;">프로필</div>
+                                </div>
+                                <div class="p-2">
+                                    <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE5LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDI4Ni4wNTQgMjg2LjA1NCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjg2LjA1NCAyODYuMDU0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQo8Zz4NCgk8cGF0aCBzdHlsZT0iZmlsbDojMjM5NEJDOyIgZD0iTTE0My4wMjcsMEM2NC4wNCwwLDAsNjQuMDQsMCwxNDMuMDI3YzAsNzguOTk2LDY0LjA0LDE0My4wMjcsMTQzLjAyNywxNDMuMDI3DQoJCXMxNDMuMDI3LTY0LjAzMSwxNDMuMDI3LTE0My4wMjdDMjg2LjA1NCw2NC4wNCwyMjIuMDE0LDAsMTQzLjAyNywweiBNMTQzLjAyNywyNTkuMjM2Yy02NC4xODMsMC0xMTYuMjA5LTUyLjAyNi0xMTYuMjA5LTExNi4yMDkNCgkJUzc4Ljg0NCwyNi44MTgsMTQzLjAyNywyNi44MThzMTE2LjIwOSw1Mi4wMjYsMTE2LjIwOSwxMTYuMjA5UzIwNy4yMSwyNTkuMjM2LDE0My4wMjcsMjU5LjIzNnogTTE2Ny43MTcsMTM3LjYzNw0KCQljOC45NjYtNS45MzYsMTMuMzY0LTE1LjI3NywxMy4zNjQtMjUuOTc3YzAtMTMuMjM5LTExLjI1NC0zMS4wODItMzQuNzI5LTMxLjA4MmMtMTguMDkzLDAtMzUuNTQyLDE0LjI3Ni0zNS41NDIsMjcuNTE1DQoJCWMwLDYuMjg0LDMuOTE1LDEyLjU2LDEwLjYwMiwxMi41NmMxMS4wODUsMCw4Ljk2Ni0xNi42MzYsMjQuNDQ5LTE2LjYzNmM3LjMzOSwwLDExLjczNyw0LjkyNSwxMS43MzcsMTEuMzcxDQoJCWMwLDE4Ljg1My0yMy4xNTIsNi43OTQtMjMuMTUyLDI0LjYyN2MwLDIwLjAzMywyNy43MiwyLjU0OCwyNy43MiwyNi4zMTdjMCw5LjAwMi02Ljg1NiwxNS43OTYtMTUuMzMxLDE1Ljc5Ng0KCQljLTE4LjQyNCwwLTE1LjgxMy0xOS44NzItMjYuODk4LTE5Ljg3MmMtNS44NzMsMC0xMi41NTEsNC43NTYtMTIuNTUxLDExLjM4YzAsMTMuNDE4LDE1LDMxLjkyMiwzOS4xMjcsMzEuOTIyDQoJCWMyMy4xNTIsMCw0MS4wODQtMTcuMTU0LDQxLjA4NC0zNy41MjdDMTg3LjU5OCwxNTQuNjIxLDE3OS40NDUsMTQzLjI1LDE2Ny43MTcsMTM3LjYzN3oiLz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K" width="30px" height="30px"/>
+                                    <div style="font-family: Pretendard-Regular; float: right; margin-left: 10px; margin-top: 3px; font-size: small; font-weight: 100;">시작하기</div>
+                                </div>
+                            </div>
+                            <h1 class="fw-bolder" style="font-family: Pretendard-Regular; margin-top: 20px;">{{user.username}} 님 반가워요</h1>
+                            <p class="lead fw-normal text-muted mb-0" style="font-family: Pretendard-Regular; font-size: medium;">프로필을 설정하고 맞춤 TimeBank 서비스를 시작해보세요.⏰</p>
+                        </div>
+                        <div class="row gx-5 justify-content-center">
+                            <div class="col-lg-8 col-xl-6">
+                                <!-- * * * * * * * * * * * * * * *-->
+                                <!-- * * SB Forms Contact Form * *-->
+                                <!-- * * * * * * * * * * * * * * *-->
+                                <!-- This form is pre-integrated with SB Forms.-->
+                                <!-- To make this form functional, sign up at-->
+                                <!-- https://startbootstrap.com/solution/contact-forms-->
+                                <!-- to get an API token!-->
+                                <form action="{% url 'register_profile' user.username %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+
+                                    <!-- contact input-->
+                                    <div class="form-floating mb-3">
+                                      <input class="form-control" name="contact" id="contact" type="text" placeholder="010-0000-0000" required/>
+                                      <label for="contact" style="font-family: Pretendard-Regular;">연락처</label>
+                                    </div>
+                                    
+                                    <!-- birth address input-->
+                                    <div class="form-floating mb-3">
+                                        <input class="form-control" id="birth" type="date" name="birth" required />
+                                        <label for="birth" style="font-family: Pretendard-Regular; font-weight: 100;">생년월일</label>
+                                        <small class="form-text text-muted"  style="font-family: Pretendard-Regular; float: left;">생년월일을 입력해주세요.</small>
+                                    </div>
+                                    <br>
+
+
+                                    <!-- gender Check input-->
+                                    <label for="gender" style="font-family: Pretendard-Regular;">성별</label>
+                                    <div class="form-floating mb-3">
+                                        <div class="btn-group-toggle" data-toggle="buttons">
+                                          <label>
+                                            <input type="radio" name="gender" id="woman" value="여성" autocomplete="off" checked>여성
+                                          </label>
+                                          <label >
+                                            <input type="radio" name="gender" id="man" value="남성" autocomplete="off" style="margin-left: 10px;">남성
+                                          </label>
+                                          <label>
+                                            <input type="radio" name="gender" id="etc" value="기타" autocomplete="off" style="margin-left: 10px;">기타
+                                          </label>
+                                        </div>
+                                    </div>
+                                    <hr style="margin: 25px 0 25px 0">
+                                    <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">관심항목 설정</div>
+
+                                    <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">
+                                      <small class="form-text" style="font-family: Pretendard-Regular; color:mediumblue;">* 주고싶어요</small>
+                                      <div class="form-floating mb-3" style="margin-top: 10px;">
+                                        
+                                        <div class="form-control" style="height: 15rem;">
+
+                                          <!--CheckBox-->
+                                          <label for="cleanG" class="btn btn-outline-info active" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="청소 / 심부름" id="cleanG" autocomplete="off" checked> 청소 / 심부름
+                                          </label>
+                                          <label for="makeupG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="몸 가꾸기 / 치장하기" id="makeupG" autocomplete="off"> 몸 가꾸기 / 치장하기
+                                          </label>
+                                          <label for="repairG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="수선/ 수리" id="repairG" autocomplete="off"> 수선/ 수리
+                                          </label>
+                                          <label for="cleanG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="정서지지" id="cleanG" autocomplete="off"> 정서지지
+                                          </label>
+                                          <label for="consultG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="상담" id="consultG" autocomplete="off"> 상담
+                                          </label>
+                                          <label for="moveG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="이동" id="moveG" autocomplete="off"> 이동
+                                          </label>
+                                          <label for="eatG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="먹기" id="eatG" autocomplete="off"> 먹기
+                                          </label>
+                                          <label for="educationG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="교육/여가생활" id="educationG" autocomplete="off"> 교육/여가생활
+                                          </label>
+                                          <label for="careG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="돌봄" id="careG" autocomplete="off"> 돌봄
+                                          </label>
+                                          <label for="plantsG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="식물 가꾸기" id="plantsG" autocomplete="off"> 식물 가꾸기
+                                          </label>
+                                          <label for="meetingG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="모임 장소 대여" id="meetingG" autocomplete="off"> 모임 장소 대여
+                                          </label>
+                                          <label for="communiationG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="의사소통" id="communiationG" autocomplete="off"> 의사소통
+                                          </label>
+                                          <label for="healthG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="건강관리" id="healthG" autocomplete="off"> 건강관리
+                                          </label>
+                                          <label for="etcG" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersG[]" value="기타" id="etcG" autocomplete="off"> 기타
+                                          </label>
+                                        <!--endCheckBox-->
+
+                                        </div>
+
+                                      </div>
+                                    </div>
+
+                                    <div class="form-floating mb-3" style="font-family: Pretendard-Regular;">
+                                      <small class="form-text" style="font-family: Pretendard-Regular; color:mediumblue;">* 받고싶어요</small>
+                                      <div class="form-floating mb-3" style="margin-top: 10px;">
+                                        <div class="form-control" style="height: 15rem;">
+
+                                          <!--CheckBox-->
+                                          <label for="cleanT" class="btn btn-outline-info active" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="청소 / 심부름" id="cleanT" autocomplete="off" checked> 청소 / 심부름
+                                          </label>
+                                          <label for="makeupT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="몸 가꾸기 / 치장하기" id="makeupT" autocomplete="off"> 몸 가꾸기 / 치장하기
+                                          </label>
+                                          <label for="repairT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="수선/ 수리" id="repairT" autocomplete="off"> 수선/ 수리
+                                          </label>
+                                          <label for="cleanT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="정서지지" id="cleanT" autocomplete="off"> 정서지지
+                                          </label>
+                                          <label for="consultT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="상담" id="consultT" autocomplete="off"> 상담
+                                          </label>
+                                          <label for="moveT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="이동" id="moveT" autocomplete="off"> 이동
+                                          </label>
+                                          <label for="eatT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="먹기" id="eatT" autocomplete="off"> 먹기
+                                          </label>
+                                          <label for="educationT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="교육/여가생활" id="educationT" autocomplete="off"> 교육/여가생활
+                                          </label>
+                                          <label for="careT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="돌봄" id="careT" autocomplete="off"> 돌봄
+                                          </label>
+                                          <label for="plantsT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="식물 가꾸기" id="plantsT" autocomplete="off"> 식물 가꾸기
+                                          </label>
+                                          <label for="meetingT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="모임 장소 대여" id="meetingT" autocomplete="off"> 모임 장소 대여
+                                          </label>
+                                          <label for="communiationT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="의사소통" id="communiationT" autocomplete="off"> 의사소통
+                                          </label>
+                                          <label for="healthT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="건강관리" id="healthT" autocomplete="off"> 건강관리
+                                          </label>
+                                          <label for="etcT" class="btn btn-outline-info" data-toggle="buttons">
+                                            <input type="checkbox" name="answersT[]" value="기타" id="etcT" autocomplete="off"> 기타
+                                          </label>
+                                        <!--endCheckBox-->
+
+                                        </div>
+                                      </div>
+                                    <hr style="margin: 25px 0 25px 0">
+
+                                    <!-- about input-->
+                                    <div class="form-floating mb-3">
+                                      <textarea class="form-control" id="about" name="about" type="about" placeholder="Enter your message here..." style="height: 10rem"></textarea>
+                                      <label for="about">소개</label>
+                                  </div>
+                                  <br>
+
+                                    <!-- Submit info message-->
+                                    
+                                    <!-- Submit error message-->
+                                    <!---->
+                                    <!-- This is what your users will see when there is-->
+                                    <!-- an error submitting the form-->
+                                    <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error !</div></div>
+                                    <!-- Submit Button-->
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary btn-lg" id="submitButton" type="submit" style="font-family: Pretendard-Regular;">시작하기</button>
+                                        <br>
+                                        <div><p class="link" style="font-family: Pretendard-Regular; float: right;">나중에 설정할게요 🙂<a href="{% url 'index' %}" style="margin-left: 10px;">건너뛰기</a></p></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Contact cards-->
+                    <div class="row gx-5 row-cols-2 row-cols-lg-4 py-5">
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-chat-dots"></i></div>
+                            <div class="h5 mb-2">Chat with us</div>
+                            <p class="text-muted mb-0">Chat live with one of our support specialists.</p>
+                        </div>
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-people"></i></div>
+                            <div class="h5">Ask the community</div>
+                            <p class="text-muted mb-0">Explore our community forums and communicate with other users.</p>
+                        </div>
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-question-circle"></i></div>
+                            <div class="h5">Support center</div>
+                            <p class="text-muted mb-0">Browse FAQ's and support articles to find solutions.</p>
+                        </div>
+                        <div class="col">
+                            <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-telephone"></i></div>
+                            <div class="h5">Call us</div>
+                            <p class="text-muted mb-0">Call us during normal business hours at (555) 892-9403.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+          </main>  
+
+          <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; TimeBank 2021</div></div>
+                    <div class="col-auto">
+                        <a class="link-light small" href="#!">Privacy</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Terms</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="#!">Contact</a>
+                    </div>
+                </div>
+            </div>
+          </footer>
+          
+          <!-- Bootstrap core JavaScript -->
+          <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+          
+          
+          <!-- Plugin JavaScript -->
+          <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+          
+          <!-- Custom JavaScript for this theme -->
+          <script src="{% static 'js/scripts.js' %}"></script>
+          
+
+  <script>
+    window.onload = function(){
+      alert('환영합니다.');
+    };
+  </script>
+
+
+ </body>
+</html>

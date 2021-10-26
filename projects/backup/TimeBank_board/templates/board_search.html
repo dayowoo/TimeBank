@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>TimeBank</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+    </head>
+
+    <style>
+        @font-face {
+        font-family: 'Pretendard-Regular';
+        src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+        line-height: 150%;
+      }
+      body{font-family: 'Pretendard-Regular';}
+      </style>
+
+    <body class="d-flex flex-column h-100">
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand" href="{% url 'index' %}">TimeBank</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">Contact</a></li>
+                            <li class="nav-item"><a class="nav-link" href="#" onclick="prepare()">FAQ</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'post_list' %}" >거래목록</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'new_post_step1' %}" >거래등록</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">시간가게</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'shop_list' %}">시간가게</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'product_new' %}">물품등록</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownBlog" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">커뮤니티</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownBlog">
+                                    <li><a class="dropdown-item" href="{% url 'board_list' %}">커뮤니티</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'board_new' %}">글 작성하기</a></li>
+                                </ul>
+                            </li>
+                            <!--로그인 상태-->
+                            {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.get_username }}</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{% url 'profile' user.username %}">프로필</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'balance' user.username %}">시간계좌</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'account' user.username %}">거래내역</a></li>  
+                                    <li><a class="dropdown-item" href="{% url 'my_review' user.username %}">거래후기</a></li>  
+                                    <li>
+                                        <form action="{% url 'logout' %}" method="POST">
+                                        {% csrf_token %} 
+                                        <input type="submit" class="dropdown-item" href="{% url 'logout' %}" value="로그아웃">
+                                    </form></li>
+                                </ul>
+                            </li>
+                            {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">로그인</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">회원가입</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        <!-- Page Content-->
+        <div class="container px-4 px-lg-5">
+          <!-- Heading Row-->
+          <div class="row gx-4 gx-lg-5 align-items-center my-5">
+            <div class="col-lg-7 card"><img class="img-fluid rounded mb-4 mb-lg-0" src="/static/img/main.png" /></div>
+            <div class="col-lg-5">
+                <h1 class="font-weight-light">시간은행, TimeBank ⏱️</h1>
+                <p style="margin-top: 10px;">봉사 자랑, 봉사 후기, 수다 등 자유롭게 TimeBank 회원들과 소통을 시작해보세요</p>
+                <div>
+                  <a class="btn btn-primary" href="{% url 'board_new' %}" style="float: right;">글 작성하러가기</a>
+                </div>
+                
+            </div>
+        </div>
+        <hr>
+            <!-- Content Row-->
+            <h3>👑 인기글</h3>
+            <div class="row gx-4 gx-lg-5">
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Card One</h2>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Card Two</h2>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod tenetur ex natus at dolorem enim! Nesciunt pariatur voluptatem sunt quam eaque, vel, non in id dolore voluptates quos eligendi labore.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title">Card Three</h2>
+                            <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Rem magni quas ex numquam, maxime minus quam molestias corporis quod, ea minima accusamus.</p>
+                        </div>
+                        <div class="card-footer"><a class="btn btn-primary btn-sm" href="#!">More Info</a></div>
+                    </div>
+                </div>
+            </div>
+            <hr><br>
+
+            <!--Search-->
+            <div style="display: flex; float: right; margin-bottom: 20px;">
+
+              <select class="custom-select" style="margin-right: 10px; flex:1; width: 100px;">
+                <option selected>제목</option>
+              </select>
+
+                <form class="form-inline" action="{% url 'board_search' %}" method="get" style="flex:3; display: flex;">
+                    {% csrf_token %}
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q" style="flex: 2;">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="flex: 1; margin-left: 10px;">Search</button>
+                </form>
+                
+            </div>
+
+
+            <!--table-->
+            {% for board in boards %}
+            <table id="example" class="table table-striped table-bordered" style="width:100%">
+              <thead>
+                <tr style="display: flex;">
+                  <th style="font-size: 13px; text-align: center; flex: 1;">#</th>
+                  <th style="font-size: 13px; text-align: center; flex: 1;">분류</th>
+                  <th style="font-size: 13px;text-align: center; flex: 1;">작성자</th>
+                  <th style="font-size: 13px;text-align: center; flex: 4;">제목</th>
+              </tr>
+              </thead>
+              <tbody>
+                <tr style="display: flex;">
+                    <td style="text-align: center; flex: 1;"><a href="{% url 'board_detail' board.id %}">{{ board.id }}</a></td>
+                    <td style="text-align: center; flex: 1;">{{board.category}}</td>
+                    <td style="text-align: center; flex: 1;"><a href="{% url 'profile' board.author.username %}">{{ board.author }}</a></td>
+                    <td style="text-align: center; flex: 4;">{{board.title}}</td>
+                </tr>
+            </tbody>
+          </table>
+          {% empty %}
+          <br><br><br>
+          <div class="row gx-4 gx-lg-5" style="margin-top:50px;margin-bottom: 100px;">
+              <h3>🙅‍♀️ 검색된 결과가 없습니다.</h3>
+          </div>
+          {% endfor %}
+        </div>
+        <br><br>
+        <!-- Footer-->
+        <footer class="py-5 bg-dark">
+            <div class="container px-4 px-lg-5"><p class="m-0 text-center text-white">Copyright &copy; Your Website 2021</p></div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>

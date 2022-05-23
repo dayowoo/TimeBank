@@ -177,7 +177,7 @@ class Account(models.Model):
 # 계좌 모델
 class Account(models.Model):
     account_no = models.CharField(max_length=20, verbose_name='계좌번호')
-    user = models.ForeignKey(User, unique=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     balance = models.IntegerField(default=0, verbose_name='잔액')
 
     @classmethod
